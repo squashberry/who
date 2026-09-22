@@ -1,0 +1,79 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="index,follow"><link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="site-pages.css"><title>WHO Beta Feedback · WHO</title></head><body>
+<header class="top"><div class="wrap"><nav><a class="brand" href="./"><span class="mark">W</span><span>WHO</span></a><div class="links"><a href="features.html">Features</a><a href="how-to-use-who.html">How to use WHO</a><a href="safety-center.html">Safety</a><a href="privacy.html">Privacy</a><a href="support.html">Support</a></div><a class="cta" href="download.html">Get WHO</a></nav></div></header>
+<main><section class="hero"><div class="wrap"><span class="eyebrow">Help shape WHO</span><h1>WHO Beta Feedback</h1><p>You are among the first people testing WHO Beta 1.0. Tell us what works, what is confusing, what broke, and what you want next.</p></div></section><section class="content"><div class="wrap">
+<div class="grid">
+  <div class="card">
+    <span class="badge">Beta 1.0</span>
+    <h2>Every report helps us improve WHO.</h2>
+    <p>We want practical feedback from real users. Tell us about the caller experience, contacts, SMS, permissions, Relay, performance, crashes, confusing screens, missing features or anything that would make WHO better.</p>
+    <form id="feedbackForm">
+      <div class="stack">
+        <label><strong>Feedback type</strong><select id="type" class="input"><option>General feedback</option><option>Bug report</option><option>Feature request</option><option>Download problem</option><option>Privacy question</option><option>Complaint</option><option>Security concern</option></select></label>
+        <label><strong>Rating</strong><select id="rating" class="input"><option value="5">★★★★★ Excellent</option><option value="4">★★★★ Very good</option><option value="3">★★★ Good</option><option value="2">★★ Needs improvement</option><option value="1">★ Poor</option></select></label>
+        <label><strong>Platform</strong><select id="platform" class="input"><option>Android</option><option>iPhone</option><option>iPad</option><option>macOS</option><option>Windows</option><option>Website</option></select></label>
+        <label><strong>WHO version</strong><input id="version" class="input" value="1.0.0" placeholder="e.g. 1.0.0"></label>
+        <label><strong>Your name <span style="color:#657287">(optional)</span></strong><input id="name" class="input" placeholder="How should we display your name?"></label>
+        <label><strong>Your email <span style="color:#657287">(optional)</span></strong><input id="email" type="email" class="input" placeholder="For a reply"></label>
+        <label><strong>What happened?</strong><textarea id="message" class="input" rows="7" placeholder="Tell us what happened, what you expected, and what you would change."></textarea></label>
+        <label><strong>If this is a bug, how can we reproduce it?</strong><textarea id="steps" class="input" rows="4" placeholder="Steps, device, screen, error message, etc."></textarea></label>
+        <label style="display:flex;gap:9px;align-items:flex-start"><input id="publish" type="checkbox" style="margin-top:4px"><span style="font-size:11px;color:#94a0b3">I am happy for WHO to consider publishing an edited version of this feedback after manual admin approval. Do not include private information.</span></label>
+        <button class="cta" type="submit" style="border:0;cursor:pointer">Send feedback</button>
+        <div id="sendStatus" class="callout" style="display:none"></div>
+      </div>
+    </form>
+    <p style="margin-top:14px;font-size:10px;color:#66748b">Do not send passwords, one-time codes, banking PINs, private contact lists or other sensitive secrets through this form.</p>
+  </div>
+  <div class="stack">
+    <div class="card">
+      <h2>What happens after you submit?</h2>
+      <ol style="padding-left:20px;color:#9aa6ba;font-size:13px">
+        <li>We receive your report or message.</li>
+        <li>We review it for relevance, privacy and safety.</li>
+        <li>Bug reports and complaints can be turned into internal fixes or support cases.</li>
+        <li>Only feedback explicitly eligible for publication is considered for the public gallery.</li>
+        <li>An admin must approve public feedback before it appears on this website.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h2>Need private help?</h2>
+      <p>For account, privacy, deletion or security issues, tell us in the form and we will treat it as a private support request rather than publishing it.</p>
+      <p><a class="badge" href="data-choices.html">Privacy choices →</a> <a class="badge" href="responsible-disclosure.html">Security →</a></p>
+    </div>
+  </div>
+</div>
+<section style="margin-top:20px">
+  <div class="section-head" style="text-align:left;margin:0 0 22px"><div class="eyebrow">Approved by the WHO team</div><h2 style="font-size:38px;margin:9px 0">What early testers are saying.</h2><p style="color:#929db2">Only feedback marked approved in WHO's publishing system is displayed publicly.</p></div>
+  <div id="feedbackGrid" class="glass-grid"></div>
+  <div id="feedbackEmpty" class="card" style="display:none;margin-top:15px"><p>No approved feedback has been published yet.</p></div>
+</section>
+<script>
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function renderFeedback(list){
+  const grid=document.getElementById('feedbackGrid');
+  const approved=(Array.isArray(list)?list:[]).filter(x=>x.approved===true).slice().reverse();
+  if(!approved.length){document.getElementById('feedbackEmpty').style.display='block';return;}
+  grid.innerHTML=approved.map(x=>'<article class="glass"><div style="display:flex;justify-content:space-between;gap:12px"><strong>'+esc(x.name||'WHO Beta Tester')+'</strong><span style="color:#69c9ff;letter-spacing:2px">'+('★'.repeat(Math.max(1,Math.min(5,Number(x.rating)||5))))+'</span></div><h3 style="margin:12px 0 7px">'+esc(x.title||'Beta feedback')+'</h3><p>'+esc(x.message||'')+'</p><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:15px"><span class="badge">'+esc(x.platform||'WHO')+'</span><span class="badge">Beta '+esc(x.version||'1.0.0')+'</span></div></article>').join('');
+}
+fetch('data/approved-feedback.json',{cache:'no-store'}).then(r=>r.json()).then(renderFeedback).catch(()=>renderFeedback([]));
+document.getElementById('feedbackForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  const subject=encodeURIComponent('[WHO Beta Feedback] '+document.getElementById('type').value);
+  const body=encodeURIComponent(
+    'Type: '+document.getElementById('type').value+'\\n'+
+    'Rating: '+document.getElementById('rating').value+'/5\\n'+
+    'Platform: '+document.getElementById('platform').value+'\\n'+
+    'WHO version: '+document.getElementById('version').value+'\\n'+
+    'Name: '+document.getElementById('name').value+'\\n'+
+    'Email: '+document.getElementById('email').value+'\\n'+
+    'Public display requested: '+(document.getElementById('publish').checked?'Yes':'No')+'\\n\\n'+
+    'Feedback:\\n'+document.getElementById('message').value+'\\n\\n'+
+    'Reproduction steps:\\n'+document.getElementById('steps').value
+  );
+  const to='squashberrypro@gmail.com';
+  window.location.href='mailto:'+to+'?subject='+subject+'&body='+body;
+  const status=document.getElementById('sendStatus');
+  status.style.display='block';
+  status.innerHTML='<b>Your feedback draft is ready.</b><br>We opened your email app so it can be sent to the WHO team. Public feedback is never published automatically; an admin must approve it first.';
+});
+</script></div></section></main>
+<footer><div class="wrap"><div class="foot"><a class="brand" href="./"><span class="mark">W</span><span>WHO</span></a><div class="footlinks"><a href="features.html">Features</a><a href="how-to-use-who.html">How to use WHO</a><a href="safety-center.html">Safety Center</a><a href="faq.html">FAQ</a><a href="feedback.html">Feedback</a><a href="support.html">Support</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="cookies.html">Cookies</a><a href="data-choices.html">Your data</a><a href="community-guidelines.html">Community Guidelines</a><a href="responsible-disclosure.html">Security</a><a href="about.html">About</a><a href="contact.html">Contact</a></div></div><div class="copy">© 2026 Squashberry · WHO Beta 1.0</div></div></footer></body></html>
