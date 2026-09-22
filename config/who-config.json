@@ -24,5 +24,6 @@
   "announcementEnabled": false,
   "announcementTitle": "",
   "announcementMessage": "",
-  "crashReportUrl": ""
+  "crashReportUrl": "",
+  "welcomeFeedbackUrl": "https://squashberry.github.io/who/feedback.html"
 }
