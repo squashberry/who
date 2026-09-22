@@ -204,10 +204,45 @@
       section{padding:78px 0}.download-panel{padding:28px 22px}.footer-grid{flex-direction:column}
       .mini-card{left:-2px}.float-card{right:-8px}
     }
+
+    .welcome-overlay{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:20px;background:rgba(2,4,8,.72);backdrop-filter:blur(16px);opacity:0;pointer-events:none;transition:.25s ease}
+    .welcome-overlay.show{opacity:1;pointer-events:auto}
+    .welcome-card{width:min(620px,100%);border:1px solid rgba(103,197,255,.22);border-radius:30px;padding:34px;background:linear-gradient(150deg,rgba(18,28,46,.96),rgba(7,11,19,.96));box-shadow:0 35px 110px rgba(0,0,0,.68),0 0 80px rgba(22,135,255,.11);position:relative;overflow:hidden}
+    .welcome-card:before{content:"";position:absolute;width:240px;height:240px;right:-100px;top:-100px;border-radius:50%;background:rgba(22,135,255,.18);filter:blur(25px)}
+    .welcome-card h2{font-size:40px;line-height:1;letter-spacing:-.06em;margin:15px 0}
+    .welcome-card p{color:#a9b5c9;font-size:15px;line-height:1.75;max-width:540px}
+    .welcome-card .welcome-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}
+    .welcome-close{position:absolute;right:17px;top:17px;width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);color:#cbd6e7;cursor:pointer}
+    .beta-count{display:inline-flex;align-items:center;gap:8px;padding:7px 10px;border-radius:999px;background:rgba(83,214,255,.07);border:1px solid rgba(83,214,255,.14);color:#9ddfff;font-size:10px;font-weight:850}
+    .feedback-preview{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
+    .feedback-preview .card{border:1px solid var(--line);border-radius:23px;padding:23px;background:linear-gradient(150deg,rgba(255,255,255,.065),rgba(255,255,255,.025))}
+    .feedback-preview .stars{color:#68c9ff;letter-spacing:2px;font-size:11px}
+    .feedback-preview h3{margin:11px 0 7px;font-size:16px;letter-spacing:-.025em}
+    .feedback-preview p{margin:0;color:#929eb2;font-size:13px;line-height:1.7}
+    .feedback-preview .meta{display:flex;gap:7px;flex-wrap:wrap;margin-top:15px}
+    .feedback-section-head{display:flex;justify-content:space-between;gap:25px;align-items:end;margin-bottom:26px}
+    .feedback-section-head p{max-width:640px;margin:8px 0 0;color:#919db2;font-size:15px}
+    @media(max-width:800px){.feedback-preview{grid-template-columns:1fr}.feedback-section-head{display:block}.welcome-card h2{font-size:34px}}
+
   </style>
 </head>
 <body>
 <div class="noise"></div>
+
+<div id="welcomeOverlay" class="welcome-overlay" aria-hidden="true">
+  <div class="welcome-card" role="dialog" aria-modal="true" aria-labelledby="welcomeTitle">
+    <button class="welcome-close" aria-label="Close welcome message" onclick="closeWelcome()">×</button>
+    <span class="pill"><span class="dot"></span> WHO Beta 1.0</span>
+    <h2 id="welcomeTitle">Welcome to WHO.</h2>
+    <p>We want you to be among the <strong>first 50 users</strong> to test the WHO Beta 1.0 app.</p>
+    <p>Your feedback can directly shape what we build next. Tell us what you love, what needs work, what broke, and what features you want on our feedback page.</p>
+    <div class="beta-count">✦ First 50 beta testers · Your feedback matters</div>
+    <div class="welcome-actions">
+      <a class="btn primary" href="feedback.html">Give feedback</a>
+      <button class="btn" onclick="closeWelcome()">Continue to explore</button>
+    </div>
+  </div>
+</div>
 
 <header>
   <div class="wrap">
@@ -217,12 +252,12 @@
       </a>
       <div class="navlinks">
         <a href="features.html">Features</a>
-        <a href="how-it-works.html">How it works</a>
+        <a href="how-to-use-who.html">How to use WHO</a>
         <a href="safety-center.html">Safety</a>
         <a href="privacy.html">Privacy</a>
       </div>
       <div class="navcta">
-        <a class="btn primary" href="#download">Get WHO</a>
+        <a class="btn primary" href="download.html">Get WHO</a>
       </div>
       <button class="btn mobile-menu" onclick="document.querySelector('.navlinks').style.display=document.querySelector('.navlinks').style.display==='flex'?'none':'flex'">Menu</button>
     </nav>
@@ -237,7 +272,7 @@
         <h1>Know <span class="shine">who</span> is calling.</h1>
         <p>WHO is a modern communication app built around caller intelligence, smarter contacts, messaging, privacy-conscious identity matching and a clean everyday phone experience.</p>
         <div class="hero-actions">
-          <a class="btn primary" href="#download">Explore downloads <span>↗</span></a>
+          <a class="btn primary" href="download.html">Download WHO <span>↗</span></a>
           <a class="btn" href="#features">See what WHO does</a>
         </div>
         <div class="trust">
@@ -387,6 +422,21 @@
     </div>
   </section>
 
+
+  <section id="feedback" style="padding-top:45px">
+    <div class="wrap">
+      <div class="feedback-section-head">
+        <div>
+          <div class="eyebrow">Early voices</div>
+          <h2 style="font-size:45px;margin:9px 0 0">What beta testers are saying.</h2>
+          <p>WHO Beta 1.0 is being shaped by early testers. Only feedback approved by the WHO team is shown publicly.</p>
+        </div>
+        <a class="btn" href="feedback.html">See all feedback ↗</a>
+      </div>
+      <div id="homeFeedback" class="feedback-preview"></div>
+    </div>
+  </section>
+
   <section id="download">
     <div class="wrap">
       <div class="section-head">
@@ -424,7 +474,7 @@
         <div style="font-size:12px;max-width:420px;margin-top:12px;line-height:1.7">Caller intelligence, contacts and communication tools — created by Squashberry.</div>
       </div>
       <div class="footer-links">
-        <a href="features.html">Features</a><a href="how-it-works.html">How it works</a><a href="safety-center.html">Safety</a><a href="privacy.html">Privacy</a><a href="support.html">Support</a><a href="mailto:squashberrypro@gmail.com">Contact</a>
+        <a href="features.html">Features</a><a href="how-to-use-who.html">How to use WHO</a><a href="safety-center.html">Safety</a><a href="privacy.html">Privacy</a><a href="support.html">Support</a><a href="mailto:squashberrypro@gmail.com">Contact</a>
       </div>
     </div>
     <div class="copyright">© 2026 Squashberry · WHO Beta 1.0 · <span style="color:#8fa0b9">More platforms coming soon.</span></div>
@@ -432,14 +482,33 @@
 </footer>
 
 <script>
-  // Small interaction layer only; the actual WHO app configuration remains backend-driven.
   const header = document.querySelector('header');
-  let lastY = window.scrollY;
   window.addEventListener('scroll', () => {
-    const y = window.scrollY;
-    header.style.boxShadow = y > 8 ? '0 12px 40px rgba(0,0,0,.24)' : 'none';
-    lastY = y;
+    header.style.boxShadow = window.scrollY > 8 ? '0 12px 40px rgba(0,0,0,.24)' : 'none';
   }, {passive:true});
+
+  const welcomeOverlay = document.getElementById('welcomeOverlay');
+  function closeWelcome(){
+    welcomeOverlay.classList.remove('show');
+    welcomeOverlay.setAttribute('aria-hidden','true');
+    sessionStorage.setItem('whoWelcomeSeen','1');
+  }
+  window.addEventListener('load',()=>{
+    if(!sessionStorage.getItem('whoWelcomeSeen')){
+      setTimeout(()=>{
+        welcomeOverlay.classList.add('show');
+        welcomeOverlay.setAttribute('aria-hidden','false');
+      },550);
+    }
+  });
+
+  const escapeHtml=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  function renderHomeFeedback(list){
+    const box=document.getElementById('homeFeedback');
+    const approved=(Array.isArray(list)?list:[]).filter(x=>x.approved===true).slice(-3).reverse();
+    box.innerHTML=approved.map(x=>'<article class="card"><div style="display:flex;justify-content:space-between;gap:10px"><strong>'+escapeHtml(x.name||'WHO Beta Tester')+'</strong><span class="stars">'+('★'.repeat(Math.max(1,Math.min(5,Number(x.rating)||5))))+'</span></div><h3>'+escapeHtml(x.title||'Beta feedback')+'</h3><p>'+escapeHtml(x.message||'')+'</p><div class="meta"><span class="pill" style="padding:5px 8px;font-size:9px">'+escapeHtml(x.platform||'Android')+'</span><span class="pill" style="padding:5px 8px;font-size:9px">Beta '+escapeHtml(x.version||'1.0.0')+'</span></div></article>').join('');
+  }
+  fetch('data/approved-feedback.json',{cache:'no-store'}).then(r=>r.json()).then(renderHomeFeedback).catch(()=>{});
 </script>
 </body>
 </html>
