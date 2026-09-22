@@ -63,6 +63,7 @@
     </div>
     <div class="section-label">Operations</div>
     <div class="nav">
+      <button data-view="crashes"><span class="ico">⚠</span><span>Crash Reports</span></button>
       <button data-view="feedback"><span class="ico">✉</span><span>Feedback</span></button>
       <button data-view="analytics"><span class="ico">▥</span><span>Analytics</span></button>
       <button data-view="settings"><span class="ico">⚙</span><span>Settings</span></button>
@@ -158,6 +159,80 @@ Thank you for testing WHO.</textarea></div>
 </div></div>
 </section>
 
+
+    <section id="crashes" class="view">
+      <div class="panel">
+        <div style="display:flex;justify-content:space-between;gap:15px;align-items:flex-start;flex-wrap:wrap">
+          <div>
+            <h2>Crash reports</h2>
+            <p>Receive, review and triage WHO application crashes. New reports stay in Pending until an admin marks them fixed. The live API will populate this view when the backend is connected.</p>
+          </div>
+          <button class="btn primary" onclick="refreshCrashReports()">↻ Refresh reports</button>
+        </div>
+
+        <div class="stats" style="margin-top:13px">
+          <div class="stat"><div class="k">Pending</div><div class="v" id="crashPendingCount">0</div><div class="trend warn">Needs review</div></div>
+          <div class="stat"><div class="k">Fixed</div><div class="v" id="crashFixedCount">0</div><div class="trend neutral">Resolved reports</div></div>
+          <div class="stat"><div class="k">Fatal</div><div class="v" id="crashFatalCount">0</div><div class="trend neutral">Fatal crashes</div></div>
+          <div class="stat"><div class="k">Today</div><div class="v" id="crashTodayCount">0</div><div class="trend neutral">Reports received</div></div>
+        </div>
+
+        <div class="toolbar" style="margin-top:15px">
+          <input id="crashSearch" class="input" style="max-width:320px" placeholder="Search error, version, platform or source" oninput="renderCrashReports()">
+          <select id="crashSort" class="input" style="max-width:190px" onchange="renderCrashReports()">
+            <option value="newest">Newest first</option>
+            <option value="oldest">Oldest first</option>
+            <option value="severity">Severity</option>
+            <option value="version">App version</option>
+            <option value="platform">Platform</option>
+          </select>
+          <button id="crashTabPending" class="btn primary" onclick="setCrashTab('pending')">Pending</button>
+          <button id="crashTabFixed" class="btn" onclick="setCrashTab('fixed')">Fixed</button>
+          <button id="crashTabAll" class="btn" onclick="setCrashTab('all')">All</button>
+          <button class="btn" onclick="loadPreviewCrash()">Load preview report</button>
+        </div>
+
+        <div class="demo">Preview mode: search, sorting, copying and Pending/Fixed workflow are functional now. The live API hookup will replace the preview data source when the backend is connected.</div>
+
+        <div style="overflow:auto">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Received</th>
+                <th>Severity</th>
+                <th>Version</th>
+                <th>Platform</th>
+                <th>Error</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="crashTableBody">
+              <tr><td colspan="7"><div class="empty">No crash reports received yet.</div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="crashDetailPanel" class="panel" style="margin-top:13px;display:none">
+        <div style="display:flex;justify-content:space-between;gap:12px;align-items:center">
+          <div>
+            <h2 id="crashDetailTitle">Crash report</h2>
+            <p id="crashDetailMeta" style="margin-bottom:0"></p>
+          </div>
+          <button class="btn" onclick="closeCrashDetail()">Close</button>
+        </div>
+
+        <div class="toolbar" style="margin-top:14px">
+          <button class="btn primary" onclick="copySelectedCrash()">Copy report</button>
+          <button id="crashFixButton" class="btn" onclick="toggleSelectedCrashFixed()">Mark fixed</button>
+          <button class="btn" onclick="toast('Fix notes will be stored with the backend record.')">Add fix note</button>
+        </div>
+
+        <pre id="crashDetailBody" style="white-space:pre-wrap;word-break:break-word;background:#070a10;border:1px solid var(--line);border-radius:14px;padding:15px;color:#b9c7da;font-size:10px;line-height:1.65;overflow:auto;max-height:520px"></pre>
+      </div>
+    </section>
+
     <section id="analytics" class="view">
       <div class="stats"><div class="stat"><div class="k">DAU</div><div class="v">—</div><div class="trend neutral">Pending</div></div><div class="stat"><div class="k">Retention</div><div class="v">—</div><div class="trend neutral">Pending</div></div><div class="stat"><div class="k">Caller ID lookups</div><div class="v">—</div><div class="trend neutral">Pending</div></div><div class="stat"><div class="k">Update adoption</div><div class="v">—</div><div class="trend neutral">Pending</div></div></div>
       <div class="panel" style="margin-top:13px"><h2>Analytics architecture</h2><div class="empty">The final dashboard can expose aggregated events only: sign-ins, active devices, caller-ID requests, report counts, version adoption and crash-free sessions. Avoid storing raw contact content in analytics.</div></div>
@@ -187,11 +262,12 @@ Thank you for testing WHO.</textarea></div>
     announcements:['Announcements','Publish revisioned welcome and product messages.'],
     backups:['Backups','Monitor privacy-preserving backup and restore operations.'],
     feedback:['Feedback','Review messages from WHO testers and users.'],
+    crashes:['Crash Reports','Receive, inspect, sort and resolve WHO application crashes.'],
     analytics:['Analytics','Aggregated product and reliability signals.'],
     settings:['Settings','System-wide WHO controls.'],
     audit:['Audit Log','Record every administrative mutation.']
   };
-  function enterDemo(){document.getElementById('login').style.display='none';document.getElementById('app').style.display='grid';}
+  function enterDemo(){document.getElementById('login').style.display='none';document.getElementById('app').style.display='grid';renderCrashReports();}
   function logout(){document.getElementById('app').style.display='none';document.getElementById('login').style.display='grid';}
   function switchView(id){
     document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===id));
@@ -201,6 +277,232 @@ Thank you for testing WHO.</textarea></div>
   }
   document.querySelectorAll('.nav button').forEach(btn=>btn.addEventListener('click',()=>switchView(btn.dataset.view)));
   document.querySelectorAll('.toggle').forEach(t=>t.addEventListener('click',()=>t.classList.toggle('on')));
+
+  let crashTab = 'pending';
+  let selectedCrashId = null;
+
+  let crashRecords = (() => {
+    try {
+      return JSON.parse(localStorage.getItem('who_admin_crash_preview') || '[]');
+    } catch (_) {
+      return [];
+    }
+  })();
+
+  function persistCrashRecords() {
+    localStorage.setItem('who_admin_crash_preview', JSON.stringify(crashRecords));
+  }
+
+  function setCrashTab(tab) {
+    crashTab = tab;
+    document.getElementById('crashTabPending').classList.toggle('primary', tab === 'pending');
+    document.getElementById('crashTabFixed').classList.toggle('primary', tab === 'fixed');
+    document.getElementById('crashTabAll').classList.toggle('primary', tab === 'all');
+    renderCrashReports();
+  }
+
+  function crashTimestamp(record) {
+    const value = record.received_at || record.timestamp || record.receivedAt;
+    const date = value ? new Date(value) : new Date(0);
+    return Number.isNaN(date.getTime()) ? new Date(0) : date;
+  }
+
+  function filteredCrashRecords() {
+    const query = (document.getElementById('crashSearch')?.value || '').trim().toLowerCase();
+    const sort = document.getElementById('crashSort')?.value || 'newest';
+
+    let rows = crashRecords.filter(record => {
+      const status = record.status || 'pending';
+      if (crashTab === 'pending' && status !== 'pending') return false;
+      if (crashTab === 'fixed' && status !== 'fixed') return false;
+      if (!query) return true;
+
+      const haystack = [
+        record.error,
+        record.stack,
+        record.app_version,
+        record.version,
+        record.build,
+        record.platform,
+        record.os_version,
+        record.source,
+        record.id
+      ].map(v => String(v ?? '')).join(' ').toLowerCase();
+
+      return haystack.includes(query);
+    });
+
+    rows.sort((a, b) => {
+      if (sort === 'oldest') return crashTimestamp(a) - crashTimestamp(b);
+      if (sort === 'severity') return Number(Boolean(b.fatal)) - Number(Boolean(a.fatal));
+      if (sort === 'version') return String(a.app_version || a.version || '').localeCompare(String(b.app_version || b.version || ''));
+      if (sort === 'platform') return String(a.platform || '').localeCompare(String(b.platform || ''));
+      return crashTimestamp(b) - crashTimestamp(a);
+    });
+
+    return rows;
+  }
+
+  function renderCrashReports() {
+    const tbody = document.getElementById('crashTableBody');
+    if (!tbody) return;
+
+    const rows = filteredCrashRecords();
+    const pending = crashRecords.filter(r => (r.status || 'pending') === 'pending');
+    const fixed = crashRecords.filter(r => (r.status || 'pending') === 'fixed');
+    const fatal = crashRecords.filter(r => Boolean(r.fatal));
+    const todayKey = new Date().toISOString().slice(0, 10);
+    const today = crashRecords.filter(r => crashTimestamp(r).toISOString().slice(0, 10) === todayKey);
+
+    document.getElementById('crashPendingCount').textContent = pending.length;
+    document.getElementById('crashFixedCount').textContent = fixed.length;
+    document.getElementById('crashFatalCount').textContent = fatal.length;
+    document.getElementById('crashTodayCount').textContent = today.length;
+
+    if (!rows.length) {
+      tbody.innerHTML = '<tr><td colspan="7"><div class="empty">No crash reports match this view.</div></td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = rows.map(record => {
+      const id = String(record.id || '');
+      const date = crashTimestamp(record).toLocaleString();
+      const severity = record.fatal ? 'Fatal' : 'Non-fatal';
+      const badge = record.fatal ? 'red' : 'amber';
+      const status = record.status || 'pending';
+      const statusClass = status === 'fixed' ? 'green' : 'amber';
+      const version = record.app_version || record.version || '—';
+      const error = String(record.error || 'Unknown error')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+      const platform = String(record.platform || '—');
+
+      return '<tr>' +
+        '<td>' + date + '</td>' +
+        '<td><span class="badge ' + badge + '">' + severity + '</span></td>' +
+        '<td>' + version + '</td>' +
+        '<td>' + platform + '</td>' +
+        '<td style="max-width:280px;overflow:hidden;text-overflow:ellipsis">' + error + '</td>' +
+        '<td><span class="badge ' + statusClass + '">' + status + '</span></td>' +
+        '<td><button class="btn" onclick="openCrashDetail(' + JSON.stringify(id) + ')">Review</button></td>' +
+        '</tr>';
+    }).join('');
+  }
+
+  function openCrashDetail(id) {
+    const record = crashRecords.find(item => String(item.id) === String(id));
+    if (!record) return;
+
+    selectedCrashId = record.id;
+
+    document.getElementById('crashDetailPanel').style.display = 'block';
+    document.getElementById('crashDetailTitle').textContent =
+      (record.fatal ? 'Fatal crash' : 'Crash report') + ' · ' + (record.id || 'unknown id');
+
+    document.getElementById('crashDetailMeta').textContent = [
+      record.received_at || record.timestamp || 'unknown time',
+      record.app_version || record.version || 'unknown version',
+      record.platform || 'unknown platform',
+      record.os_version || 'unknown OS'
+    ].join(' · ');
+
+    document.getElementById('crashDetailBody').textContent =
+      JSON.stringify(record, null, 2);
+
+    document.getElementById('crashFixButton').textContent =
+      (record.status || 'pending') === 'fixed'
+        ? 'Move back to pending'
+        : 'Mark fixed';
+
+    document.getElementById('crashDetailPanel').scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
+    });
+  }
+
+  function closeCrashDetail() {
+    selectedCrashId = null;
+    document.getElementById('crashDetailPanel').style.display = 'none';
+  }
+
+  async function copySelectedCrash() {
+    if (!selectedCrashId) return;
+
+    const record = crashRecords.find(item => String(item.id) === String(selectedCrashId));
+    if (!record) return;
+
+    const text = JSON.stringify(record, null, 2);
+
+    try {
+      await navigator.clipboard.writeText(text);
+      toast('Crash report copied to clipboard.');
+    } catch (_) {
+      const area = document.createElement('textarea');
+      area.value = text;
+      document.body.appendChild(area);
+      area.select();
+      document.execCommand('copy');
+      area.remove();
+      toast('Crash report copied to clipboard.');
+    }
+  }
+
+  function toggleSelectedCrashFixed() {
+    if (!selectedCrashId) return;
+
+    const record = crashRecords.find(item => String(item.id) === String(selectedCrashId));
+    if (!record) return;
+
+    if ((record.status || 'pending') === 'fixed') {
+      record.status = 'pending';
+      delete record.fixed_at;
+      delete record.fixed_by;
+    } else {
+      record.status = 'fixed';
+      record.fixed_at = new Date().toISOString();
+      record.fixed_by = 'SQUASHBERRY · ADMIN';
+    }
+
+    persistCrashRecords();
+    openCrashDetail(record.id);
+    renderCrashReports();
+
+    toast(
+      record.status === 'fixed'
+        ? 'Crash report moved to Fixed.'
+        : 'Crash report reopened.'
+    );
+  }
+
+  function loadPreviewCrash() {
+    const now = new Date().toISOString();
+
+    crashRecords.unshift({
+      id: 'preview-' + Date.now(),
+      received_at: now,
+      timestamp: now,
+      app_version: '1.0.0',
+      build: '1',
+      platform: 'android',
+      os_version: '12',
+      fatal: true,
+      source: 'flutter',
+      installation_id: 'preview-installation',
+      error: 'Preview crash report — not a real user crash.',
+      stack: 'Preview stack trace. Real reports will come from POST /crash.'
+    });
+
+    persistCrashRecords();
+    setCrashTab('pending');
+    toast('Preview crash report added.');
+  }
+
+  async function refreshCrashReports() {
+    toast('Preview mode: waiting for WHO API connection.');
+    renderCrashReports();
+  }
+
   function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.style.display='block';clearTimeout(window.__t);window.__t=setTimeout(()=>t.style.display='none',2400)}
 </script>
 </body>
