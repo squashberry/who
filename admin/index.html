@@ -142,7 +142,21 @@ Thank you for testing WHO.</textarea></div>
 
     <section id="backups" class="view"><div class="panel"><h2>Backups</h2><p>WHO contact backup should be user-authorized and separate from community caller-intelligence observations. This area can later show backup/restore events without exposing the user's contact content to admins.</p><div class="empty">No backup service connected. Google Drive OAuth + per-user restore jobs will be implemented in the app/backend milestone.</div></div></section>
 
-    <section id="feedback" class="view"><div class="panel"><h2>Feedback inbox</h2><div class="toolbar"><input class="input" style="max-width:320px" placeholder="Search feedback"><button class="btn">Mark resolved</button><button class="btn">Export</button></div><div class="empty">Feedback records will appear after the WHO API is connected.</div></div></section>
+    <section id="feedback" class="view">
+<div class="panel"><h2>Feedback inbox & publishing</h2><p>Feedback submitted by beta testers is private by default. Only entries an admin explicitly approves should be published to the public WHO feedback page.</p>
+<div class="toolbar"><input class="input" style="max-width:320px" placeholder="Search feedback"><button class="btn">Filter pending</button><button class="btn">Filter approved</button><button class="btn">Export</button></div>
+<div class="demo">Preview workflow: submissions are received → reviewed → edited/redacted if necessary → approved or rejected → approved entries become public feedback cards.</div>
+<table class="table"><tr><th>Feedback</th><th>Rating</th><th>Platform</th><th>Publish</th><th>Action</th></tr>
+<tr><td><strong>Clean caller experience</strong><br><span style="font-size:9px;color:#6f7c93">WHO Beta Tester</span></td><td>★★★★★</td><td>Android</td><td><span class="badge green">Approved</span></td><td><button class="btn">Edit</button></td></tr>
+<tr><td><strong>Simple and easy to understand</strong><br><span style="font-size:9px;color:#6f7c93">Beta Tester</span></td><td>★★★★</td><td>Android</td><td><span class="badge green">Approved</span></td><td><button class="btn">Edit</button></td></tr>
+<tr><td><strong>Sample pending feedback</strong><br><span style="font-size:9px;color:#6f7c93">Preview submission</span></td><td>★★★★★</td><td>Android</td><td><span class="badge amber">Pending</span></td><td><button class="btn primary" onclick="toast('Preview only — this action will connect to the WHO API.')">Approve</button> <button class="btn danger">Reject</button></td></tr>
+</table></div>
+<div class="panel" style="margin-top:13px"><h2>Publication safeguards</h2><div class="settings">
+<div class="setting"><div><strong>Public display requires approval</strong><small>Never publish raw submissions automatically.</small></div><button class="toggle on"><span></span></button></div>
+<div class="setting"><div><strong>Allow tester to request publication</strong><small>A user's request is not itself an approval.</small></div><button class="toggle on"><span></span></button></div>
+<div class="setting"><div><strong>Admin redaction required</strong><small>Review private names, emails, numbers and sensitive details before publishing.</small></div><button class="toggle on"><span></span></button></div>
+</div></div>
+</section>
 
     <section id="analytics" class="view">
       <div class="stats"><div class="stat"><div class="k">DAU</div><div class="v">—</div><div class="trend neutral">Pending</div></div><div class="stat"><div class="k">Retention</div><div class="v">—</div><div class="trend neutral">Pending</div></div><div class="stat"><div class="k">Caller ID lookups</div><div class="v">—</div><div class="trend neutral">Pending</div></div><div class="stat"><div class="k">Update adoption</div><div class="v">—</div><div class="trend neutral">Pending</div></div></div>
