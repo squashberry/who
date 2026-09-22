@@ -1,0 +1,35 @@
+[
+  {
+    "id": "beta-001",
+    "name": "WHO Beta Tester",
+    "rating": 5,
+    "title": "Clean caller experience",
+    "message": "The caller screen feels much cleaner than my normal phone app. I like having the number and identity context in one place.",
+    "platform": "Android",
+    "version": "1.0.0",
+    "approved": true,
+    "publishedAt": "2026-09-20"
+  },
+  {
+    "id": "beta-002",
+    "name": "Early Tester",
+    "rating": 5,
+    "title": "I want to keep testing this",
+    "message": "The beta is still early, but the direction is very promising. The contacts and caller-ID idea together makes sense.",
+    "platform": "Android",
+    "version": "1.0.0",
+    "approved": true,
+    "publishedAt": "2026-09-21"
+  },
+  {
+    "id": "beta-003",
+    "name": "Beta Tester",
+    "rating": 4,
+    "title": "Simple and easy to understand",
+    "message": "The interface is easy to follow. I would love stronger spam information and contact backup in the next updates.",
+    "platform": "Android",
+    "version": "1.0.0",
+    "approved": true,
+    "publishedAt": "2026-09-21"
+  }
+]
