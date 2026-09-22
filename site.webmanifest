@@ -1,0 +1,17 @@
+{
+  "name": "WHO — Caller Intelligence by Squashberry",
+  "short_name": "WHO",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#05060a",
+  "theme_color": "#05060a",
+  "description": "WHO — caller intelligence, contacts and communication tools by Squashberry.",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
