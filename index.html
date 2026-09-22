@@ -506,6 +506,10 @@
   function renderHomeFeedback(list){
     const box=document.getElementById('homeFeedback');
     const approved=(Array.isArray(list)?list:[]).filter(x=>x.approved===true).slice(-3).reverse();
+    if(!approved.length){
+      box.innerHTML='<article class="card"><div class="beta-count">✦ Public feedback gallery is opening</div><h3>Be one of the first WHO Beta 1.0 testers.</h3><p>Approved tester feedback will appear here. Your honest experience can help shape the next WHO release.</p><div class="meta"><a class="btn primary" href="feedback.html">Leave feedback ↗</a><span class="pill">Admin approval required</span></div></article>';
+      return;
+    }
     box.innerHTML=approved.map(x=>'<article class="card"><div style="display:flex;justify-content:space-between;gap:10px"><strong>'+escapeHtml(x.name||'WHO Beta Tester')+'</strong><span class="stars">'+('★'.repeat(Math.max(1,Math.min(5,Number(x.rating)||5))))+'</span></div><h3>'+escapeHtml(x.title||'Beta feedback')+'</h3><p>'+escapeHtml(x.message||'')+'</p><div class="meta"><span class="pill" style="padding:5px 8px;font-size:9px">'+escapeHtml(x.platform||'Android')+'</span><span class="pill" style="padding:5px 8px;font-size:9px">Beta '+escapeHtml(x.version||'1.0.0')+'</span></div></article>').join('');
   }
   fetch('data/approved-feedback.json',{cache:'no-store'}).then(r=>r.json()).then(renderHomeFeedback).catch(()=>{});
