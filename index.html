@@ -2,517 +2,294 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#05060a">
-  <meta name="description" content="WHO — intelligent caller ID, contacts, messaging and communication protection by Squashberry.">
-  <meta property="og:title" content="WHO — Know who is calling.">
-  <meta property="og:description" content="WHO brings caller intelligence, smarter contacts and safer communication into one beautifully simple app.">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#060812">
+  <meta name="color-scheme" content="dark">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="WHO">
+  <meta name="description" content="WHO is a phone experience built around caller intelligence, calls, contacts, messages, Relay and network privacy.">
+  <meta property="og:title" content="WHO — Your phone, understood.">
+  <meta property="og:description" content="Caller intelligence, smarter calling, WHO Relay and private network tools in one app.">
   <meta property="og:type" content="website">
-  <title>WHO — Know who is calling.</title>
+  <title>WHO — Your phone, understood.</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="manifest" href="site.webmanifest">
   <style>
-    :root{
-      --bg:#05060a;
-      --bg2:#080b13;
-      --panel:rgba(255,255,255,.055);
-      --panel-strong:rgba(255,255,255,.09);
-      --line:rgba(255,255,255,.105);
-      --text:#f7f9ff;
-      --muted:#a7afc4;
-      --blue:#1687ff;
-      --blue2:#62b2ff;
-      --cyan:#53d6ff;
-      --shadow:0 28px 90px rgba(0,0,0,.48);
-      --radius:28px;
-      --max:1220px;
-    }
-    *{box-sizing:border-box}
-    html{scroll-behavior:smooth}
-    body{
-      margin:0;
-      color:var(--text);
-      background:
-        radial-gradient(700px 500px at 86% 8%, rgba(22,135,255,.18), transparent 60%),
-        radial-gradient(600px 500px at 10% 22%, rgba(83,214,255,.10), transparent 62%),
-        linear-gradient(180deg,#05060a 0%,#070912 48%,#05060a 100%);
-      font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-      line-height:1.5;
-      overflow-x:hidden;
-    }
-    a{color:inherit;text-decoration:none}
-    .noise{
-      position:fixed;inset:0;pointer-events:none;z-index:-1;opacity:.08;
-      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
-      mix-blend-mode:soft-light;
-    }
-    .wrap{width:min(calc(100% - 40px),var(--max));margin:auto}
-    .pill{
-      display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid var(--line);
-      border-radius:999px;background:rgba(255,255,255,.04);color:#dce6f8;font-size:13px;font-weight:650;
-      backdrop-filter:blur(18px);
-    }
-    .dot{width:7px;height:7px;border-radius:50%;background:#55d6ff;box-shadow:0 0 18px #55d6ff}
-    header{
-      position:sticky;top:0;z-index:50;
-      background:rgba(5,6,10,.62);backdrop-filter:blur(22px);border-bottom:1px solid rgba(255,255,255,.07);
-    }
-    nav{height:76px;display:flex;align-items:center;justify-content:space-between;gap:24px}
-    .brand{display:flex;align-items:center;gap:12px;font-weight:850;letter-spacing:-.03em}
-    .brand-mark{
-      width:40px;height:40px;border-radius:13px;display:grid;place-items:center;
-      background:linear-gradient(145deg,#74c6ff,#0c78ff 58%,#075bd1);
-      color:white;box-shadow:0 10px 35px rgba(22,135,255,.35), inset 0 1px 0 rgba(255,255,255,.4);
-      font-size:17px;font-weight:950;
-    }
-    .navlinks{display:flex;align-items:center;gap:28px;color:#c0c7d9;font-size:14px}
-    .navlinks a:hover{color:white}
-    .navcta{display:flex;align-items:center;gap:10px}
-    .btn{
-      border:1px solid var(--line);border-radius:14px;padding:12px 17px;display:inline-flex;align-items:center;justify-content:center;gap:9px;
-      font-weight:760;font-size:14px;transition:.22s ease;cursor:pointer;background:rgba(255,255,255,.05);
-    }
-    .btn:hover{transform:translateY(-2px);background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.18)}
-    .btn.primary{
-      border-color:rgba(108,190,255,.38);
-      background:linear-gradient(135deg,#1595ff,#0c67e8);
-      box-shadow:0 14px 35px rgba(22,135,255,.24),inset 0 1px 0 rgba(255,255,255,.28);
-    }
-    .btn.primary:hover{box-shadow:0 18px 42px rgba(22,135,255,.38)}
-    .btn.ghost{background:transparent}
-    .hero{padding:84px 0 70px;position:relative}
-    .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center}
-    h1{
-      margin:18px 0 20px;font-size:clamp(54px,7vw,96px);line-height:.95;letter-spacing:-.065em;
-      max-width:760px;
-    }
-    .shine{
-      background:linear-gradient(105deg,#fff 0%,#fff 37%,#83cbff 59%,#2b91ff 78%,#fff 97%);
-      -webkit-background-clip:text;background-clip:text;color:transparent;
-      background-size:180% auto;animation:shine 6s linear infinite;
-    }
-    @keyframes shine{to{background-position:-180% 0}}
-    .hero p{max-width:650px;font-size:19px;color:#aeb7ca;line-height:1.7;margin:0}
-    .hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin:30px 0 24px}
-    .trust{display:flex;gap:20px;align-items:center;flex-wrap:wrap;color:#7f8aa4;font-size:12px}
-    .trust strong{color:#dbe5f6;font-size:13px}
-    .hero-art{position:relative;min-height:610px;display:grid;place-items:center}
-    .orb{
-      position:absolute;width:440px;height:440px;border-radius:50%;
-      background:radial-gradient(circle at 35% 28%,rgba(121,219,255,.48),rgba(26,124,255,.22) 32%,rgba(7,23,64,.06) 65%,transparent 72%);
-      filter:blur(6px);animation:float 7s ease-in-out infinite;
-    }
-    @keyframes float{50%{transform:translateY(-18px) scale(1.03)}}
-    .phone{
-      width:315px;aspect-ratio:9/19.4;border:1px solid rgba(255,255,255,.18);border-radius:44px;
-      background:linear-gradient(160deg,#121a28,#08101f 55%,#07142b);
-      box-shadow:0 45px 95px rgba(0,0,0,.66),0 0 55px rgba(22,135,255,.22),inset 0 0 0 8px rgba(255,255,255,.035);
-      padding:9px;position:relative;z-index:3;transform:rotate(5deg);animation:phoneFloat 6s ease-in-out infinite;
-    }
-    @keyframes phoneFloat{50%{transform:rotate(2deg) translateY(-13px)}}
-    .phone:before{content:"";position:absolute;top:15px;left:50%;transform:translateX(-50%);width:105px;height:26px;border-radius:20px;background:#05060a;z-index:5}
-    .screen{
-      height:100%;border-radius:36px;overflow:hidden;
-      background:linear-gradient(180deg,#f8fbff 0%,#edf4ff 48%,#eaf1fd 100%);color:#0c1220;padding:44px 17px 17px;
-    }
-    .screen.dark{background:linear-gradient(180deg,#0c1320,#090f19 55%,#070d16);color:#f7f9ff}
-    .status{display:flex;justify-content:space-between;font-size:10px;opacity:.65;margin-bottom:20px}
-    .who-title{font-size:25px;font-weight:880;letter-spacing:-.04em}
-    .search{
-      margin-top:18px;height:43px;border-radius:16px;background:rgba(30,105,188,.09);border:1px solid rgba(25,90,160,.10);
-      display:flex;align-items:center;gap:9px;padding:0 12px;color:#74829a;font-size:11px
-    }
-    .caller-card{
-      margin-top:17px;border-radius:22px;padding:16px;background:rgba(255,255,255,.76);border:1px solid rgba(16,32,56,.08);box-shadow:0 10px 30px rgba(31,65,110,.09)
-    }
-    .screen.dark .caller-card{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.08)}
-    .avatar{width:43px;height:43px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#55caff,#1975ff);color:#fff;font-weight:900}
-    .caller-top{display:flex;gap:11px;align-items:center}.name{font-weight:840;font-size:13px}.number{font-size:10px;opacity:.6;margin-top:3px}
-    .verified{margin-left:auto;width:21px;height:21px;border-radius:50%;display:grid;place-items:center;background:#1e89ff;color:white;font-size:11px}
-    .risk{margin-top:13px;display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:6px 9px;background:#eaf5ff;color:#1267b6;font-size:9px;font-weight:800}
-    .screen.dark .risk{background:rgba(30,137,255,.13);color:#74c4ff}
-    .bars{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-top:22px}.bars i{height:7px;border-radius:99px;background:#d8e8fb}.bars i:nth-child(4),.bars i:nth-child(5){background:#2d9aff}
-    .bottom-tabs{margin-top:auto;padding-top:18px;display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
-    .bottom-tabs span{text-align:center;font-size:8px;padding:8px 2px;border-radius:12px}.bottom-tabs .active{background:rgba(22,135,255,.12);color:#0874e7;font-weight:800}
-    .float-card{
-      position:absolute;z-index:4;right:5px;top:85px;width:205px;padding:15px;border-radius:21px;
-      background:rgba(13,19,31,.76);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(22px);
-      box-shadow:var(--shadow);animation:floatCard 5.8s ease-in-out infinite;
-    }
-    @keyframes floatCard{50%{transform:translateY(15px)}}
-    .float-card small{color:#8fa1be;font-size:10px}.float-card strong{display:block;font-size:15px;margin-top:5px}.confidence{margin-top:12px;height:6px;border-radius:99px;background:#1c2b3e;overflow:hidden}.confidence i{display:block;width:94%;height:100%;background:linear-gradient(90deg,#4ad4ff,#1f86ff);border-radius:99px}
-    .mini-card{
-      position:absolute;left:12px;bottom:83px;width:220px;padding:15px;border-radius:21px;background:rgba(246,250,255,.9);color:#0b1422;
-      border:1px solid rgba(255,255,255,.65);box-shadow:var(--shadow);backdrop-filter:blur(18px);animation:floatCard2 6.2s ease-in-out infinite;
-    }
-    @keyframes floatCard2{50%{transform:translateY(-15px)}}
-    .mini-card .row{display:flex;justify-content:space-between;align-items:center}.mini-card .badge{font-size:10px;font-weight:850;color:#167be1}.mini-card p{font-size:11px;margin:9px 0 0;color:#61718b}
-    section{padding:110px 0}
-    .section-head{text-align:center;max-width:760px;margin:0 auto 55px}
-    .eyebrow{color:#6dc3ff;font-size:12px;font-weight:850;text-transform:uppercase;letter-spacing:.16em}
-    h2{font-size:clamp(38px,5vw,62px);line-height:1;letter-spacing:-.055em;margin:13px 0 16px}
-    .section-head p{color:#929db2;font-size:17px;line-height:1.7;margin:0}
-    .glass-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-    .glass{
-      border:1px solid var(--line);border-radius:var(--radius);padding:28px;background:
-      linear-gradient(155deg,rgba(255,255,255,.075),rgba(255,255,255,.028));
-      box-shadow:0 18px 55px rgba(0,0,0,.2);backdrop-filter:blur(18px);transition:.25s ease
-    }
-    .glass:hover{transform:translateY(-5px);border-color:rgba(93,183,255,.28);box-shadow:0 28px 70px rgba(0,0,0,.34)}
-    .iconbox{width:48px;height:48px;border-radius:16px;display:grid;place-items:center;background:rgba(26,133,255,.12);border:1px solid rgba(83,188,255,.18);margin-bottom:20px}
-    .iconbox svg{width:23px;height:23px;stroke:#6ec6ff}
-    .glass h3{margin:0 0 10px;font-size:19px;letter-spacing:-.025em}.glass p{margin:0;color:#8f99ad;font-size:14px;line-height:1.7}
-    .showcase{
-      display:grid;grid-template-columns:.95fr 1.05fr;gap:70px;align-items:center
-    }
-    .showcase-copy h2{text-align:left}.showcase-copy p{color:#99a5bb;font-size:16px;line-height:1.8;max-width:590px}
-    .checks{display:grid;gap:13px;margin:28px 0}.checks div{display:flex;align-items:flex-start;gap:11px;color:#cfd8e8;font-size:14px}.checks svg{flex:0 0 auto;margin-top:2px;stroke:#4bbdff}
-    .device-stage{min-height:600px;position:relative;display:grid;place-items:center}
-    .device-stage .phone{width:280px;transform:rotate(-5deg)}.device-stage .phone:nth-child(2){position:absolute;transform:rotate(7deg) translate(165px,40px);z-index:2;opacity:.78;filter:saturate(.8)}
-    .device-stage .phone:nth-child(2) .screen{background:linear-gradient(180deg,#0a101b,#09111d)}
-    .quote{
-      margin-top:38px;border-left:2px solid #2c96ff;padding-left:17px;color:#dce6f7;font-size:14px;line-height:1.7
-    }
-    .platforms{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}
-    .platform{
-      padding:24px;border:1px solid var(--line);border-radius:25px;background:rgba(255,255,255,.035);position:relative;overflow:hidden
-    }
-    .platform:after{content:"";position:absolute;width:170px;height:170px;border-radius:50%;right:-80px;top:-80px;background:rgba(42,145,255,.1);filter:blur(8px)}
-    .platform .brand-icon{width:45px;height:45px;border-radius:14px;background:rgba(255,255,255,.065);display:grid;place-items:center;border:1px solid var(--line);margin-bottom:18px}
-    .platform h3{margin:0;font-size:17px}.platform p{color:#8f9aae;font-size:12px;line-height:1.6;margin:7px 0 16px}.status-tag{font-size:10px;font-weight:850;padding:6px 9px;border-radius:999px;border:1px solid rgba(255,255,255,.08);color:#aeb9ca;background:rgba(255,255,255,.03);display:inline-flex}
-    .download-panel{
-      border:1px solid rgba(82,186,255,.18);border-radius:35px;padding:42px;
-      background:radial-gradient(500px 280px at 80% 10%,rgba(22,135,255,.18),transparent 60%),linear-gradient(145deg,rgba(255,255,255,.075),rgba(255,255,255,.03));
-      display:flex;justify-content:space-between;gap:30px;align-items:center;overflow:hidden;position:relative
-    }
-    .download-panel h2{margin:0 0 11px;font-size:45px}.download-panel p{margin:0;color:#939fb4;max-width:600px}
-    .download-orb{position:absolute;width:260px;height:260px;right:-95px;bottom:-115px;background:rgba(22,135,255,.23);filter:blur(40px);border-radius:50%}
-    .store-row{display:flex;gap:10px;flex-wrap:wrap;position:relative;z-index:2}.store-btn{min-width:170px}
-    footer{padding:55px 0 35px;border-top:1px solid rgba(255,255,255,.07);color:#7f8ba2}
-    .footer-grid{display:flex;justify-content:space-between;gap:40px;align-items:flex-start}.footer-links{display:flex;gap:20px;flex-wrap:wrap;font-size:12px}.footer-links a:hover{color:#fff}.copyright{font-size:12px;margin-top:35px;color:#68748c}
-    .mobile-menu{display:none}
-    @media (max-width:980px){
-      .navlinks{display:none}.mobile-menu{display:inline-flex}.navcta .btn.ghost{display:none}
-      .hero-grid,.showcase{grid-template-columns:1fr}.hero{padding-top:60px}.hero-art{min-height:560px}.hero-copy{text-align:center}.hero-copy p{margin:auto}.hero-actions,.trust{justify-content:center}
-      .glass-grid{grid-template-columns:1fr 1fr}.platforms{grid-template-columns:1fr 1fr}
-      .download-panel{flex-direction:column;align-items:flex-start}.download-panel h2{font-size:38px}
-    }
-    @media (max-width:650px){
-      .wrap{width:min(calc(100% - 24px),var(--max))}nav{height:68px}
-      h1{font-size:56px}.hero{padding:46px 0 25px}.hero-art{min-height:525px;transform:scale(.92)}
-      .glass-grid,.platforms{grid-template-columns:1fr}.showcase{gap:30px}
-      section{padding:78px 0}.download-panel{padding:28px 22px}.footer-grid{flex-direction:column}
-      .mini-card{left:-2px}.float-card{right:-8px}
-    }
-
-    .welcome-overlay{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:20px;background:rgba(2,4,8,.72);backdrop-filter:blur(16px);opacity:0;pointer-events:none;transition:.25s ease}
-    .welcome-overlay.show{opacity:1;pointer-events:auto}
-    .welcome-card{width:min(620px,100%);border:1px solid rgba(103,197,255,.22);border-radius:30px;padding:34px;background:linear-gradient(150deg,rgba(18,28,46,.96),rgba(7,11,19,.96));box-shadow:0 35px 110px rgba(0,0,0,.68),0 0 80px rgba(22,135,255,.11);position:relative;overflow:hidden}
-    .welcome-card:before{content:"";position:absolute;width:240px;height:240px;right:-100px;top:-100px;border-radius:50%;background:rgba(22,135,255,.18);filter:blur(25px)}
-    .welcome-card h2{font-size:40px;line-height:1;letter-spacing:-.06em;margin:15px 0}
-    .welcome-card p{color:#a9b5c9;font-size:15px;line-height:1.75;max-width:540px}
-    .welcome-card .welcome-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}
-    .welcome-close{position:absolute;right:17px;top:17px;width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);color:#cbd6e7;cursor:pointer}
-    .beta-count{display:inline-flex;align-items:center;gap:8px;padding:7px 10px;border-radius:999px;background:rgba(83,214,255,.07);border:1px solid rgba(83,214,255,.14);color:#9ddfff;font-size:10px;font-weight:850}
-    .feedback-preview{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
-    .feedback-preview .card{border:1px solid var(--line);border-radius:23px;padding:23px;background:linear-gradient(150deg,rgba(255,255,255,.065),rgba(255,255,255,.025))}
-    .feedback-preview .stars{color:#68c9ff;letter-spacing:2px;font-size:11px}
-    .feedback-preview h3{margin:11px 0 7px;font-size:16px;letter-spacing:-.025em}
-    .feedback-preview p{margin:0;color:#929eb2;font-size:13px;line-height:1.7}
-    .feedback-preview .meta{display:flex;gap:7px;flex-wrap:wrap;margin-top:15px}
-    .feedback-section-head{display:flex;justify-content:space-between;gap:25px;align-items:end;margin-bottom:26px}
-    .feedback-section-head p{max-width:640px;margin:8px 0 0;color:#919db2;font-size:15px}
-    @media(max-width:800px){.feedback-preview{grid-template-columns:1fr}.feedback-section-head{display:block}.welcome-card h2{font-size:34px}}
-
+    html{background:#060812}
+    body{margin:0;background:#060812;color:#f7f9ff}
+    #boot{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;background:#060812;transition:opacity .35s ease,visibility .35s ease}
+    #boot.hide{opacity:0;visibility:hidden}
+    .boot-mark{width:72px;height:72px;border-radius:24px;background:linear-gradient(145deg,#77d4ff,#1687ff 58%,#0751c5);display:grid;place-items:center;box-shadow:0 22px 70px rgba(22,135,255,.35)}
+    .boot-mark svg{width:36px;height:36px}
+    .boot-line{margin-top:18px;width:72px;height:3px;background:#1b2940;border-radius:99px;overflow:hidden}
+    .boot-line i{display:block;width:45%;height:100%;background:#62c7ff;border-radius:99px;animation:boot 1s ease-in-out infinite}
+    @keyframes boot{0%{transform:translateX(-100%)}100%{transform:translateX(240%)}}
   </style>
+  <link rel="stylesheet" href="app.css">
 </head>
 <body>
-<div class="noise"></div>
-
-<div id="welcomeOverlay" class="welcome-overlay" aria-hidden="true">
-  <div class="welcome-card" role="dialog" aria-modal="true" aria-labelledby="welcomeTitle">
-    <button class="welcome-close" aria-label="Close welcome message" onclick="closeWelcome()">×</button>
-    <span class="pill"><span class="dot"></span> WHO Beta 1.0</span>
-    <h2 id="welcomeTitle">Welcome to WHO.</h2>
-    <p>We want you to be among the <strong>first 50 users</strong> to test the WHO Beta 1.0 app.</p>
-    <p>Your feedback can directly shape what we build next. Tell us what you love, what needs work, what broke, and what features you want on our feedback page.</p>
-    <div class="beta-count">✦ First 50 beta testers · Your feedback matters</div>
-    <div class="welcome-actions">
-      <a class="btn primary" href="feedback.html">Give feedback</a>
-      <button class="btn" onclick="closeWelcome()">Continue to explore</button>
+  <div id="boot" aria-hidden="true">
+    <div>
+      <div class="boot-mark">
+        <svg viewBox="0 0 64 64" fill="none" aria-hidden="true"><path d="M16 15v34h7V30l18 19h7V15h-7v19L23 15h-7Z" fill="white"/></svg>
+      </div>
+      <div class="boot-line"><i></i></div>
     </div>
   </div>
-</div>
 
-<header>
-  <div class="wrap">
-    <nav>
-      <a class="brand" href="#">
-        <span class="brand-mark">W</span><span>WHO</span>
+  <div class="ambient ambient-a"></div>
+  <div class="ambient ambient-b"></div>
+  <div class="grid-noise"></div>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="#home" data-view="home" aria-label="WHO home">
+        <span class="brand-icon"><span>W</span></span>
+        <span class="brand-copy"><strong>WHO</strong><small>by Squashberry</small></span>
       </a>
-      <div class="navlinks">
-        <a href="features.html">Features</a>
-        <a href="how-to-use-who.html">How to use WHO</a>
-        <a href="safety-center.html">Safety</a>
-        <a href="privacy.html">Privacy</a>
-      </div>
-      <div class="navcta">
-        <a class="btn primary" href="download.html">Get WHO</a>
-      </div>
-      <button class="btn mobile-menu" onclick="document.querySelector('.navlinks').style.display=document.querySelector('.navlinks').style.display==='flex'?'none':'flex'">Menu</button>
-    </nav>
-  </div>
-</header>
 
-<main>
-  <section class="hero">
-    <div class="wrap hero-grid">
-      <div class="hero-copy">
-        <span class="pill"><span class="dot"></span> WHO Beta 1.0 · built by Squashberry</span>
-        <h1>Know <span class="shine">who</span> is calling.</h1>
-        <p>WHO is a modern communication app built around caller intelligence, smarter contacts, messaging, privacy-conscious identity matching and a clean everyday phone experience.</p>
-        <div class="hero-actions">
-          <a class="btn primary" href="download.html">Download WHO <span>↗</span></a>
-          <a class="btn" href="#features">See what WHO does</a>
-        </div>
-        <div class="trust">
-          <span><strong>Caller ID</strong> · contacts · SMS · dialer</span>
-          <span><strong>Android first</strong> · iOS/iPad/macOS/Windows planned</span>
-        </div>
+      <nav class="desktop-nav" aria-label="Primary">
+        <a href="#home" data-view="home">Home</a>
+        <a href="#features" data-view="features">Features</a>
+        <a href="#relay" data-view="relay">Relay</a>
+        <a href="#vpn" data-view="vpn">Network</a>
+        <a href="#install" data-view="install">Get WHO</a>
+      </nav>
+
+      <div class="top-actions">
+        <button class="icon-btn" id="installBtn" type="button" title="Install WHO" aria-label="Install WHO">↥</button>
+        <a class="top-cta" href="#install" data-view="install">Get WHO</a>
       </div>
-      <div class="hero-art" aria-label="WHO app preview">
-        <div class="orb"></div>
-        <div class="float-card">
-          <small>CALLER INTELLIGENCE</small>
-          <strong>Identity match found</strong>
-          <div style="display:flex;justify-content:space-between;margin-top:12px;font-size:10px;color:#90a0ba"><span>Confidence</span><b style="color:#dce6f5">94%</b></div>
-          <div class="confidence"><i></i></div>
-          <div style="display:flex;gap:7px;margin-top:12px;flex-wrap:wrap"><span class="pill" style="padding:5px 8px;font-size:9px">Community match</span><span class="pill" style="padding:5px 8px;font-size:9px">Contact source</span></div>
+    </div>
+  </header>
+
+  <main id="app">
+    <section id="home" class="screen-section active" data-screen="home">
+      <div class="shell hero-shell">
+        <div class="hero-copy">
+          <div class="status-pill"><span class="live-dot"></span> WHO Beta 1.0 <span class="pill-divider"></span> built by Squashberry</div>
+          <h1>Your phone,<br><span class="gradient-text">understood.</span></h1>
+          <p class="hero-lead">WHO brings caller intelligence, real calling, contacts, messages, spam protection, WHO Relay and private network tools into one calm phone experience.</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#install" data-view="install">Get WHO <span>↗</span></a>
+            <a class="btn btn-secondary" href="#features" data-view="features">Explore the experience</a>
+          </div>
+          <div class="hero-meta">
+            <span><b>Caller ID</b> & spam</span>
+            <span><b>Dialer</b> & contacts</span>
+            <span><b>Relay</b> & VPN</span>
+          </div>
         </div>
 
-        <div class="phone">
-          <div class="screen">
-            <div class="status"><span>9:41</span><span>● ● ▪</span></div>
-            <div class="who-title">WHO</div>
-            <div class="search"><span>⌕</span><span>Search contacts & numbers</span></div>
-            <div class="caller-card">
-              <div class="caller-top">
-                <div class="avatar">A</div>
-                <div><div class="name">Amie Jallow</div><div class="number">+220 3XX XXXX</div></div>
-                <div class="verified">✓</div>
+        <div class="hero-stage" aria-label="WHO app preview">
+          <div class="halo halo-main"></div>
+          <div class="phone phone-back">
+            <div class="phone-screen dark-screen">
+              <div class="statusbar"><span>9:41</span><span>⌁ 100%</span></div>
+              <div class="screen-top"><strong>WHO</strong><span>•••</span></div>
+              <div class="search-mini">⌕ Search people, calls or numbers</div>
+              <div class="call-list">
+                <div class="call-row"><span class="avatar a1">A</span><div><b>Amadou</b><small>Incoming · 2m ago</small></div><span class="call-arrow">↙</span></div>
+                <div class="call-row"><span class="avatar a2">M</span><div><b>Meenat</b><small>Outgoing · 16m ago</small></div><span class="call-arrow">↗</span></div>
+                <div class="call-row"><span class="avatar a3">?</span><div><b>Unknown caller</b><small>WHO match found</small></div><span class="call-arrow danger">!</span></div>
               </div>
-              <div class="risk">● Known contact match</div>
-              <div class="bars"><i></i><i></i><i></i><i></i><i></i></div>
-              <div style="display:flex;justify-content:space-between;margin-top:13px;font-size:9px;color:#718099"><span>Recent call</span><b style="color:#1b73c6">Today · 10:12</b></div>
+              <div class="bottom-tab"><span class="selected">◉</span><span>⌕</span><span>◌</span><span>⚙</span></div>
             </div>
-            <div class="caller-card" style="margin-top:10px;padding:12px">
-              <div class="caller-top"><div class="avatar" style="background:linear-gradient(135deg,#9da8b9,#596578)">M</div><div><div class="name">Musa · New number</div><div class="number">+220 7XX XXXX</div></div></div>
-            </div>
-            <div class="bottom-tabs"><span class="active">Calls</span><span>Contacts</span><span>Settings</span></div>
           </div>
-        </div>
 
-        <div class="mini-card">
-          <div class="row"><b style="font-size:12px">Backup ready</b><span class="badge">Google Drive</span></div>
-          <p>Keep your contacts safe and restore them to a new device when needed.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="features">
-    <div class="wrap">
-      <div class="section-head">
-        <div class="eyebrow">Built for communication</div>
-        <h2>One place for the things your phone should understand.</h2>
-        <p>WHO is being designed as more than a dialer — it connects calling, contacts, SMS and caller intelligence into one consistent experience.</p>
-      </div>
-      <div class="glass-grid">
-        <article class="glass">
-          <div class="iconbox"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M15 5.5a3.5 3.5 0 0 1 5 5L13 17.5l-5.2 1.2L9 13.5l7-7Z"/><path d="M14 7l3 3"/></svg></div>
-          <h3>Smart Caller ID</h3><p>Surface useful identity information when an unknown number reaches you, while keeping the phone UI fast and understandable.</p>
-        </article>
-        <article class="glass">
-          <div class="iconbox"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><circle cx="9" cy="8" r="3"/><path d="M3 20c.5-3.2 2.5-5 6-5s5.5 1.8 6 5"/><path d="M16 5.5a3 3 0 1 1 0 5.8"/><path d="M16.5 15c2.6.2 4.1 1.8 4.5 4"/></svg></div>
-          <h3>Contact intelligence</h3><p>Compare opted-in contact observations and build a confidence-based identity layer rather than treating one uploaded name as absolute truth.</p>
-        </article>
-        <article class="glass">
-          <div class="iconbox"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 7h8M8 11h8M8 15h5"/></svg></div>
-          <h3>Calls + SMS</h3><p>Keep everyday calling, recent activity and messaging close together, with the same visual language across the app.</p>
-        </article>
-        <article class="glass">
-          <div class="iconbox"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M12 3v9"/><path d="M7 12a5 5 0 1 0 10 0"/><path d="M5 20h14"/></svg></div>
-          <h3>Safer communication</h3><p>Leave room for spam intelligence, reports, blocking and later reputation signals without turning the interface into noise.</p>
-        </article>
-        <article class="glass">
-          <div class="iconbox"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M12 4a8 8 0 1 1-5.66 2.34"/><path d="M12 8v4l3 2"/><path d="M4 4v5h5"/></svg></div>
-          <h3>Restore without the panic</h3><p>Back up contacts to your Google Drive and restore them when moving to another device, with user-controlled authorization.</p>
-        </article>
-        <article class="glass">
-          <div class="iconbox"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M12 3 4 6v6c0 5 3.5 8.5 8 9 4.5-.5 8-4 8-9V6l-8-3Z"/><path d="m8 12 2.4 2.4L16 9"/></svg></div>
-          <h3>Privacy by design</h3><p>WHO will make consent, deletion, correction and data visibility first-class product decisions as the identity network grows.</p>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <section id="identity">
-    <div class="wrap showcase">
-      <div class="showcase-copy">
-        <div class="eyebrow">The next intelligence layer</div>
-        <h2>Names that get smarter with permission.</h2>
-        <p>Future WHO builds can use an opt-in community identity system: a number may be observed under different contact names, and the service can compare those observations to produce a confidence-based result.</p>
-        <div class="checks">
-          <div><svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6" stroke-width="2" stroke-linecap="round"/></svg><span>Multiple independent contact observations can raise confidence.</span></div>
-          <div><svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6" stroke-width="2" stroke-linecap="round"/></svg><span>Conflicting names can be handled as competing candidates instead of silently overwriting one another.</span></div>
-          <div><svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6" stroke-width="2" stroke-linecap="round"/></svg><span>Users can report incorrect identities and corrections can feed the moderation queue.</span></div>
-        </div>
-        <div class="quote">The goal is not to claim that every matched name is “the real name”. WHO should show why an identity is suggested and how confident the system is.</div>
-      </div>
-      <div class="device-stage">
-        <div class="phone">
-          <div class="screen dark">
-            <div class="status"><span>9:41</span><span>● ● ▪</span></div>
-            <div style="font-size:20px;font-weight:850">Caller</div>
-            <div style="height:155px;display:grid;place-items:center"><div class="avatar" style="width:76px;height:76px;border-radius:28px;font-size:30px">M</div></div>
-            <div style="text-align:center;font-weight:850;font-size:19px">Mamadou Bah</div>
-            <div style="text-align:center;color:#7f92ac;font-size:10px;margin-top:4px">+220 7XX XXXX</div>
-            <div class="caller-card" style="margin-top:24px">
-              <div style="font-size:10px;color:#7d8da5;text-transform:uppercase;letter-spacing:.1em">Identity confidence</div>
-              <div style="font-size:27px;font-weight:900;margin-top:5px">94%</div>
-              <div class="confidence"><i style="width:94%"></i></div>
-              <div style="font-size:9px;color:#8ca0bb;margin-top:10px">Matched across 11 opted-in contact observations</div>
+          <div class="phone phone-main">
+            <div class="phone-screen light-screen">
+              <div class="statusbar dark-status"><span>9:41</span><span>⌁ 100%</span></div>
+              <div class="caller-banner">
+                <div class="caller-avatar">K</div>
+                <div class="caller-data"><small>INCOMING CALL</small><strong>Kairaba Business</strong><span>+220 3XX XXX</span></div>
+                <div class="verified-badge">✓</div>
+              </div>
+              <div class="confidence-box">
+                <div><small>WHO caller confidence</small><b>High confidence</b></div>
+                <div class="meter"><i></i></div>
+              </div>
+              <div class="risk-row"><span>✓</span> Community signal · not on your contacts</div>
+              <div class="phone-actions"><button>Ignore</button><button class="answer">Answer</button></div>
+              <div class="tab-strip"><span class="active">Caller</span><span>Contact</span><span>Report</span></div>
             </div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px"><div class="btn" style="font-size:9px;padding:10px">Save</div><div class="btn primary" style="font-size:9px;padding:10px">Call</div></div>
           </div>
-        </div>
-        <div class="phone">
-          <div class="screen">
-            <div class="status"><span>9:41</span><span>● ● ▪</span></div>
-            <div style="font-size:19px;font-weight:850">Contact source</div>
-            <div class="caller-card"><div class="name">Mamadou Bah</div><div class="number">7XX XXXX</div><div class="risk">✓ 7 matching contacts</div></div>
-            <div class="caller-card"><div class="name">M. Bah</div><div class="number">2 matching contacts</div><div class="risk">Candidate</div></div>
-            <div style="margin-top:20px;font-size:9px;color:#7889a0">WHO can present multiple candidate names when the community signal is mixed.</div>
-            <div class="bottom-tabs"><span class="active">Caller</span><span>Evidence</span><span>Report</span></div>
+
+          <div class="floating-card relay-card">
+            <div class="float-icon">⇄</div>
+            <div><small>WHO RELAY</small><strong>2 devices connected</strong><span>Private local link</span></div>
+          </div>
+
+          <div class="floating-card vpn-card">
+            <div class="float-icon vpn">⌁</div>
+            <div><small>NETWORK</small><strong>WHO VPN ready</strong><span>Traffic protected</span></div>
           </div>
         </div>
       </div>
-    </div>
-  </section>
 
-  <section id="backup">
-    <div class="wrap">
-      <div class="section-head">
-        <div class="eyebrow">Your contacts, your backup</div>
-        <h2>Move to a new phone without starting over.</h2>
-        <p>WHO is planned to support user-authorized Google Drive contact backups and restores. The backup layer will be separate from the public caller-intelligence dataset.</p>
+      <div class="shell marquee-shell">
+        <div class="feature-marquee">
+          <span>CALLER INTELLIGENCE</span><i>•</i><span>SMART DIALER</span><i>•</i><span>CONTACTS</span><i>•</i><span>SMS</span><i>•</i><span>SPAM PROTECTION</span><i>•</i><span>WHO RELAY</span><i>•</i><span>WHO VPN</span><i>•</i>
+        </div>
       </div>
-      <div class="download-panel">
+
+      <div class="shell quick-grid">
+        <a class="quick-card" href="#features" data-view="features"><span class="quick-icon blue">⌕</span><span><b>Know who called</b><small>Caller ID + community signals</small></span><em>→</em></a>
+        <a class="quick-card" href="#relay" data-view="relay"><span class="quick-icon cyan">⇄</span><span><b>Share internet with WHO Relay</b><small>Device-to-device, session-authenticated</small></span><em>→</em></a>
+        <a class="quick-card" href="#vpn" data-view="vpn"><span class="quick-icon violet">⌁</span><span><b>Protect network traffic</b><small>Native VPN engine + proxy controls</small></span><em>→</em></a>
+      </div>
+    </section>
+
+    <section id="features" class="screen-section" data-screen="features">
+      <div class="shell page-heading">
+        <div><span class="eyebrow">The WHO system</span><h2>One phone app.<br><span class="gradient-text">A lot more context.</span></h2><p>WHO is being built around the things you actually do with a phone: answer, call, message, recognize, protect and connect.</p></div>
+      </div>
+
+      <div class="shell feature-bento">
+        <article class="feature-card feature-large blue-card">
+          <div class="feature-head"><span class="feature-number">01</span><span class="feature-icon">◉</span></div>
+          <h3>Caller intelligence</h3>
+          <p>See who may be calling, get caller context, report suspicious numbers and use Android call-screening controls without turning every call into a full-screen interruption.</p>
+          <div class="feature-demo caller-demo">
+            <div class="demo-tag">INCOMING</div><strong>Unknown number</strong><span>WHO match found</span><div class="demo-line"><i></i></div>
+          </div>
+        </article>
+
+        <article class="feature-card dark-card">
+          <div class="feature-head"><span class="feature-number">02</span><span class="feature-icon">⌕</span></div>
+          <h3>Real dialer</h3><p>Recents, contacts, keypad, call actions and multi-SIM selection in one phone-first flow.</p>
+          <div class="dial-demo"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></div>
+        </article>
+
+        <article class="feature-card dark-card">
+          <div class="feature-head"><span class="feature-number">03</span><span class="feature-icon">◌</span></div>
+          <h3>Contacts & messages</h3><p>Bring your existing contacts and communication history into the same place, with SMS support built into the phone experience.</p>
+          <div class="message-demo"><div><b>Today</b><span>3 new messages</span></div><i>→</i></div>
+        </article>
+
+        <article class="feature-card wide-card cyan-card">
+          <div><span class="feature-number">04</span><span class="wide-label">REPUTATION</span></div>
+          <h3>Spam protection that explains itself.</h3>
+          <p>WHO can combine caller observations, community reports and local device signals so you can see more context around an unknown caller instead of a mysterious red label with no explanation.</p>
+          <div class="signal-row"><span>Identity</span><i></i><b>matched</b></div><div class="signal-row"><span>Community</span><i class="mid"></i><b>reported</b></div>
+        </article>
+
+        <article class="feature-card purple-card">
+          <div class="feature-head"><span class="feature-number">05</span><span class="feature-icon">⚙</span></div>
+          <h3>Be the default phone app</h3><p>On supported Android builds, WHO can become your default phone app and use the system call-screening role.</p>
+          <div class="toggle-demo"><span>Default phone app</span><i></i></div>
+        </article>
+
+        <article class="feature-card dark-card">
+          <div class="feature-head"><span class="feature-number">06</span><span class="feature-icon">☁</span></div>
+          <h3>Backups & preferences</h3><p>Google Drive backup/restore architecture, local settings, dark mode and account-aware preferences can live behind one system.</p>
+          <div class="backup-demo"><span>Backup</span><b>Ready</b><small>Last sync · local device</small></div>
+        </article>
+      </div>
+    </section>
+
+    <section id="relay" class="screen-section" data-screen="relay">
+      <div class="shell split-hero">
         <div>
-          <div class="eyebrow">Backup & restore</div>
-          <h2>Save. Switch. Restore.</h2>
-          <p>Choose when to back up your contacts and restore them on a fresh device. WHO will request the Google authorization it needs instead of silently uploading your address book.</p>
+          <span class="eyebrow">WHO Relay</span>
+          <h2>Turn two WHO phones into a private little network.</h2>
+          <p>WHO Relay lets one Android device share its internet connection with another WHO device through a local authenticated link rather than relying on ordinary phone tethering alone.</p>
+          <div class="bullet-stack">
+            <div><span>01</span><b>Host or receive</b><small>Share mode and Receive mode are built into the Relay flow.</small></div>
+            <div><span>02</span><b>Pair with a fresh code</b><small>Every relay session gets a random pairing code.</small></div>
+            <div><span>03</span><b>Route traffic through VPN</b><small>The receiving device can use WHO's native VPN/tun2socks path for the session.</small></div>
+          </div>
+          <a class="btn btn-primary" href="#install" data-view="install">Get WHO to use Relay <span>↗</span></a>
         </div>
-        <div class="store-row">
-          <span class="btn primary store-btn">☁ Google Drive backup</span>
-          <span class="btn store-btn">↺ One-tap restore</span>
+
+        <div class="relay-visual">
+          <div class="relay-grid-lines"></div>
+          <div class="relay-device host"><span>W</span><b>HOST</b><small>Internet</small></div>
+          <div class="relay-link"><span>WHO RELAY</span><i></i><i></i><i></i></div>
+          <div class="relay-device client"><span>W</span><b>CLIENT</b><small>Protected session</small></div>
+          <div class="relay-data-card"><small>SESSION</small><strong>7A4 • 9KD • Q2</strong><span>authenticated · TCP + UDP-over-TCP capable</span></div>
         </div>
-        <div class="download-orb"></div>
       </div>
-    </div>
-  </section>
 
+      <div class="shell relay-notes">
+        <div class="note-card"><span class="quick-icon cyan">⌁</span><div><b>Local discovery</b><p>WHO Relay can discover nearby WHO devices and guide the pairing flow.</p></div></div>
+        <div class="note-card"><span class="quick-icon blue">↕</span><div><b>Traffic counters</b><p>Connected sessions expose connection state, timing and traffic information.</p></div></div>
+        <div class="note-card"><span class="quick-icon violet">▣</span><div><b>Session security</b><p>The Relay path uses a per-session credential rather than a permanent shared password.</p></div></div>
+      </div>
+    </section>
 
-  <section id="feedback" style="padding-top:45px">
-    <div class="wrap">
-      <div class="feedback-section-head">
-        <div>
-          <div class="eyebrow">Early voices</div>
-          <h2 style="font-size:45px;margin:9px 0 0">What beta testers are saying.</h2>
-          <p>WHO Beta 1.0 is being shaped by early testers. Only feedback approved by the WHO team is shown publicly.</p>
+    <section id="vpn" class="screen-section" data-screen="vpn">
+      <div class="shell network-hero">
+        <div class="network-copy">
+          <span class="eyebrow">WHO Network</span>
+          <h2>Network tools that feel like part of the phone.</h2>
+          <p>WHO includes a native VPN/tun2socks path for protected traffic and a proxy-oriented network screen for inspecting available endpoints and connection characteristics.</p>
+          <div class="network-pills"><span>Native Android VPN</span><span>SOCKS5 path</span><span>Latency sorting</span><span>Country</span><span>Uptime</span><span>Protocol</span></div>
         </div>
-        <a class="btn" href="feedback.html">See all feedback ↗</a>
+        <div class="network-console">
+          <div class="console-top"><span>WHO NETWORK</span><span class="console-live">● LIVE</span></div>
+          <div class="network-state"><strong>Protected</strong><span>WHO tunnel active</span></div>
+          <div class="network-bars"><i style="height:38%"></i><i style="height:67%"></i><i style="height:54%"></i><i style="height:83%"></i><i style="height:72%"></i><i style="height:91%"></i><i style="height:62%"></i><i style="height:77%"></i></div>
+          <div class="endpoint"><div><small>ROUTE</small><b>WHO Session</b></div><div><small>LATENCY</small><b>— ms</b></div><div><small>UPTIME</small><b>—</b></div></div>
+        </div>
       </div>
-      <div id="homeFeedback" class="feedback-preview"></div>
+
+      <div class="shell safety-band">
+        <div><b>Privacy by design.</b><span>WHO's public site does not ask you to enter your contacts or phone number just to learn about the app.</span></div>
+        <a class="btn btn-secondary" href="#privacy" data-view="privacy">Read privacy approach</a>
+      </div>
+
+      <div id="privacy" class="shell privacy-grid">
+        <div><span class="eyebrow">Privacy</span><h3>Control first. Intelligence second.</h3><p>WHO's caller architecture is designed around consent, normalization, confidence and report/correction flows. The app can compare names from contacts with anonymized caller observations; raw phone numbers are not intended to be stored in the caller database.</p></div>
+        <div class="privacy-list"><div><b>Consent</b><span>Explicit contacts/call permissions.</span></div><div><b>Minimization</b><span>Do not turn raw personal data into analytics.</span></div><div><b>Correction</b><span>Caller signals can be reported and challenged.</span></div><div><b>Transparency</b><span>Explain why an identity signal exists.</span></div></div>
+      </div>
+    </section>
+
+    <section id="install" class="screen-section" data-screen="install">
+      <div class="shell install-hero">
+        <div class="install-copy">
+          <span class="eyebrow">Get WHO</span>
+          <h2>Install WHO.<br><span class="gradient-text">Use it like an app.</span></h2>
+          <p>WHO's site itself is installable as a PWA, while the real WHO phone app is Android-first during Beta 1.0.</p>
+          <div class="install-actions"><button class="btn btn-primary" id="installBtnLarge" type="button">Install this web app <span>↥</span></button><a class="btn btn-secondary" href="download.html">Android download page</a></div>
+          <div class="platform-row"><span><b>Android</b><small>Beta 1.0 active path</small></span><span><b>iPhone</b><small>planned</small></span><span><b>iPad</b><small>planned</small></span><span><b>Desktop</b><small>planned</small></span></div>
+        </div>
+        <div class="install-card">
+          <div class="install-icon"><span>W</span></div>
+          <strong>WHO Web App</strong><span>Fast, installable, app-like.</span><div class="install-checks"><span>✓ Mobile-first</span><span>✓ Works from the home screen</span><span>✓ No giant image bundles</span><span>✓ Offline shell caching</span></div>
+        </div>
+      </div>
+
+      <div class="shell faq">
+        <div><span class="eyebrow">Quick answers</span><h3>WHO, without the noise.</h3></div>
+        <div class="faq-list">
+          <details open><summary>Is WHO only a caller-ID app?</summary><p>No. Caller intelligence is one part of a larger phone experience that includes dialer, contacts, SMS, call controls, Relay and network features.</p></details>
+          <details><summary>What is WHO Relay?</summary><p>It is the device-to-device internet sharing system inside WHO. One device can host, another can receive, and the connection uses a session-authenticated local path.</p></details>
+          <details><summary>What does WHO VPN do?</summary><p>WHO contains a native Android VPN/tun2socks path used by features such as Relay and network protection flows.</p></details>
+          <details><summary>Can WHO become the default dialer?</summary><p>On supported Android builds, WHO includes the system default-phone and call-screening role flow.</p></details>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="shell footer-top">
+      <div class="footer-brand"><span class="brand-icon"><span>W</span></span><div><b>WHO</b><small>caller intelligence · calling · network</small></div></div>
+      <div class="footer-links"><a href="#home" data-view="home">Home</a><a href="#features" data-view="features">Features</a><a href="#relay" data-view="relay">Relay</a><a href="#vpn" data-view="vpn">Network</a><a href="#install" data-view="install">Get WHO</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="feedback.html">Feedback</a><a href="admin/">Admin</a></div>
     </div>
-  </section>
+    <div class="shell footer-bottom"><span>© 2026 Squashberry · WHO Beta 1.0</span><span>Built as a lightweight PWA-ready site.</span></div>
+  </footer>
 
-  <section id="download">
-    <div class="wrap">
-      <div class="section-head">
-        <div class="eyebrow">Bring WHO with you</div>
-        <h2>One WHO. More places to use it.</h2>
-        <p>Android is the current focus. iPhone, iPad, macOS and Windows are being planned so the brand and experience can grow without boxing the product into one platform.</p>
-      </div>
-      <div class="platforms">
-        <article class="platform">
-          <div class="brand-icon"><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><path d="m5.3 3.7 8.9 8.3-8.9 8.3A2 2 0 0 1 4 18.8V5.2a2 2 0 0 1 1.3-1.5Z" fill="#67c8ff"/><path d="M14.2 12 17.7 8.7l1.8 1A2 2 0 0 1 19.5 13l-1.8 1-3.5-2Z" fill="#2d8cff"/><path d="M5.3 3.7 15 9.1l2.7-1.4-10.7-5A2 2 0 0 0 5.3 3.7Z" fill="#9ae8ff"/><path d="m5.3 20.3 10-5.4 2.4 1.3-10.7 5.1a2 2 0 0 1-1.7-1Z" fill="#1597ff"/></svg></div>
-          <h3>Google Play</h3><p>Primary mobile release path for WHO.</p><span class="status-tag">Coming soon</span>
-        </article>
-        <article class="platform">
-          <div class="brand-icon"><span style="font-size:23px"></span></div>
-          <h3>iPhone + iPad</h3><p>Native Apple experience planned around the WHO identity.</p><span class="status-tag">Coming soon</span>
-        </article>
-        <article class="platform">
-          <div class="brand-icon"><span style="font-size:22px">◉</span></div>
-          <h3>macOS</h3><p>A desktop companion experience is planned.</p><span class="status-tag">Coming soon</span>
-        </article>
-        <article class="platform">
-          <div class="brand-icon"><span style="font-size:22px">⊞</span></div>
-          <h3>Windows</h3><p>Desktop WHO is planned for a later release.</p><span class="status-tag">Coming soon</span>
-        </article>
-      </div>
-    </div>
-  </section>
-</main>
+  <nav class="mobile-tabs" aria-label="Mobile navigation">
+    <a href="#home" data-view="home"><span>⌂</span><small>Home</small></a>
+    <a href="#features" data-view="features"><span>◫</span><small>Features</small></a>
+    <a href="#relay" data-view="relay"><span>⇄</span><small>Relay</small></a>
+    <a href="#vpn" data-view="vpn"><span>⌁</span><small>Network</small></a>
+    <a href="#install" data-view="install"><span>↥</span><small>Get</small></a>
+  </nav>
 
-<footer>
-  <div class="wrap">
-    <div class="footer-grid">
-      <div>
-        <a class="brand" href="#"><span class="brand-mark">W</span><span>WHO</span></a>
-        <div style="font-size:12px;max-width:420px;margin-top:12px;line-height:1.7">Caller intelligence, contacts and communication tools — created by Squashberry.</div>
-      </div>
-      <div class="footer-links">
-        <a href="features.html">Features</a><a href="how-to-use-who.html">How to use WHO</a><a href="safety-center.html">Safety</a><a href="privacy.html">Privacy</a><a href="support.html">Support</a><a href="mailto:squashberrypro@gmail.com">Contact</a>
-      </div>
-    </div>
-    <div class="copyright">© 2026 Squashberry · WHO Beta 1.0 · <span style="color:#8fa0b9">More platforms coming soon.</span></div>
-  </div>
-</footer>
-
-<script>
-  const header = document.querySelector('header');
-  window.addEventListener('scroll', () => {
-    header.style.boxShadow = window.scrollY > 8 ? '0 12px 40px rgba(0,0,0,.24)' : 'none';
-  }, {passive:true});
-
-  const welcomeOverlay = document.getElementById('welcomeOverlay');
-  function closeWelcome(){
-    welcomeOverlay.classList.remove('show');
-    welcomeOverlay.setAttribute('aria-hidden','true');
-    sessionStorage.setItem('whoWelcomeSeen','1');
-  }
-  window.addEventListener('load',()=>{
-    if(!sessionStorage.getItem('whoWelcomeSeen')){
-      setTimeout(()=>{
-        welcomeOverlay.classList.add('show');
-        welcomeOverlay.setAttribute('aria-hidden','false');
-      },550);
-    }
-  });
-
-  const escapeHtml=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-  function renderHomeFeedback(list){
-    const box=document.getElementById('homeFeedback');
-    const approved=(Array.isArray(list)?list:[]).filter(x=>x.approved===true).slice(-3).reverse();
-    if(!approved.length){
-      box.innerHTML='<article class="card"><div class="beta-count">✦ Public feedback gallery is opening</div><h3>Be one of the first WHO Beta 1.0 testers.</h3><p>Approved tester feedback will appear here. Your honest experience can help shape the next WHO release.</p><div class="meta"><a class="btn primary" href="feedback.html">Leave feedback ↗</a><span class="pill">Admin approval required</span></div></article>';
-      return;
-    }
-    box.innerHTML=approved.map(x=>'<article class="card"><div style="display:flex;justify-content:space-between;gap:10px"><strong>'+escapeHtml(x.name||'WHO Beta Tester')+'</strong><span class="stars">'+('★'.repeat(Math.max(1,Math.min(5,Number(x.rating)||5))))+'</span></div><h3>'+escapeHtml(x.title||'Beta feedback')+'</h3><p>'+escapeHtml(x.message||'')+'</p><div class="meta"><span class="pill" style="padding:5px 8px;font-size:9px">'+escapeHtml(x.platform||'Android')+'</span><span class="pill" style="padding:5px 8px;font-size:9px">Beta '+escapeHtml(x.version||'1.0.0')+'</span></div></article>').join('');
-  }
-  fetch('data/approved-feedback.json',{cache:'no-store'}).then(r=>r.json()).then(renderHomeFeedback).catch(()=>{});
-</script>
+  <script src="app.js" defer></script>
 </body>
 </html>
