@@ -195,6 +195,26 @@
   document.getElementById('adminInstall').addEventListener('click',()=>{
     if(deferredPrompt){deferredPrompt.prompt();deferredPrompt=null}else alert('Use the browser menu to install WHO Control when the install option is available.');
   });
+  function setAdminBootProgress(value, status) {
+    const bar=document.getElementById('adminBootProgress');
+    const percent=document.getElementById('adminBootPercent');
+    const label=document.getElementById('adminBootStatus');
+    const safe=Math.max(0,Math.min(100,Math.round(value)));
+    if(bar) bar.style.width=safe+'%';
+    if(percent) percent.textContent=safe+'%';
+    if(label && status) label.textContent=status;
+  }
+
+  setAdminBootProgress(10,'Preparing control center…');
+  setTimeout(()=>setAdminBootProgress(34,'Loading dashboard…'),140);
+  setTimeout(()=>setAdminBootProgress(58,'Loading local preview data…'),280);
+  setTimeout(()=>setAdminBootProgress(78,'Preparing controls…'),420);
+
   if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(()=>{}); }
-  window.addEventListener('load',()=>{setTimeout(()=>boot.classList.add('hide'),450);loadConfig();renderReports();renderCrashes();if(location.hash) setPage(location.hash.slice(1));});
+  window.addEventListener('DOMContentLoaded',()=>setAdminBootProgress(62,'Dashboard ready…'));
+  window.addEventListener('load',()=>{
+    setAdminBootProgress(100,'Control center is ready.');
+    setTimeout(()=>boot.classList.add('hide'),430);
+    loadConfig();renderReports();renderCrashes();if(location.hash) setPage(location.hash.slice(1));
+  });
 })();
