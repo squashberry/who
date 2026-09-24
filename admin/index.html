@@ -16,12 +16,12 @@
     #adminBoot{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;background:#05070c;transition:.35s}
     #adminBoot.hide{opacity:0;visibility:hidden}
     .admin-boot-mark{width:68px;height:68px;border-radius:23px;display:grid;place-items:center;background:linear-gradient(145deg,#8cdaff,#1687ff 62%,#0751c5);box-shadow:0 20px 70px rgba(22,135,255,.32);font-weight:950;font-size:21px}
-    .admin-boot-line{width:70px;height:3px;background:#172438;border-radius:99px;margin:16px auto 0;overflow:hidden}.admin-boot-line i{display:block;width:45%;height:100%;background:#62c7ff;animation:ab .9s ease-in-out infinite}@keyframes ab{to{transform:translateX(240%)}}
+    .admin-boot-sub{margin-top:5px;color:#667792;font-size:9px}.admin-boot-progress{width:min(250px,calc(100vw - 64px));height:5px;background:#172438;border-radius:99px;margin:16px auto 0;overflow:hidden}.admin-boot-progress i{display:block;width:0;height:100%;background:linear-gradient(90deg,#46bbff,#1687ff);border-radius:99px;transition:width .3s cubic-bezier(.2,.8,.2,1)}.admin-boot-status{display:flex;justify-content:space-between;width:min(250px,calc(100vw - 64px));margin:8px auto 0;color:#576781;font-size:8px}.admin-boot-status strong{color:#81caf0}.admin-boot-mark{animation:adminBootIn .7s cubic-bezier(.2,.8,.2,1) both}@keyframes adminBootIn{from{opacity:0;transform:translateY(12px) scale(.92)}to{opacity:1;transform:none}}
   </style>
   <link rel="stylesheet" href="admin.css">
 </head>
 <body>
-  <div id="adminBoot"><div><div class="admin-boot-mark">W</div><div class="admin-boot-line"><i></i></div></div></div>
+  <div id="adminBoot"><div><div class="admin-boot-mark">W</div><div class="admin-boot-sub">WHO Control</div><div class="admin-boot-progress"><i id="adminBootProgress"></i></div><div class="admin-boot-status"><span id="adminBootStatus">Preparing control center…</span><strong id="adminBootPercent">0%</strong></div></div></div>
 
   <div class="admin-app">
     <aside class="sidebar">
