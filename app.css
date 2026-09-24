@@ -189,3 +189,37 @@ button{font:inherit}
   .vpn-card{left:-4px}
   .page-heading h2,.split-hero h2,.network-copy h2,.install-copy h2{font-size:36px}
 }
+
+
+/* Human product-site pass: stable chrome, no sideways page, less synthetic visual noise */
+html{overflow-x:clip;overscroll-behavior-x:none}
+body{overflow-x:clip;overscroll-behavior-x:none}
+.topbar{position:sticky;top:0}
+.screen-section{padding-top:0}
+.grid-noise,.ambient{display:none}
+.gradient-text{background:none;color:#72caff}
+.feature-marquee{animation:none}
+.phone{box-shadow:0 28px 70px rgba(0,0,0,.48),inset 0 0 0 6px rgba(255,255,255,.025)}
+.floating-card{backdrop-filter:blur(10px);background:#0d1523;border-color:rgba(255,255,255,.08)}
+.relay-visual,.network-console,.install-card,.feature-card,.quick-card,.beta-review-card{box-shadow:none}
+@media(max-width:640px){
+  .topbar{position:sticky;top:0}
+  .screen-section{padding-top:0}
+  .hero-stage{width:100%;margin:4px 0 0;overflow:visible}
+  .phone-back{transform:rotate(-8deg) translate(-66px,22px)}
+  .phone-main{transform:rotate(3deg) translate(16px,0)}
+  .relay-card{right:4px}
+  .vpn-card{left:4px}
+  .floating-card{max-width:calc(100% - 8px)}
+  .marquee-shell{overflow:hidden}
+  .feature-marquee{overflow-x:hidden;white-space:nowrap}
+}
+@media(max-width:380px){
+  .hero-stage{width:100%}
+  .relay-card{right:3px}
+  .vpn-card{left:3px}
+}
+@supports(padding:max(0px)){
+  .mobile-tabs{bottom:max(8px,env(safe-area-inset-bottom))}
+  .footer{padding-bottom:max(92px,calc(82px + env(safe-area-inset-bottom)))}
+}
