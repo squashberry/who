@@ -223,3 +223,79 @@ body{overflow-x:clip;overscroll-behavior-x:none}
   .mobile-tabs{bottom:max(8px,env(safe-area-inset-bottom))}
   .footer{padding-bottom:max(92px,calc(82px + env(safe-area-inset-bottom)))}
 }
+
+
+/* ============================================================
+   WHO MOTION SYSTEM
+   ============================================================ */
+@keyframes whoRiseIn{from{opacity:0;transform:translate3d(0,22px,0) scale(.985)}to{opacity:1;transform:none}}
+@keyframes whoFadeIn{from{opacity:0}to{opacity:1}}
+@keyframes whoSlideIn{from{opacity:0;transform:translate3d(28px,0,0)}to{opacity:1;transform:none}}
+@keyframes whoFloatSoft{0%,100%{transform:translate3d(0,0,0)}50%{transform:translate3d(0,-8px,0)}}
+@keyframes whoPulseGlow{0%,100%{box-shadow:0 0 0 0 rgba(70,190,255,0)}50%{box-shadow:0 0 0 7px rgba(70,190,255,.08)}}
+@keyframes whoShimmer{from{background-position:180% 0}to{background-position:-180% 0}}
+@keyframes whoSweep{from{transform:translateX(-130%)}to{transform:translateX(130%)}}
+@keyframes whoDotPulse{0%,100%{opacity:.55;transform:scale(.9)}50%{opacity:1;transform:scale(1.15)}}
+
+.screen-section.active .hero-copy .status-pill{animation:whoRiseIn .55s .05s both}
+.screen-section.active .hero-copy h1{animation:whoRiseIn .7s .12s both}
+.screen-section.active .hero-copy .hero-lead{animation:whoRiseIn .65s .2s both}
+.screen-section.active .hero-copy .hero-actions{animation:whoRiseIn .6s .28s both}
+.screen-section.active .hero-copy .hero-meta{animation:whoRiseIn .6s .36s both}
+.screen-section.active .hero-stage{animation:whoFadeIn .8s .12s both}
+.screen-section.active .quick-card{animation:whoRiseIn .55s both}
+.screen-section.active .quick-card:nth-child(1){animation-delay:.08s}
+.screen-section.active .quick-card:nth-child(2){animation-delay:.14s}
+.screen-section.active .quick-card:nth-child(3){animation-delay:.20s}
+.screen-section.active .feature-card{animation:whoRiseIn .58s both}
+.screen-section.active .feature-card:nth-child(1){animation-delay:.06s}
+.screen-section.active .feature-card:nth-child(2){animation-delay:.12s}
+.screen-section.active .feature-card:nth-child(3){animation-delay:.18s}
+.screen-section.active .feature-card:nth-child(4){animation-delay:.24s}
+.screen-section.active .feature-card:nth-child(5){animation-delay:.30s}
+.screen-section.active .feature-card:nth-child(6){animation-delay:.36s}
+.screen-section.active .relay-step,
+.screen-section.active .network-card,
+.screen-section.active .install-card,
+.screen-section.active .beta-review-card,
+.screen-section.active .feedback-card,
+.screen-section.active .faq-item{animation:whoRiseIn .55s both}
+.screen-section.active .relay-step:nth-child(2),
+.screen-section.active .network-card:nth-child(2),
+.screen-section.active .beta-review-card:nth-child(2){animation-delay:.08s}
+.screen-section.active .relay-step:nth-child(3),
+.screen-section.active .network-card:nth-child(3),
+.screen-section.active .beta-review-card:nth-child(3){animation-delay:.16s}
+.screen-section.active .page-heading{animation:whoRiseIn .55s both}
+.screen-section.active .relay-visual,
+.screen-section.active .network-console{animation:whoSlideIn .65s .12s both}
+
+.phone-main{animation:phonefloat 6s ease-in-out infinite,whoPulseGlow 4.5s ease-in-out infinite}
+.phone-back{animation:phoneback 7s ease-in-out infinite}
+.floating-card{animation:whoFloatSoft 5.5s ease-in-out infinite}
+.vpn-card{animation-delay:-2.1s}
+.relay-card{animation-delay:-.7s}
+.live-dot{animation:whoDotPulse 1.8s ease-in-out infinite}
+.brand-icon{transition:transform .28s cubic-bezier(.2,.8,.2,1),box-shadow .28s ease}
+.brand:hover .brand-icon{transform:rotate(-4deg) scale(1.05)}
+.btn,.top-cta,.quick-card,.feature-card,.floating-card,.mobile-tab{will-change:transform}
+.btn:hover{transform:translateY(-3px) scale(1.01)}
+.quick-card:hover,.feature-card:hover{transform:translateY(-6px)}
+.quick-card em{transition:transform .25s ease}.quick-card:hover em{transform:translateX(5px)}
+.feature-card::after,.quick-card::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:0;background:linear-gradient(110deg,transparent 35%,rgba(255,255,255,.07) 50%,transparent 65%);transform:translateX(-120%);transition:opacity .25s ease}
+.feature-card:hover::after,.quick-card:hover::after{opacity:1;animation:whoSweep .8s ease}
+.status-pill{position:relative;overflow:hidden}
+.status-pill::after{content:"";position:absolute;top:0;bottom:0;width:35%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent);transform:translateX(-140%);animation:whoSweep 3.6s ease-in-out infinite}
+.mobile-tabs .active::before{transition:transform .28s cubic-bezier(.2,.8,.2,1),opacity .2s ease;transform:scale(.92)}
+.mobile-tabs .active{animation:whoPulseGlow 3.2s ease-in-out infinite}
+.screen-section.active .feature-marquee{animation:whoFadeIn .7s .12s both}
+.fade-up{animation:whoRiseIn .6s both}
+.fade-in{animation:whoFadeIn .5s both}
+
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .screen-section.active *,.screen-section.active::before,.screen-section.active::after,
+  .phone,.floating-card,.live-dot,.status-pill::after,.mobile-tabs .active{animation:none!important}
+  .feature-card::after,.quick-card::after{display:none}
+  .btn,.quick-card,.feature-card,.brand-icon{transition:none!important}
+}
