@@ -31,6 +31,28 @@
   <link rel="stylesheet" href="app.css">
 </head>
 <body>
+  
+  <div id="betaWelcome" class="beta-popup" aria-hidden="true">
+    <div class="beta-popup-backdrop" data-beta-close></div>
+    <div class="beta-popup-card" role="dialog" aria-modal="true" aria-labelledby="betaPopupTitle">
+      <button class="beta-popup-close" type="button" data-beta-close aria-label="Close">×</button>
+      <span class="beta-popup-badge"><span class="live-dot"></span> WHO BETA 1.0</span>
+      <div class="beta-popup-number"><strong>01</strong><span>of the first 50</span></div>
+      <h2 id="betaPopupTitle">We want you to be one of the first 50 people to use WHO.</h2>
+      <p>You're seeing WHO while we're still shaping it. Use the app, try the caller ID, dialer, contacts, SMS, Relay and network features — then tell us what you honestly think.</p>
+      <div class="beta-popup-points">
+        <div><span>✓</span><b>Use it for real</b><small>Try the features you actually need every day.</small></div>
+        <div><span>★</span><b>Give us your review</b><small>Tell us what you loved, what felt confusing and what we should improve.</small></div>
+        <div><span>⚑</span><b>Report anything broken</b><small>Bugs, crashes, strange calls or missing features all help.</small></div>
+      </div>
+      <div class="beta-popup-actions">
+        <a class="btn btn-primary" href="#feedback" data-view="feedback" data-beta-close>Give WHO feedback <span>↗</span></a>
+        <button class="btn btn-secondary" type="button" data-beta-close>Let me explore first</button>
+      </div>
+      <div class="beta-popup-foot">Your feedback is reviewed before anything is published publicly. Private information should never be included.</div>
+    </div>
+  </div>
+
   <div id="boot" aria-hidden="true">
     <div>
       <div class="boot-mark">
@@ -248,6 +270,48 @@
       </div>
     </section>
 
+    <section id="feedback" class="screen-section" data-screen="feedback">
+      <div class="shell page-heading">
+        <div>
+          <span class="eyebrow">WHO Beta 1.0 · FIRST 50</span>
+          <h2>You're not just using WHO.<br><span class="gradient-text">You're helping shape it.</span></h2>
+          <p>We want honest feedback from the first people using WHO. Tell us what feels great, what feels rough, what broke, and what you want us to build next.</p>
+        </div>
+      </div>
+
+      <div class="shell beta-review-grid">
+        <div class="beta-review-card review-invite-card">
+          <div class="review-orbit"><span>50</span><small>BETA USERS</small></div>
+          <span class="eyebrow">YOUR VOICE MATTERS</span>
+          <h3>Use WHO. Then tell us the truth.</h3>
+          <p>You can review the app, report a bug, request a feature, complain about something that annoyed you, or simply tell us what you loved.</p>
+          <div class="review-points">
+            <span>Caller ID & spam</span><span>Dialer & calls</span><span>Contacts & SMS</span><span>WHO Relay</span><span>VPN / network</span><span>Onboarding</span>
+          </div>
+          <a class="btn btn-primary" href="feedback.html">Leave a WHO review <span>↗</span></a>
+        </div>
+
+        <div class="beta-review-card reviews-card">
+          <div class="reviews-card-head">
+            <div><span class="eyebrow">BETA WALL</span><h3>What early testers are saying</h3></div>
+            <span class="review-count">APPROVED ONLY</span>
+          </div>
+          <div id="homeFeedbackGrid" class="home-feedback-grid"></div>
+          <div id="homeFeedbackEmpty" class="review-empty">
+            <div class="empty-stars">★★★★★</div>
+            <b>You're early.</b>
+            <p>No public beta reviews have been approved yet. Your review could be one of the first.</p>
+            <a href="feedback.html">Be one of the first reviewers →</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="shell beta-note">
+        <span>✦</span>
+        <div><b>First 50 beta users</b><p>We'd rather have 50 real people tell us exactly what needs work than pretend WHO is finished. Help us make Beta 1.0 better.</p></div>
+      </div>
+    </section>
+
     <section id="install" class="screen-section" data-screen="install">
       <div class="shell install-hero">
         <div class="install-copy">
@@ -278,7 +342,7 @@
   <footer class="footer">
     <div class="shell footer-top">
       <div class="footer-brand"><span class="brand-icon"><span>W</span></span><div><b>WHO</b><small>caller intelligence · calling · network</small></div></div>
-      <div class="footer-links"><a href="#home" data-view="home">Home</a><a href="#features" data-view="features">Features</a><a href="#relay" data-view="relay">Relay</a><a href="#vpn" data-view="vpn">Network</a><a href="#install" data-view="install">Get WHO</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="feedback.html">Feedback</a><a href="admin/">Admin</a></div>
+      <div class="footer-links"><a href="#home" data-view="home">Home</a><a href="#features" data-view="features">Features</a><a href="#relay" data-view="relay">Relay</a><a href="#vpn" data-view="vpn">Network</a><a href="#install" data-view="install">Get WHO</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="#feedback" data-view="feedback">Feedback</a><a href="admin/">Admin</a></div>
     </div>
     <div class="shell footer-bottom"><span>© 2026 Squashberry · WHO Beta 1.0</span><span>Built as a lightweight PWA-ready site.</span></div>
   </footer>
