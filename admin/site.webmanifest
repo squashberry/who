@@ -1,0 +1,11 @@
+{
+  "name":"WHO Control — Squashberry",
+  "short_name":"WHO Control",
+  "start_url":"./",
+  "scope":"./",
+  "display":"standalone",
+  "background_color":"#05070c",
+  "theme_color":"#05070c",
+  "description":"WHO administration control center.",
+  "icons":[{"src":"../favicon.svg","sizes":"64x64","type":"image/svg+xml","purpose":"any maskable"}]
+}
