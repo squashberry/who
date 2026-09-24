@@ -195,5 +195,6 @@
   document.getElementById('adminInstall').addEventListener('click',()=>{
     if(deferredPrompt){deferredPrompt.prompt();deferredPrompt=null}else alert('Use the browser menu to install WHO Control when the install option is available.');
   });
+  if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(()=>{}); }
   window.addEventListener('load',()=>{setTimeout(()=>boot.classList.add('hide'),450);loadConfig();renderReports();renderCrashes();if(location.hash) setPage(location.hash.slice(1));});
 })();
