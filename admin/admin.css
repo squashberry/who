@@ -16,3 +16,40 @@ label{display:grid;gap:6px;color:#7d8ba0;font-size:8px;margin-top:12px}input,tex
 @media(max-width:940px){.admin-app{grid-template-columns:1fr}.sidebar{display:none}.admin-topbar{padding:20px 18px 16px}.content{width:min(100% - 28px,1260px)}.hero-panel{grid-template-columns:1fr 200px}.stats-grid{grid-template-columns:1fr 1fr}.feedback-grid{grid-template-columns:1fr 1fr}.mobile-admin-nav{position:fixed;display:grid;grid-template-columns:repeat(5,1fr);left:10px;right:10px;bottom:10px;height:63px;padding:7px;background:rgba(10,15,24,.92);backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.1);border-radius:21px;z-index:100;box-shadow:0 20px 55px rgba(0,0,0,.42)}.mobile-admin-nav button{border:0;background:transparent;color:#65748b;border-radius:15px;display:grid;place-items:center}.mobile-admin-nav button.active{background:rgba(22,135,255,.1);color:#71ccff}.mobile-admin-nav span{font-size:15px;line-height:1}.mobile-admin-nav small{font-size:7px;margin-top:2px}}
 @media(max-width:680px){.admin-topbar{align-items:center}.admin-topbar p{display:none}.api-chip{display:none}.hero-panel{grid-template-columns:1fr;min-height:auto}.hero-panel h2{font-size:35px}.hero-orbit{display:none}.two-col,.announcement-editor,.feedback-grid{grid-template-columns:1fr}.section-title h2{font-size:37px}.stats-grid{grid-template-columns:1fr 1fr}.config-grid{grid-template-columns:1fr}.config-grid .full{grid-column:auto}.toolbar{align-items:stretch;flex-direction:column}.toolbar input{width:100%}.field-row{grid-template-columns:1fr}.callout-panel{align-items:flex-start;flex-direction:column}.content{padding-bottom:92px}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+
+/* ============================================================
+   WHO CONTROL MOTION SYSTEM
+   ============================================================ */
+@keyframes adminRise{from{opacity:0;transform:translateY(18px) scale(.99)}to{opacity:1;transform:none}}
+@keyframes adminFade{from{opacity:0}to{opacity:1}}
+@keyframes adminSlide{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}
+@keyframes adminFloat{0%,100%{transform:none}50%{transform:translateY(-5px)}}
+@keyframes adminPulse{0%,100%{box-shadow:0 0 0 0 rgba(70,190,255,0)}50%{box-shadow:0 0 0 7px rgba(70,190,255,.07)}}
+
+.page.active .section-title{animation:adminRise .55s .03s both}
+.page.active .hero-panel{animation:adminSlide .65s .08s both}
+.page.active .stat-card{animation:adminRise .5s both}
+.page.active .stat-card:nth-child(1){animation-delay:.08s}
+.page.active .stat-card:nth-child(2){animation-delay:.14s}
+.page.active .stat-card:nth-child(3){animation-delay:.20s}
+.page.active .stat-card:nth-child(4){animation-delay:.26s}
+.page.active .panel{animation:adminRise .52s both}
+.page.active .two-col .panel:nth-child(1){animation-delay:.08s}
+.page.active .two-col .panel:nth-child(2){animation-delay:.16s}
+.page.active .feedback-grid article{animation:adminRise .5s both}
+.page.active .feedback-grid article:nth-child(2){animation-delay:.08s}
+.page.active .feedback-grid article:nth-child(3){animation-delay:.16s}
+.page.active .table-panel{animation:adminRise .55s .1s both}
+.page.active .callout-panel{animation:adminRise .55s .08s both}
+.hero-orbit{animation:adminFloat 5.5s ease-in-out infinite,adminPulse 4s ease-in-out infinite}
+.side-nav button,.mobile-admin-nav button,.top-icon,.ghost-btn,.primary-btn{transition:transform .22s cubic-bezier(.2,.8,.2,1),border-color .22s ease,background .22s ease,color .22s ease}
+.side-nav button:hover,.mobile-admin-nav button:hover{transform:translateX(3px)}
+.ghost-btn:hover,.primary-btn:hover,.top-icon:hover{transform:translateY(-2px)}
+.stat-card,.panel,.feedback-grid article,.hero-panel{will-change:transform}
+.mobile-admin-nav button.active{position:relative}
+.mobile-admin-nav button.active::before{content:"";position:absolute;inset:3px 11px;border-radius:13px;background:rgba(22,135,255,.08);z-index:-1;animation:adminPulse 3s ease-in-out infinite}
+@media(prefers-reduced-motion:reduce){
+  .page.active *,.hero-orbit,.mobile-admin-nav button.active::before{animation:none!important}
+  .side-nav button,.mobile-admin-nav button,.top-icon,.ghost-btn,.primary-btn{transition:none!important}
+}
