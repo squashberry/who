@@ -8,7 +8,11 @@
 
   function setView(view) {
     const target = screens.some((s) => s.dataset.screen === view) ? view : 'home';
+    screens.forEach((screen) => screen.classList.remove('view-enter'));
+    void document.body.offsetWidth;
     screens.forEach((screen) => screen.classList.toggle('active', screen.dataset.screen === target));
+    const activeScreen = screens.find((screen) => screen.dataset.screen === target);
+    if (activeScreen) activeScreen.classList.add('view-enter');
     navItems.forEach((item) => item.classList.toggle('active', item.dataset.view === target));
     if (location.hash !== '#' + target) {
       history.replaceState(null, '', '#' + target);
@@ -135,9 +139,44 @@
     deferredPrompt = null;
   });
 
+  function setBootProgress(value, status) {
+    const bar = document.getElementById('bootProgressBar');
+    const percent = document.getElementById('bootPercent');
+    const label = document.getElementById('bootStatus');
+    const safe = Math.max(0, Math.min(100, Math.round(value)));
+    if (bar) bar.style.width = safe + '%';
+    if (percent) percent.textContent = safe + '%';
+    if (label && status) label.textContent = status;
+  }
+
+  function startBootProgress() {
+    setBootProgress(8, 'Preparing WHO…');
+    const steps = [
+      [28, 'Loading interface…'],
+      [52, 'Preparing phone tools…'],
+      [74, 'Connecting WHO features…'],
+      [92, 'Finishing setup…']
+    ];
+    let i = 0;
+    const tick = () => {
+      if (i >= steps.length) return;
+      const [value, status] = steps[i++];
+      setBootProgress(value, status);
+      setTimeout(tick, 190);
+    };
+    setTimeout(tick, 140);
+  }
+
+  startBootProgress();
+
+  window.addEventListener('DOMContentLoaded', () => {
+    setBootProgress(58, 'Interface ready…');
+  });
+
   window.addEventListener('load', () => {
-    setTimeout(() => boot.classList.add('hide'), 520);
-    setTimeout(readView, 20);
+    setBootProgress(100, 'WHO is ready.');
+    setTimeout(() => boot.classList.add('hide'), 430);
+    setTimeout(readView, 60);
     initBetaWelcome();
     initBetaFeedback();
   });
