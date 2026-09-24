@@ -2,508 +2,132 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#070911">
-  <title>WHO Admin — Control Center</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#05070c">
+  <meta name="color-scheme" content="dark">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="WHO Control">
+  <title>WHO Control · Admin</title>
   <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="site.webmanifest">
   <style>
-    :root{--bg:#06070c;--sidebar:#090c14;--panel:#0d111b;--panel2:#111725;--line:rgba(255,255,255,.08);--text:#eef4ff;--muted:#8f9ab0;--blue:#1687ff;--cyan:#5ed8ff;--good:#48d597;--warn:#ffc857;--bad:#ff687d}
-    *{box-sizing:border-box}body{margin:0;background:radial-gradient(650px 520px at 75% 0%,rgba(22,135,255,.11),transparent 65%),var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-    button,input,textarea,select{font:inherit}.shell{min-height:100vh;display:grid;grid-template-columns:245px 1fr}
-    aside{background:rgba(9,12,20,.88);border-right:1px solid var(--line);padding:22px 15px;position:sticky;top:0;height:100vh;backdrop-filter:blur(20px)}
-    .brand{display:flex;align-items:center;gap:11px;padding:6px 9px 21px;font-weight:900;letter-spacing:-.04em}.mark{width:37px;height:37px;display:grid;place-items:center;border-radius:12px;background:linear-gradient(145deg,#74c6ff,#0c78ff);box-shadow:0 9px 28px rgba(22,135,255,.27)}
-    .section-label{font-size:10px;text-transform:uppercase;letter-spacing:.14em;color:#5f6b81;font-weight:850;padding:12px 11px 7px}
-    .nav{display:grid;gap:4px}.nav button{border:0;background:transparent;color:#98a5ba;text-align:left;padding:10px 11px;border-radius:11px;display:flex;gap:10px;align-items:center;cursor:pointer;font-size:12px;font-weight:730}.nav button:hover{background:rgba(255,255,255,.04);color:#e8eef9}.nav button.active{background:rgba(22,135,255,.12);color:#fff;box-shadow:inset 0 0 0 1px rgba(65,170,255,.1)}.nav .ico{width:18px;text-align:center;opacity:.9}
-    .side-bottom{position:absolute;bottom:17px;left:15px;right:15px;border-top:1px solid var(--line);padding-top:15px}.beta{font-size:10px;color:#778398;line-height:1.6}.beta strong{color:#aebbd0}
-    main{padding:28px 30px 50px;min-width:0}.top{display:flex;justify-content:space-between;gap:20px;align-items:center;margin-bottom:25px}.title h1{margin:0;font-size:28px;letter-spacing:-.04em}.title p{margin:6px 0 0;color:var(--muted);font-size:12px}.user{display:flex;align-items:center;gap:10px}.user-chip{padding:9px 12px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.03);font-size:11px;color:#bdc9dc}.logout{border:1px solid var(--line);background:transparent;color:#9aa7bb;border-radius:12px;padding:9px 12px;cursor:pointer}
-    .view{display:none}.view.active{display:block}
-    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.stat{padding:18px;border:1px solid var(--line);border-radius:18px;background:linear-gradient(145deg,rgba(255,255,255,.055),rgba(255,255,255,.02));box-shadow:0 14px 45px rgba(0,0,0,.15)}.stat .k{font-size:11px;color:#738097}.stat .v{font-size:28px;font-weight:900;letter-spacing:-.05em;margin-top:7px}.trend{font-size:10px;color:var(--good);margin-top:7px}.trend.neutral{color:#718096}.trend.warn{color:var(--warn)}
-    .grid{display:grid;grid-template-columns:1.25fr .75fr;gap:13px;margin-top:13px}.panel{background:linear-gradient(145deg,rgba(255,255,255,.055),rgba(255,255,255,.02));border:1px solid var(--line);border-radius:18px;padding:18px;min-width:0}.panel h2{font-size:14px;margin:0 0 14px}.panel p{font-size:11px;color:var(--muted);line-height:1.7}.table{width:100%;border-collapse:collapse;font-size:11px}.table th,.table td{text-align:left;padding:10px 7px;border-bottom:1px solid rgba(255,255,255,.06);white-space:nowrap}.table th{color:#66738b;font-size:9px;text-transform:uppercase;letter-spacing:.1em}.table td{color:#b8c3d4}.badge{display:inline-flex;padding:4px 7px;border-radius:999px;border:1px solid rgba(255,255,255,.07);font-size:9px}.green{color:#60e1a5;background:rgba(72,213,151,.08)}.amber{color:#ffd36d;background:rgba(255,200,87,.08)}.red{color:#ff8495;background:rgba(255,104,125,.08)}
-    .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:13px}.btn{border:1px solid var(--line);background:rgba(255,255,255,.035);color:#dbe4f3;border-radius:10px;padding:9px 12px;font-size:10px;font-weight:780;cursor:pointer}.btn.primary{background:linear-gradient(135deg,#178fff,#0b66df);border-color:rgba(101,188,255,.25)}.btn.danger{color:#ff98a5;background:rgba(255,104,125,.06)}.input{background:#080b12;border:1px solid var(--line);color:#e8effb;border-radius:10px;padding:10px 11px;width:100%;outline:none}.input:focus{border-color:rgba(69,172,255,.4)}
-    .settings{display:grid;gap:12px}.setting{display:grid;grid-template-columns:1fr 1.15fr;gap:12px;align-items:start;padding:14px;border-bottom:1px solid rgba(255,255,255,.055)}.setting:last-child{border-bottom:0}.setting strong{font-size:11px}.setting small{display:block;color:#707d93;font-size:9px;line-height:1.6;margin-top:4px}.toggle{width:42px;height:24px;border-radius:99px;background:#242b39;border:1px solid var(--line);padding:2px;cursor:pointer}.toggle span{width:18px;height:18px;border-radius:50%;display:block;background:#8a95a7;transition:.2s}.toggle.on{background:rgba(22,135,255,.35);border-color:rgba(22,135,255,.4)}.toggle.on span{transform:translateX(16px);background:#69c8ff}
-    .empty{padding:30px;border:1px dashed rgba(255,255,255,.11);border-radius:14px;text-align:center;color:#7e8ba1;font-size:11px}
-    .note{padding:12px 13px;border-radius:12px;background:rgba(22,135,255,.07);border:1px solid rgba(22,135,255,.13);color:#aebbd0;font-size:10px;line-height:1.6}
-    .demo{margin-bottom:14px;padding:10px 12px;border-radius:11px;background:rgba(255,200,87,.07);border:1px solid rgba(255,200,87,.14);font-size:10px;color:#d8bf7c}
-    .login{min-height:100vh;display:grid;place-items:center;padding:22px;background:radial-gradient(500px 400px at 50% 25%,rgba(22,135,255,.12),transparent 68%),#05060a}.login-card{width:min(430px,100%);border:1px solid var(--line);background:rgba(13,17,27,.88);backdrop-filter:blur(20px);border-radius:25px;padding:30px;box-shadow:0 30px 100px rgba(0,0,0,.55)}.login-card h1{margin:15px 0 8px;font-size:28px;letter-spacing:-.05em}.login-card p{color:#8995aa;font-size:11px;line-height:1.7}.login-row{display:grid;gap:9px;margin-top:18px}.login-help{font-size:9px;color:#667288;margin-top:12px;line-height:1.6}
-    @media(max-width:1020px){.shell{grid-template-columns:75px 1fr}.brand span:last-child,.section-label,.nav button span:not(.ico),.side-bottom{display:none}aside{padding:18px 11px}.nav button{justify-content:center}.stats{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}}
-    @media(max-width:620px){.shell{display:block}aside{height:auto;position:sticky;display:flex;align-items:center;z-index:10}.brand{padding:0;margin-right:8px}.nav{display:flex;overflow:auto}.nav button{padding:9px}.nav button .ico{font-size:14px}main{padding:20px 14px}.top{align-items:flex-start}.stats{grid-template-columns:1fr 1fr}.setting{grid-template-columns:1fr}.user-chip{display:none}}
+    html,body{margin:0;background:#05070c;color:#f7f9ff}
+    #adminBoot{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;background:#05070c;transition:.35s}
+    #adminBoot.hide{opacity:0;visibility:hidden}
+    .admin-boot-mark{width:68px;height:68px;border-radius:23px;display:grid;place-items:center;background:linear-gradient(145deg,#8cdaff,#1687ff 62%,#0751c5);box-shadow:0 20px 70px rgba(22,135,255,.32);font-weight:950;font-size:21px}
+    .admin-boot-line{width:70px;height:3px;background:#172438;border-radius:99px;margin:16px auto 0;overflow:hidden}.admin-boot-line i{display:block;width:45%;height:100%;background:#62c7ff;animation:ab .9s ease-in-out infinite}@keyframes ab{to{transform:translateX(240%)}}
   </style>
+  <link rel="stylesheet" href="admin.css">
 </head>
 <body>
-<div id="login" class="login">
-  <div class="login-card">
-    <div class="brand"><span class="mark">W</span><span>WHO ADMIN</span></div>
-    <h1>Control center.</h1>
-    <p>This page is the front-end shell for the WHO administration system. Live authentication and API actions will be connected to the WHO backend and protected with an admin identity layer before operational controls are exposed publicly.</p>
-    <div class="note">Preview mode is enabled because the WHO backend is not connected to this GitHub site yet. No user data is stored by this page.</div>
-    <div class="login-row">
-      <button class="btn primary" onclick="enterDemo()">Open dashboard preview</button>
-      <a class="btn" href="../">← Back to WHO website</a>
+  <div id="adminBoot"><div><div class="admin-boot-mark">W</div><div class="admin-boot-line"><i></i></div></div></div>
+
+  <div class="admin-app">
+    <aside class="sidebar">
+      <div class="side-brand"><span class="brand-mark">W</span><div><b>WHO Control</b><small>Squashberry</small></div></div>
+      <div class="preview-badge">PREVIEW MODE</div>
+      <nav class="side-nav" id="sideNav">
+        <button class="active" data-page="overview"><span>⌂</span>Overview</button>
+        <button data-page="users"><span>◉</span>Users</button>
+        <button data-page="caller"><span>⌕</span>Caller intelligence</button>
+        <button data-page="reports"><span>⚑</span>Reports</button>
+        <button data-page="releases"><span>↥</span>Releases</button>
+        <button data-page="remote"><span>⚙</span>Remote config</button>
+        <button data-page="announcements"><span>✦</span>Announcements</button>
+        <button data-page="crashes"><span>!</span>Crashes</button>
+        <button data-page="feedback"><span>☷</span>Feedback</button>
+        <button data-page="audit"><span>◌</span>Audit</button>
+      </nav>
+      <div class="sidebar-bottom"><a href="../">↩ Public WHO</a><button id="adminInstall">↥ Install Control</button></div>
+    </aside>
+
+    <div class="main-shell">
+      <header class="admin-topbar">
+        <div><span class="crumb">WHO CONTROL</span><h1 id="pageTitle">Overview</h1><p id="pageSub">A light command center for the WHO product.</p></div>
+        <div class="top-right"><span class="api-chip"><i></i> API not connected</span><button class="top-icon" id="refreshButton" aria-label="Refresh">↻</button></div>
+      </header>
+
+      <main class="content">
+        <section class="page active" data-section="overview">
+          <div class="hero-panel">
+            <div><span class="eyebrow">PRODUCT COMMAND CENTER</span><h2>See the whole WHO system at a glance.</h2><p>Designed for quick decisions on mobile, tablet and desktop. Connect it to the WHO backend later; the shell is already ready for remote config, releases, feedback and crash workflows.</p></div>
+            <div class="hero-orbit"><span>W</span><i></i><i></i><i></i><b>WHO</b></div>
+          </div>
+          <div class="stats-grid">
+            <div class="stat-card"><small>App version</small><strong>1.0.0</strong><span>Beta 1.0</span></div>
+            <div class="stat-card"><small>Force update</small><strong id="forceStat">OFF</strong><span>Remote controlled</span></div>
+            <div class="stat-card"><small>Announcements</small><strong id="announceStat">OFF</strong><span>Revisioned copy</span></div>
+            <div class="stat-card"><small>Crash reports</small><strong id="crashStat">0</strong><span>Local preview records</span></div>
+          </div>
+          <div class="two-col">
+            <div class="panel"><div class="panel-head"><div><span class="eyebrow">SYSTEM MAP</span><h3>WHO product surfaces</h3></div></div><div class="surface-list"><div><span>Caller ID</span><b>Active</b></div><div><span>Dialer / contacts</span><b>Active</b></div><div><span>SMS</span><b>Active</b></div><div><span>WHO Relay</span><b>Active</b></div><div><span>VPN / network</span><b>Active</b></div><div><span>Backup</span><b>Architecture ready</b></div></div></div>
+            <div class="panel"><div class="panel-head"><div><span class="eyebrow">QUICK ACTIONS</span><h3>Do the useful thing first.</h3></div></div><div class="action-grid"><button data-jump="remote">Edit remote config</button><button data-jump="announcements">Publish announcement</button><button data-jump="releases">Manage release</button><button data-jump="crashes">Review crashes</button></div></div>
+          </div>
+        </section>
+
+        <section class="page" data-section="users">
+          <div class="section-title"><span class="eyebrow">USERS</span><h2>Device & account surface.</h2><p>Privacy-preserving administration only. Do not put raw contact contents into this dashboard.</p></div>
+          <div class="panel table-panel"><div class="panel-head"><div><h3>Recent devices</h3><small>Preview dataset</small></div><button class="ghost-btn" onclick="toast('Backend connection required for live users.')">Refresh</button></div><div class="table-wrap"><table><thead><tr><th>Device</th><th>Platform</th><th>Version</th><th>Last seen</th><th>Status</th></tr></thead><tbody><tr><td>preview-01</td><td>Android</td><td>1.0.0</td><td>Just now</td><td><span class="tag green">active</span></td></tr><tr><td>preview-02</td><td>Android</td><td>1.0.0</td><td>18m ago</td><td><span class="tag amber">idle</span></td></tr></tbody></table></div></div>
+        </section>
+
+        <section class="page" data-section="caller">
+          <div class="section-title"><span class="eyebrow">CALLER INTELLIGENCE</span><h2>Signals, not guesses.</h2><p>Use this space for confidence scoring, corrections and community observations once the backend is connected.</p></div>
+          <div class="stats-grid"><div class="stat-card"><small>Observed signals</small><strong>—</strong><span>Awaiting API</span></div><div class="stat-card"><small>Corrections</small><strong>—</strong><span>Awaiting API</span></div><div class="stat-card"><small>Reports</small><strong id="callerReportCount">0</strong><span>Local preview</span></div><div class="stat-card"><small>Raw numbers stored</small><strong>0</strong><span>Design target</span></div></div>
+          <div class="panel callout-panel"><div class="signal-ring"><span>WHO</span></div><div><span class="eyebrow">ARCHITECTURE</span><h3>Consent → observation → confidence → correction</h3><p>WHO can compare names from contacts with anonymized caller observations while keeping raw numbers out of the caller database design.</p></div></div>
+        </section>
+
+        <section class="page" data-section="reports">
+          <div class="section-title"><span class="eyebrow">REPORTS</span><h2>Keep reputation explainable.</h2><p>Moderate spam/scam reports without turning reports into permanent identity claims.</p></div>
+          <div class="panel table-panel"><div class="toolbar"><div class="segmented"><button class="active" data-report-filter="pending">Pending</button><button data-report-filter="resolved">Resolved</button><button data-report-filter="all">All</button></div><input id="reportSearch" placeholder="Search preview reports"></div><div class="table-wrap"><table><thead><tr><th>Number</th><th>Reason</th><th>Reports</th><th>Status</th><th></th></tr></thead><tbody id="reportBody"></tbody></table></div></div>
+        </section>
+
+        <section class="page" data-section="releases">
+          <div class="section-title"><span class="eyebrow">RELEASES</span><h2>Keep updates under control.</h2><p>Set latest/minimum versions and the text users see when an update is required.</p></div>
+          <div class="two-col">
+            <div class="panel"><div class="panel-head"><div><h3>Current release</h3><small>WHO Beta</small></div><span class="tag blue">1.0.0</span></div><label>Latest version<input id="latestVersion" value="1.0.0"></label><label>Minimum version<input id="minimumVersion" value="1.0.0"></label><label>Update URL<input id="updateUrl" value="https://squashberry.github.io/who/download.html"></label><button class="primary-btn" onclick="saveRelease()">Save release draft</button></div>
+            <div class="panel danger-panel"><span class="eyebrow">UPDATE GATE</span><h3>Force update</h3><p>When enabled, the mobile app should block use until the required version is installed.</p><div class="toggle-row"><b>Force update</b><button class="toggle" id="forceToggle" aria-pressed="false"><i></i></button></div><label>Title<textarea id="forceTitle">WHO update required</textarea></label><label>Message<textarea id="forceMessage">You need to update this app to continue using it.</textarea></label></div>
+          </div>
+        </section>
+
+        <section class="page" data-section="remote">
+          <div class="section-title"><span class="eyebrow">REMOTE CONFIG</span><h2>Change the app without rebuilding it.</h2><p>Matches the current <b>who-config.json</b> architecture while keeping the editor lightweight.</p></div>
+          <div class="panel config-panel"><div class="toggle-row"><div><b>Welcome modal</b><small>Show the Beta 1.0 message on first entry.</small></div><button class="toggle on" id="welcomeToggle" aria-pressed="true"><i></i></button></div><div class="toggle-row"><div><b>Maintenance mode</b><small>Temporarily prevent normal sessions.</small></div><button class="toggle" id="maintenanceToggle" aria-pressed="false"><i></i></button></div><div class="toggle-row"><div><b>Announcement</b><small>Publish a versioned message/banner.</small></div><button class="toggle" id="announcementToggle" aria-pressed="false"><i></i></button></div><div class="config-grid"><label>Welcome title<input id="welcomeTitle" value="WHO Beta 1.0"></label><label>Welcome button<input id="welcomeButton" value="Continue"></label><label class="full">Welcome message<textarea id="welcomeMessage">This is a WHO Beta 1.0 app created by Squashberry.</textarea></label><label>Maintenance title<input id="maintenanceTitle" value="WHO is temporarily unavailable"></label><label>Maintenance message<textarea id="maintenanceMessage">WHO is undergoing maintenance. Please try again later.</textarea></label><label>Announcement title<input id="announcementTitle" value=""></label><label>Announcement message<textarea id="announcementMessage"></textarea></label></div><div class="panel-actions"><button class="ghost-btn" onclick="loadConfig()">Reload local draft</button><button class="primary-btn" onclick="saveConfig()">Save local draft</button><button class="ghost-btn" onclick="copyConfig()">Copy JSON</button></div></div>
+        </section>
+
+        <section class="page" data-section="announcements">
+          <div class="section-title"><span class="eyebrow">ANNOUNCEMENTS</span><h2>Ship product messages cleanly.</h2><p>Use revisioned copy for beta notices, release notes, feature launches and maintenance windows.</p></div>
+          <div class="panel announcement-editor"><div class="announcement-preview"><span class="preview-kicker">PREVIEW</span><h3 id="previewAnnouncementTitle">Your WHO message</h3><p id="previewAnnouncementMessage">Write an announcement and see how it will look inside the app.</p><div class="preview-actions"><button>Not now</button><button class="preview-primary">Continue</button></div></div><div class="announcement-fields"><label>Title<input id="annTitle" value="WHO Beta 1.0"></label><label>Message<textarea id="annMessage" placeholder="What should users know?"></textarea></label><div class="field-row"><label>Button text<input id="annButton" value="Continue"></label><label>Revision<input id="annRevision" value="1"></label></div><button class="primary-btn" onclick="publishAnnouncement()">Publish preview announcement</button></div></div>
+        </section>
+
+        <section class="page" data-section="crashes">
+          <div class="section-title"><span class="eyebrow">CRASH CENTER</span><h2>Find what broke. Fast.</h2><p>Local preview storage is used here until the WHO crash endpoint is connected.</p></div>
+          <div class="stats-grid"><div class="stat-card"><small>Pending</small><strong id="pendingCrash">0</strong><span>Needs review</span></div><div class="stat-card"><small>Fixed</small><strong id="fixedCrash">0</strong><span>Resolved locally</span></div><div class="stat-card"><small>Fatal</small><strong id="fatalCrash">0</strong><span>Preview only</span></div><div class="stat-card"><small>Today</small><strong id="todayCrash">0</strong><span>Preview only</span></div></div>
+          <div class="panel table-panel"><div class="toolbar"><div class="segmented"><button class="active" data-crash-filter="pending">Pending</button><button data-crash-filter="fixed">Fixed</button><button data-crash-filter="all">All</button></div><button class="ghost-btn" onclick="addPreviewCrash()">Add preview crash</button></div><div class="table-wrap"><table><thead><tr><th>Time</th><th>Severity</th><th>Version</th><th>Platform</th><th>Error</th><th>Status</th><th></th></tr></thead><tbody id="crashBody"></tbody></table></div></div>
+        </section>
+
+        <section class="page" data-section="feedback">
+          <div class="section-title"><span class="eyebrow">FEEDBACK</span><h2>Close the beta loop.</h2><p>Keep user feedback close to releases, announcements and crash patterns.</p></div>
+          <div class="feedback-grid"><article><span class="tag blue">FEATURE</span><h3>Relay pairing is clear</h3><p>Preview feedback from beta testers will appear here when the feedback endpoint is connected.</p><small>preview-user · 2h ago</small></article><article><span class="tag amber">BUG</span><h3>Call-screening setup needs explanation</h3><p>Use feedback to improve the onboarding path instead of hiding complexity behind settings.</p><small>preview-user · 5h ago</small></article><article><span class="tag green">PRAISE</span><h3>The new dialer feels native</h3><p>A lightweight design should make the product easier to learn at first launch.</p><small>preview-user · 1d ago</small></article></div>
+        </section>
+
+        <section class="page" data-section="audit">
+          <div class="section-title"><span class="eyebrow">AUDIT</span><h2>Every admin mutation should leave a trace.</h2><p>The production dashboard should record actor, timestamp, target, old value, new value and result.</p></div>
+          <div class="panel table-panel"><table><thead><tr><th>Time</th><th>Actor</th><th>Action</th><th>Result</th></tr></thead><tbody><tr><td>—</td><td>PREVIEW</td><td>Opened WHO Control</td><td><span class="tag blue">local</span></td></tr><tr><td>—</td><td>PREVIEW</td><td>Loaded remote config draft</td><td><span class="tag blue">local</span></td></tr></tbody></table></div>
+        </section>
+      </main>
     </div>
-    <div class="login-help">Recommended production setup: host the admin behind Cloudflare Access or an equivalent identity gate; never put database/service secrets in this GitHub Pages frontend.</div>
   </div>
-</div>
 
-<div id="app" class="shell" style="display:none">
-  <aside>
-    <div class="brand"><span class="mark">W</span><span>WHO</span></div>
-    <div class="section-label">Control</div>
-    <div class="nav">
-      <button class="active" data-view="overview"><span class="ico">◈</span><span>Overview</span></button>
-      <button data-view="users"><span class="ico">◉</span><span>Users</span></button>
-      <button data-view="identity"><span class="ico">⌁</span><span>Caller Intelligence</span></button>
-      <button data-view="reports"><span class="ico">⚑</span><span>Reports & Spam</span></button>
-    </div>
-    <div class="section-label">Product</div>
-    <div class="nav">
-      <button data-view="releases"><span class="ico">⇧</span><span>Releases</span></button>
-      <button data-view="remote"><span class="ico">⚙</span><span>Remote Config</span></button>
-      <button data-view="announcements"><span class="ico">◌</span><span>Announcements</span></button>
-      <button data-view="backups"><span class="ico">☁</span><span>Backups</span></button>
-    </div>
-    <div class="section-label">Operations</div>
-    <div class="nav">
-      <button data-view="crashes"><span class="ico">⚠</span><span>Crash Reports</span></button>
-      <button data-view="feedback"><span class="ico">✉</span><span>Feedback</span></button>
-      <button data-view="analytics"><span class="ico">▥</span><span>Analytics</span></button>
-      <button data-view="settings"><span class="ico">⚙</span><span>Settings</span></button>
-      <button data-view="audit"><span class="ico">≡</span><span>Audit Log</span></button>
-    </div>
-    <div class="side-bottom"><div class="beta"><strong>WHO Beta 1.0</strong><br>Dashboard shell · Preview mode</div></div>
-  </aside>
-
-  <main>
-    <div class="top">
-      <div class="title"><h1 id="viewTitle">Overview</h1><p id="viewSubtitle">Your WHO product at a glance.</p></div>
-      <div class="user"><div class="user-chip">SQUASHBERRY · ADMIN</div><button class="logout" onclick="logout()">Exit</button></div>
-    </div>
-
-    <section id="overview" class="view active">
-      <div class="demo">Demo data only — live values will come from the WHO API once the backend is connected.</div>
-      <div class="stats">
-        <div class="stat"><div class="k">Registered users</div><div class="v">—</div><div class="trend neutral">Backend not connected</div></div>
-        <div class="stat"><div class="k">Active today</div><div class="v">—</div><div class="trend neutral">Backend not connected</div></div>
-        <div class="stat"><div class="k">Identity matches</div><div class="v">—</div><div class="trend neutral">Backend not connected</div></div>
-        <div class="stat"><div class="k">Open reports</div><div class="v">—</div><div class="trend neutral">Backend not connected</div></div>
-      </div>
-      <div class="grid">
-        <div class="panel"><h2>Product health</h2><table class="table"><tr><th>Signal</th><th>Status</th><th>Value</th></tr><tr><td>API</td><td><span class="badge amber">Pending</span></td><td>Connect WHO backend</td></tr><tr><td>Database</td><td><span class="badge amber">Pending</span></td><td>Connect WHO database</td></tr><tr><td>Latest app</td><td><span class="badge green">Planned</span></td><td>1.0.0</td></tr><tr><td>Minimum app</td><td><span class="badge green">Planned</span></td><td>1.0.0</td></tr></table></div>
-        <div class="panel"><h2>Quick actions</h2><div class="toolbar"><button class="btn primary" onclick="switchView('remote')">Edit remote config</button><button class="btn" onclick="switchView('announcements')">New announcement</button><button class="btn" onclick="switchView('releases')">Manage release</button></div><div class="note">These buttons currently navigate the UI only. No live mutation is performed in preview mode.</div></div>
-      </div>
-    </section>
-
-    <section id="users" class="view">
-      <div class="panel"><h2>User management</h2><div class="toolbar"><input class="input" style="max-width:280px" placeholder="Search user, phone or device ID"><button class="btn">Export</button><button class="btn danger">Suspend selected</button></div><div class="empty">User records will appear here after the WHO API is connected. Useful fields: account status, app version, platform, last seen, country/region, consent status and report history.</div></div>
-    </section>
-
-    <section id="identity" class="view">
-      <div class="panel"><h2>Caller intelligence moderation</h2><p>This area is designed for reviewing identity candidates, confidence scores and conflicting community observations before they become trusted signals.</p><div class="toolbar"><button class="btn primary">Review queue</button><button class="btn">Low-confidence matches</button><button class="btn">Flagged identities</button></div><div class="empty">No live identity records are loaded in preview mode.</div></div>
-      <div class="panel" style="margin-top:13px"><h2>Suggested data model</h2><table class="table"><tr><th>Field</th><th>Purpose</th></tr><tr><td>normalized phone hash</td><td>Stable lookup key</td></tr><tr><td>name candidate</td><td>Observed contact label</td></tr><tr><td>source count</td><td>Independent observations</td></tr><tr><td>confidence</td><td>Scored identity suggestion</td></tr><tr><td>status</td><td>pending · trusted · disputed · blocked</td></tr></table></div>
-    </section>
-
-    <section id="reports" class="view"><div class="panel"><h2>Reports & spam</h2><div class="toolbar"><button class="btn primary">Open queue</button><button class="btn">Spam trends</button><button class="btn">Blocked numbers</button></div><div class="empty">Report moderation will be connected to the same identity/reputation API.</div></div></section>
-
-    <section id="releases" class="view">
-      <div class="panel"><h2>Release management</h2><div class="toolbar"><button class="btn primary">Create release</button><button class="btn">Edit download URL</button></div><table class="table"><tr><th>Version</th><th>Channel</th><th>Minimum</th><th>Status</th><th>Action</th></tr><tr><td>1.0.0</td><td>Beta</td><td>1.0.0</td><td><span class="badge green">Current</span></td><td><button class="btn">Edit</button></td></tr></table></div>
-    </section>
-
-    <section id="remote" class="view">
-      <div class="panel"><h2>Remote configuration</h2><p>These fields are intended to power the WHO startup version check and remotely editable product copy.</p>
-      <div class="settings">
-        <div class="setting"><div><strong>Latest version</strong><small>Soft update target.</small></div><input class="input" value="1.0.0"></div>
-        <div class="setting"><div><strong>Minimum version</strong><small>Versions below this value are blocked.</small></div><input class="input" value="1.0.0"></div>
-        <div class="setting"><div><strong>Force update enabled</strong><small>Use the minimum version threshold for blocking.</small></div><button class="toggle"><span></span></button></div>
-        <div class="setting"><div><strong>Update URL</strong><small>Where users should download the current release.</small></div><input class="input" placeholder="https://..."></div>
-        <div class="setting"><div><strong>Force-update title</strong><small>Remote popup heading.</small></div><input class="input" value="WHO update required"></div>
-        <div class="setting"><div><strong>Force-update message</strong><small>Remote explanatory copy.</small></div><textarea class="input" rows="4">You need to update this app to continue using it.</textarea></div>
-        <div class="setting"><div><strong>Force-update button</strong><small>Remote call-to-action.</small></div><input class="input" value="Update WHO"></div>
-      </div>
-      <div class="toolbar" style="margin-top:14px"><button class="btn primary" onclick="toast('Preview only — changes are not saved yet.')">Save configuration</button><button class="btn">Discard</button></div></div>
-    </section>
-
-    <section id="announcements" class="view">
-      <div class="panel"><h2>Announcements</h2><p>Versioned announcements let you change the Beta greeting later without forcing the same message to appear every launch.</p>
-      <div class="settings">
-        <div class="setting"><div><strong>Welcome enabled</strong><small>Show on first launch / unseen revision.</small></div><button class="toggle on"><span></span></button></div>
-        <div class="setting"><div><strong>Revision</strong><small>Increase this when a new announcement should be shown again.</small></div><input class="input" value="1"></div>
-        <div class="setting"><div><strong>Title</strong></div><input class="input" value="WHO Beta 1.0"></div>
-        <div class="setting"><div><strong>Message</strong></div><textarea class="input" rows="6">This is a WHO Beta 1.0 app created by Squashberry.
-
-We really appreciate your feedback as we continue improving WHO.
-
-You can send feedback to squashberrypro@gmail.com.
-
-WHO may occasionally ask you to update the app. Please install updates as soon as possible so you can continue using the latest features and fixes.
-
-Thank you for testing WHO.</textarea></div>
-        <div class="setting"><div><strong>Feedback email</strong></div><input class="input" value="squashberrypro@gmail.com"></div>
-        <div class="setting"><div><strong>Button text</strong></div><input class="input" value="Continue"></div>
-      </div><div class="toolbar" style="margin-top:14px"><button class="btn primary" onclick="toast('Preview only — announcement was not published.')">Publish announcement</button></div></div>
-    </section>
-
-    <section id="backups" class="view"><div class="panel"><h2>Backups</h2><p>WHO contact backup should be user-authorized and separate from community caller-intelligence observations. This area can later show backup/restore events without exposing the user's contact content to admins.</p><div class="empty">No backup service connected. Google Drive OAuth + per-user restore jobs will be implemented in the app/backend milestone.</div></div></section>
-
-    <section id="feedback" class="view">
-<div class="panel"><h2>Feedback inbox & publishing</h2><p>Feedback submitted by beta testers is private by default. Only entries an admin explicitly approves should be published to the public WHO feedback page.</p>
-<div class="toolbar"><input class="input" style="max-width:320px" placeholder="Search feedback"><button class="btn">Filter pending</button><button class="btn">Filter approved</button><button class="btn">Export</button></div>
-<div class="demo">Preview workflow: submissions are received → reviewed → edited/redacted if necessary → approved or rejected → approved entries become public feedback cards.</div>
-<table class="table"><tr><th>Feedback</th><th>Rating</th><th>Platform</th><th>Publish</th><th>Action</th></tr>
-<tr><td><strong>Clean caller experience</strong><br><span style="font-size:9px;color:#6f7c93">WHO Beta Tester</span></td><td>★★★★★</td><td>Android</td><td><span class="badge green">Approved</span></td><td><button class="btn">Edit</button></td></tr>
-<tr><td><strong>Simple and easy to understand</strong><br><span style="font-size:9px;color:#6f7c93">Beta Tester</span></td><td>★★★★</td><td>Android</td><td><span class="badge green">Approved</span></td><td><button class="btn">Edit</button></td></tr>
-<tr><td><strong>Sample pending feedback</strong><br><span style="font-size:9px;color:#6f7c93">Preview submission</span></td><td>★★★★★</td><td>Android</td><td><span class="badge amber">Pending</span></td><td><button class="btn primary" onclick="toast('Preview only — this action will connect to the WHO API.')">Approve</button> <button class="btn danger">Reject</button></td></tr>
-</table></div>
-<div class="panel" style="margin-top:13px"><h2>Publication safeguards</h2><div class="settings">
-<div class="setting"><div><strong>Public display requires approval</strong><small>Never publish raw submissions automatically.</small></div><button class="toggle on"><span></span></button></div>
-<div class="setting"><div><strong>Allow tester to request publication</strong><small>A user's request is not itself an approval.</small></div><button class="toggle on"><span></span></button></div>
-<div class="setting"><div><strong>Admin redaction required</strong><small>Review private names, emails, numbers and sensitive details before publishing.</small></div><button class="toggle on"><span></span></button></div>
-</div></div>
-</section>
-
-
-    <section id="crashes" class="view">
-      <div class="panel">
-        <div style="display:flex;justify-content:space-between;gap:15px;align-items:flex-start;flex-wrap:wrap">
-          <div>
-            <h2>Crash reports</h2>
-            <p>Receive, review and triage WHO application crashes. New reports stay in Pending until an admin marks them fixed. The live API will populate this view when the backend is connected.</p>
-          </div>
-          <button class="btn primary" onclick="refreshCrashReports()">↻ Refresh reports</button>
-        </div>
-
-        <div class="stats" style="margin-top:13px">
-          <div class="stat"><div class="k">Pending</div><div class="v" id="crashPendingCount">0</div><div class="trend warn">Needs review</div></div>
-          <div class="stat"><div class="k">Fixed</div><div class="v" id="crashFixedCount">0</div><div class="trend neutral">Resolved reports</div></div>
-          <div class="stat"><div class="k">Fatal</div><div class="v" id="crashFatalCount">0</div><div class="trend neutral">Fatal crashes</div></div>
-          <div class="stat"><div class="k">Today</div><div class="v" id="crashTodayCount">0</div><div class="trend neutral">Reports received</div></div>
-        </div>
-
-        <div class="toolbar" style="margin-top:15px">
-          <input id="crashSearch" class="input" style="max-width:320px" placeholder="Search error, version, platform or source" oninput="renderCrashReports()">
-          <select id="crashSort" class="input" style="max-width:190px" onchange="renderCrashReports()">
-            <option value="newest">Newest first</option>
-            <option value="oldest">Oldest first</option>
-            <option value="severity">Severity</option>
-            <option value="version">App version</option>
-            <option value="platform">Platform</option>
-          </select>
-          <button id="crashTabPending" class="btn primary" onclick="setCrashTab('pending')">Pending</button>
-          <button id="crashTabFixed" class="btn" onclick="setCrashTab('fixed')">Fixed</button>
-          <button id="crashTabAll" class="btn" onclick="setCrashTab('all')">All</button>
-          <button class="btn" onclick="loadPreviewCrash()">Load preview report</button>
-        </div>
-
-        <div class="demo">Preview mode: search, sorting, copying and Pending/Fixed workflow are functional now. The live API hookup will replace the preview data source when the backend is connected.</div>
-
-        <div style="overflow:auto">
-          <table class="table">
-            <thead>
-              <tr>
-                <th>Received</th>
-                <th>Severity</th>
-                <th>Version</th>
-                <th>Platform</th>
-                <th>Error</th>
-                <th>Status</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody id="crashTableBody">
-              <tr><td colspan="7"><div class="empty">No crash reports received yet.</div></td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <div id="crashDetailPanel" class="panel" style="margin-top:13px;display:none">
-        <div style="display:flex;justify-content:space-between;gap:12px;align-items:center">
-          <div>
-            <h2 id="crashDetailTitle">Crash report</h2>
-            <p id="crashDetailMeta" style="margin-bottom:0"></p>
-          </div>
-          <button class="btn" onclick="closeCrashDetail()">Close</button>
-        </div>
-
-        <div class="toolbar" style="margin-top:14px">
-          <button class="btn primary" onclick="copySelectedCrash()">Copy report</button>
-          <button id="crashFixButton" class="btn" onclick="toggleSelectedCrashFixed()">Mark fixed</button>
-          <button class="btn" onclick="toast('Fix notes will be stored with the backend record.')">Add fix note</button>
-        </div>
-
-        <pre id="crashDetailBody" style="white-space:pre-wrap;word-break:break-word;background:#070a10;border:1px solid var(--line);border-radius:14px;padding:15px;color:#b9c7da;font-size:10px;line-height:1.65;overflow:auto;max-height:520px"></pre>
-      </div>
-    </section>
-
-    <section id="analytics" class="view">
-      <div class="stats"><div class="stat"><div class="k">DAU</div><div class="v">—</div><div class="trend neutral">Pending</div></div><div class="stat"><div class="k">Retention</div><div class="v">—</div><div class="trend neutral">Pending</div></div><div class="stat"><div class="k">Caller ID lookups</div><div class="v">—</div><div class="trend neutral">Pending</div></div><div class="stat"><div class="k">Update adoption</div><div class="v">—</div><div class="trend neutral">Pending</div></div></div>
-      <div class="panel" style="margin-top:13px"><h2>Analytics architecture</h2><div class="empty">The final dashboard can expose aggregated events only: sign-ins, active devices, caller-ID requests, report counts, version adoption and crash-free sessions. Avoid storing raw contact content in analytics.</div></div>
-    </section>
-
-    <section id="settings" class="view"><div class="panel"><h2>System settings</h2><div class="settings">
-      <div class="setting"><div><strong>Maintenance mode</strong><small>Block new sessions while preserving a custom maintenance message.</small></div><button class="toggle"><span></span></button></div>
-      <div class="setting"><div><strong>Default app message</strong><small>Remote informational copy for the mobile app.</small></div><input class="input" value="WHO is currently in beta."></div>
-      <div class="setting"><div><strong>API base URL</strong></div><input class="input" placeholder="https://api.who.example"></div>
-      <div class="setting"><div><strong>Admin access policy</strong><small>Production admin should be protected by a dedicated identity layer.</small></div><select class="input"><option>Cloudflare Access / SSO</option><option>Firebase Authentication</option><option>Supabase Auth</option></select></div>
-    </div></div></section>
-
-    <section id="audit" class="view"><div class="panel"><h2>Audit log</h2><p>Every future administrative mutation should create an immutable audit entry with actor, timestamp, action, target and result.</p><table class="table"><tr><th>Time</th><th>Actor</th><th>Action</th><th>Status</th></tr><tr><td>—</td><td>—</td><td>Preview mode</td><td><span class="badge amber">Not connected</span></td></tr></table></div></section>
-  </main>
-</div>
-
-<div id="toast" style="position:fixed;right:18px;bottom:18px;display:none;max-width:340px;padding:12px 14px;border:1px solid rgba(255,255,255,.09);background:rgba(12,16,25,.92);backdrop-filter:blur(15px);border-radius:12px;color:#cbd7e8;font-size:10px;box-shadow:0 20px 55px rgba(0,0,0,.45)"></div>
-
-<script>
-  const titles={
-    overview:['Overview','Your WHO product at a glance.'],
-    users:['Users','Account, device and app-version management.'],
-    identity:['Caller Intelligence','Review and moderate identity signals.'],
-    reports:['Reports & Spam','Moderate reported numbers and reputation signals.'],
-    releases:['Releases','Control versions, minimum versions and download targets.'],
-    remote:['Remote Config','Change mobile app behavior and copy without rebuilding.'],
-    announcements:['Announcements','Publish revisioned welcome and product messages.'],
-    backups:['Backups','Monitor privacy-preserving backup and restore operations.'],
-    feedback:['Feedback','Review messages from WHO testers and users.'],
-    crashes:['Crash Reports','Receive, inspect, sort and resolve WHO application crashes.'],
-    analytics:['Analytics','Aggregated product and reliability signals.'],
-    settings:['Settings','System-wide WHO controls.'],
-    audit:['Audit Log','Record every administrative mutation.']
-  };
-  function enterDemo(){document.getElementById('login').style.display='none';document.getElementById('app').style.display='grid';renderCrashReports();}
-  function logout(){document.getElementById('app').style.display='none';document.getElementById('login').style.display='grid';}
-  function switchView(id){
-    document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===id));
-    document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===id));
-    document.getElementById('viewTitle').textContent=titles[id][0];
-    document.getElementById('viewSubtitle').textContent=titles[id][1];
-  }
-  document.querySelectorAll('.nav button').forEach(btn=>btn.addEventListener('click',()=>switchView(btn.dataset.view)));
-  document.querySelectorAll('.toggle').forEach(t=>t.addEventListener('click',()=>t.classList.toggle('on')));
-
-  let crashTab = 'pending';
-  let selectedCrashId = null;
-
-  let crashRecords = (() => {
-    try {
-      return JSON.parse(localStorage.getItem('who_admin_crash_preview') || '[]');
-    } catch (_) {
-      return [];
-    }
-  })();
-
-  function persistCrashRecords() {
-    localStorage.setItem('who_admin_crash_preview', JSON.stringify(crashRecords));
-  }
-
-  function setCrashTab(tab) {
-    crashTab = tab;
-    document.getElementById('crashTabPending').classList.toggle('primary', tab === 'pending');
-    document.getElementById('crashTabFixed').classList.toggle('primary', tab === 'fixed');
-    document.getElementById('crashTabAll').classList.toggle('primary', tab === 'all');
-    renderCrashReports();
-  }
-
-  function crashTimestamp(record) {
-    const value = record.received_at || record.timestamp || record.receivedAt;
-    const date = value ? new Date(value) : new Date(0);
-    return Number.isNaN(date.getTime()) ? new Date(0) : date;
-  }
-
-  function filteredCrashRecords() {
-    const query = (document.getElementById('crashSearch')?.value || '').trim().toLowerCase();
-    const sort = document.getElementById('crashSort')?.value || 'newest';
-
-    let rows = crashRecords.filter(record => {
-      const status = record.status || 'pending';
-      if (crashTab === 'pending' && status !== 'pending') return false;
-      if (crashTab === 'fixed' && status !== 'fixed') return false;
-      if (!query) return true;
-
-      const haystack = [
-        record.error,
-        record.stack,
-        record.app_version,
-        record.version,
-        record.build,
-        record.platform,
-        record.os_version,
-        record.source,
-        record.id
-      ].map(v => String(v ?? '')).join(' ').toLowerCase();
-
-      return haystack.includes(query);
-    });
-
-    rows.sort((a, b) => {
-      if (sort === 'oldest') return crashTimestamp(a) - crashTimestamp(b);
-      if (sort === 'severity') return Number(Boolean(b.fatal)) - Number(Boolean(a.fatal));
-      if (sort === 'version') return String(a.app_version || a.version || '').localeCompare(String(b.app_version || b.version || ''));
-      if (sort === 'platform') return String(a.platform || '').localeCompare(String(b.platform || ''));
-      return crashTimestamp(b) - crashTimestamp(a);
-    });
-
-    return rows;
-  }
-
-  function renderCrashReports() {
-    const tbody = document.getElementById('crashTableBody');
-    if (!tbody) return;
-
-    const rows = filteredCrashRecords();
-    const pending = crashRecords.filter(r => (r.status || 'pending') === 'pending');
-    const fixed = crashRecords.filter(r => (r.status || 'pending') === 'fixed');
-    const fatal = crashRecords.filter(r => Boolean(r.fatal));
-    const todayKey = new Date().toISOString().slice(0, 10);
-    const today = crashRecords.filter(r => crashTimestamp(r).toISOString().slice(0, 10) === todayKey);
-
-    document.getElementById('crashPendingCount').textContent = pending.length;
-    document.getElementById('crashFixedCount').textContent = fixed.length;
-    document.getElementById('crashFatalCount').textContent = fatal.length;
-    document.getElementById('crashTodayCount').textContent = today.length;
-
-    if (!rows.length) {
-      tbody.innerHTML = '<tr><td colspan="7"><div class="empty">No crash reports match this view.</div></td></tr>';
-      return;
-    }
-
-    tbody.innerHTML = rows.map(record => {
-      const id = String(record.id || '');
-      const date = crashTimestamp(record).toLocaleString();
-      const severity = record.fatal ? 'Fatal' : 'Non-fatal';
-      const badge = record.fatal ? 'red' : 'amber';
-      const status = record.status || 'pending';
-      const statusClass = status === 'fixed' ? 'green' : 'amber';
-      const version = record.app_version || record.version || '—';
-      const error = String(record.error || 'Unknown error')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;');
-      const platform = String(record.platform || '—');
-
-      return '<tr>' +
-        '<td>' + date + '</td>' +
-        '<td><span class="badge ' + badge + '">' + severity + '</span></td>' +
-        '<td>' + version + '</td>' +
-        '<td>' + platform + '</td>' +
-        '<td style="max-width:280px;overflow:hidden;text-overflow:ellipsis">' + error + '</td>' +
-        '<td><span class="badge ' + statusClass + '">' + status + '</span></td>' +
-        '<td><button class="btn" onclick="openCrashDetail(' + JSON.stringify(id) + ')">Review</button></td>' +
-        '</tr>';
-    }).join('');
-  }
-
-  function openCrashDetail(id) {
-    const record = crashRecords.find(item => String(item.id) === String(id));
-    if (!record) return;
-
-    selectedCrashId = record.id;
-
-    document.getElementById('crashDetailPanel').style.display = 'block';
-    document.getElementById('crashDetailTitle').textContent =
-      (record.fatal ? 'Fatal crash' : 'Crash report') + ' · ' + (record.id || 'unknown id');
-
-    document.getElementById('crashDetailMeta').textContent = [
-      record.received_at || record.timestamp || 'unknown time',
-      record.app_version || record.version || 'unknown version',
-      record.platform || 'unknown platform',
-      record.os_version || 'unknown OS'
-    ].join(' · ');
-
-    document.getElementById('crashDetailBody').textContent =
-      JSON.stringify(record, null, 2);
-
-    document.getElementById('crashFixButton').textContent =
-      (record.status || 'pending') === 'fixed'
-        ? 'Move back to pending'
-        : 'Mark fixed';
-
-    document.getElementById('crashDetailPanel').scrollIntoView({
-      behavior: 'smooth',
-      block: 'start'
-    });
-  }
-
-  function closeCrashDetail() {
-    selectedCrashId = null;
-    document.getElementById('crashDetailPanel').style.display = 'none';
-  }
-
-  async function copySelectedCrash() {
-    if (!selectedCrashId) return;
-
-    const record = crashRecords.find(item => String(item.id) === String(selectedCrashId));
-    if (!record) return;
-
-    const text = JSON.stringify(record, null, 2);
-
-    try {
-      await navigator.clipboard.writeText(text);
-      toast('Crash report copied to clipboard.');
-    } catch (_) {
-      const area = document.createElement('textarea');
-      area.value = text;
-      document.body.appendChild(area);
-      area.select();
-      document.execCommand('copy');
-      area.remove();
-      toast('Crash report copied to clipboard.');
-    }
-  }
-
-  function toggleSelectedCrashFixed() {
-    if (!selectedCrashId) return;
-
-    const record = crashRecords.find(item => String(item.id) === String(selectedCrashId));
-    if (!record) return;
-
-    if ((record.status || 'pending') === 'fixed') {
-      record.status = 'pending';
-      delete record.fixed_at;
-      delete record.fixed_by;
-    } else {
-      record.status = 'fixed';
-      record.fixed_at = new Date().toISOString();
-      record.fixed_by = 'SQUASHBERRY · ADMIN';
-    }
-
-    persistCrashRecords();
-    openCrashDetail(record.id);
-    renderCrashReports();
-
-    toast(
-      record.status === 'fixed'
-        ? 'Crash report moved to Fixed.'
-        : 'Crash report reopened.'
-    );
-  }
-
-  function loadPreviewCrash() {
-    const now = new Date().toISOString();
-
-    crashRecords.unshift({
-      id: 'preview-' + Date.now(),
-      received_at: now,
-      timestamp: now,
-      app_version: '1.0.0',
-      build: '1',
-      platform: 'android',
-      os_version: '12',
-      fatal: true,
-      source: 'flutter',
-      installation_id: 'preview-installation',
-      error: 'Preview crash report — not a real user crash.',
-      stack: 'Preview stack trace. Real reports will come from POST /crash.'
-    });
-
-    persistCrashRecords();
-    setCrashTab('pending');
-    toast('Preview crash report added.');
-  }
-
-  async function refreshCrashReports() {
-    toast('Preview mode: waiting for WHO API connection.');
-    renderCrashReports();
-  }
-
-  function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.style.display='block';clearTimeout(window.__t);window.__t=setTimeout(()=>t.style.display='none',2400)}
-</script>
+  <nav class="mobile-admin-nav" id="mobileAdminNav">
+    <button class="active" data-page="overview"><span>⌂</span><small>Home</small></button>
+    <button data-page="caller"><span>⌕</span><small>Caller</small></button>
+    <button data-page="remote"><span>⚙</span><small>Config</small></button>
+    <button data-page="crashes"><span>!</span><small>Crashes</small></button>
+    <button data-page="audit"><span>◌</span><small>Audit</small></button>
+  </nav>
+
+  <div class="toast" id="toast"></div>
+  <script src="admin.js" defer></script>
 </body>
 </html>
