@@ -20,13 +20,19 @@
   <style>
     html{background:#060812}
     body{margin:0;background:#060812;color:#f7f9ff}
-    #boot{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;background:#060812;transition:opacity .35s ease,visibility .35s ease}
-    #boot.hide{opacity:0;visibility:hidden}
-    .boot-mark{width:72px;height:72px;border-radius:24px;background:linear-gradient(145deg,#77d4ff,#1687ff 58%,#0751c5);display:grid;place-items:center;box-shadow:0 22px 70px rgba(22,135,255,.35)}
-    .boot-mark svg{width:36px;height:36px}
-    .boot-line{margin-top:18px;width:72px;height:3px;background:#1b2940;border-radius:99px;overflow:hidden}
-    .boot-line i{display:block;width:45%;height:100%;background:#62c7ff;border-radius:99px;animation:boot 1s ease-in-out infinite}
-    @keyframes boot{0%{transform:translateX(-100%)}100%{transform:translateX(240%)}}
+    #boot{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;background:#060812;transition:opacity .55s cubic-bezier(.22,.8,.24,1),visibility .55s ease,transform .55s cubic-bezier(.22,.8,.24,1)}
+    #boot.hide{opacity:0;visibility:hidden;transform:scale(1.015)}
+    .boot-shell{width:min(300px,calc(100% - 48px));text-align:center}
+    .boot-mark{width:76px;height:76px;margin:0 auto;border-radius:25px;background:linear-gradient(145deg,#77d4ff,#1687ff 58%,#0751c5);display:grid;place-items:center;box-shadow:0 22px 70px rgba(22,135,255,.35);animation:bootMarkIn .75s cubic-bezier(.2,.8,.2,1) both}
+    .boot-mark svg{width:38px;height:38px}
+    .boot-title{margin-top:18px;font-size:15px;font-weight:900;letter-spacing:-.03em}
+    .boot-sub{margin-top:5px;color:#687993;font-size:10px}
+    .boot-progress{margin:20px auto 0;height:5px;width:100%;overflow:hidden;border-radius:99px;background:#172237;border:1px solid rgba(255,255,255,.04)}
+    .boot-progress i{display:block;width:0;height:100%;border-radius:99px;background:linear-gradient(90deg,#46bbff,#1687ff);box-shadow:0 0 18px rgba(64,194,255,.45);transition:width .3s cubic-bezier(.2,.8,.2,1)}
+    .boot-status{display:flex;justify-content:space-between;gap:12px;margin-top:9px;color:#566681;font-size:9px}
+    .boot-status strong{color:#86cbef;font-weight:800}
+    @keyframes bootMarkIn{from{opacity:0;transform:translateY(12px) scale(.92)}to{opacity:1;transform:none}}
+    @media(prefers-reduced-motion:reduce){#boot,.boot-mark,.boot-progress i{transition:none!important;animation:none!important}}
   </style>
   <link rel="stylesheet" href="app.css">
 </head>
@@ -54,11 +60,14 @@
   </div>
 
   <div id="boot" aria-hidden="true">
-    <div>
+    <div class="boot-shell">
       <div class="boot-mark">
         <svg viewBox="0 0 64 64" fill="none" aria-hidden="true"><path d="M16 15v34h7V30l18 19h7V15h-7v19L23 15h-7Z" fill="white"/></svg>
       </div>
-      <div class="boot-line"><i></i></div>
+      <div class="boot-title">Starting WHO</div>
+      <div class="boot-sub">Loading your phone experience</div>
+      <div class="boot-progress" aria-label="WHO loading progress"><i id="bootProgressBar"></i></div>
+      <div class="boot-status"><span id="bootStatus">Preparing WHO…</span><strong id="bootPercent">0%</strong></div>
     </div>
   </div>
 
