@@ -33,6 +33,82 @@
 
   window.addEventListener('hashchange', readView);
 
+
+  function initBetaWelcome() {
+    const popup = document.getElementById('betaWelcome');
+    if (!popup) return;
+
+    const seen = localStorage.getItem('who_beta_welcome_seen') === '1';
+
+    function closeBeta() {
+      popup.classList.remove('show');
+      popup.setAttribute('aria-hidden', 'true');
+      localStorage.setItem('who_beta_welcome_seen', '1');
+    }
+
+    popup.querySelectorAll('[data-beta-close]').forEach((element) => {
+      element.addEventListener('click', closeBeta);
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && popup.classList.contains('show')) {
+        closeBeta();
+      }
+    });
+
+    if (!seen) {
+      setTimeout(() => {
+        popup.classList.add('show');
+        popup.setAttribute('aria-hidden', 'false');
+      }, 1050);
+    }
+  }
+
+  function initBetaFeedback() {
+    const grid = document.getElementById('homeFeedbackGrid');
+    const empty = document.getElementById('homeFeedbackEmpty');
+    if (!grid || !empty) return;
+
+    fetch('data/approved-feedback.json', { cache: 'no-store' })
+      .then((response) => response.ok ? response.json() : [])
+      .then((list) => {
+        const approved = (Array.isArray(list) ? list : [])
+          .filter((item) => item && item.approved === true)
+          .slice(-3)
+          .reverse();
+
+        if (!approved.length) {
+          empty.style.display = 'block';
+          return;
+        }
+
+        empty.style.display = 'none';
+        grid.innerHTML = approved.map((item) => {
+          const rating = Math.max(1, Math.min(5, Number(item.rating) || 5));
+          const name = String(item.name || 'WHO Beta Tester')
+            .replace(/[&<>"]/g, (character) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[character]));
+          const title = String(item.title || 'Beta feedback')
+            .replace(/[&<>"]/g, (character) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[character]));
+          const message = String(item.message || '')
+            .replace(/[&<>"]/g, (character) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[character]));
+          const platform = String(item.platform || 'WHO')
+            .replace(/[&<>"]/g, (character) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[character]));
+          const version = String(item.version || '1.0.0')
+            .replace(/[&<>"]/g, (character) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[character]));
+
+          return '<article class="home-review">' +
+            '<div class="home-review-top"><span class="home-review-name">' + name + '</span><span class="home-review-stars">' + '★'.repeat(rating) + '</span></div>' +
+            '<div class="home-review-title">' + title + '</div>' +
+            '<div class="home-review-text">' + message + '</div>' +
+            '<div class="home-review-meta"><span>' + platform + '</span><span>Beta ' + version + '</span></div>' +
+            '</article>';
+        }).join('');
+      })
+      .catch(() => {
+        empty.style.display = 'block';
+      });
+  }
+
   function showInstallHelp() {
     const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
     if (isIOS && !window.matchMedia('(display-mode: standalone)').matches) {
@@ -62,6 +138,8 @@
   window.addEventListener('load', () => {
     setTimeout(() => boot.classList.add('hide'), 520);
     setTimeout(readView, 20);
+    initBetaWelcome();
+    initBetaFeedback();
   });
 
   if ('serviceWorker' in navigator) {
