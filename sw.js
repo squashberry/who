@@ -1,4 +1,4 @@
-const CACHE = 'who-web-v3';
+const CACHE = 'who-web-v4';
 const CORE = [
   './',
   './index.html',
