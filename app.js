@@ -1,8 +1,5 @@
 (() => {
   const boot = document.getElementById('boot');
-  const installBtns = [document.getElementById('installBtn'), document.getElementById('installBtnLarge')].filter(Boolean);
-  let deferredPrompt = null;
-
   const screens = [...document.querySelectorAll('.screen-section[data-screen]')];
   const navItems = [...document.querySelectorAll('[data-view]')];
 
@@ -113,32 +110,6 @@
       });
   }
 
-  function showInstallHelp() {
-    const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
-    if (isIOS && !window.matchMedia('(display-mode: standalone)').matches) {
-      alert('To install WHO on iPhone/iPad: tap Share, then choose “Add to Home Screen”.');
-      return;
-    }
-    if (!deferredPrompt) {
-      alert('WHO is already installed, or your browser is not showing the install prompt yet. On supported browsers, open the browser menu and choose “Install” or “Add to Home screen”.');
-      return;
-    }
-    deferredPrompt.prompt();
-    deferredPrompt.userChoice.finally(() => {
-      deferredPrompt = null;
-    });
-  }
-
-  installBtns.forEach((btn) => btn.addEventListener('click', showInstallHelp));
-  window.addEventListener('beforeinstallprompt', (event) => {
-    event.preventDefault();
-    deferredPrompt = event;
-  });
-
-  window.addEventListener('appinstalled', () => {
-    deferredPrompt = null;
-  });
-
   function setBootProgress(value, status) {
     const bar = document.getElementById('bootProgressBar');
     const percent = document.getElementById('bootPercent');
@@ -182,6 +153,8 @@
   });
 
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js').catch(() => {});
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      registrations.forEach((registration) => registration.unregister());
+    }).catch(() => {});
   }
 })();
