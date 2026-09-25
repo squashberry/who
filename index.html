@@ -5,10 +5,6 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#060812">
   <meta name="color-scheme" content="dark">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="WHO">
   <meta name="description" content="WHO is a phone experience built around caller intelligence, calls, contacts, messages, Relay and network privacy.">
   <meta property="og:title" content="WHO — Your phone, understood.">
   <meta property="og:description" content="Caller intelligence, smarter calling, WHO Relay and private network tools in one app.">
@@ -16,7 +12,6 @@
   <title>WHO — Your phone, understood.</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
-  <link rel="manifest" href="site.webmanifest">
   <style>
     html{background:#060812}
     body{margin:0;background:#060812;color:#f7f9ff}
@@ -91,7 +86,6 @@
       </nav>
 
       <div class="top-actions">
-        <button class="icon-btn" id="installBtn" type="button" title="Install WHO" aria-label="Install WHO">↥</button>
         <a class="top-cta" href="#install" data-view="install">Get WHO</a>
       </div>
     </div>
@@ -324,25 +318,24 @@
     <section id="install" class="screen-section" data-screen="install">
       <div class="shell install-hero">
         <div class="install-copy">
-          <span class="eyebrow">Get WHO</span>
-          <h2>Install WHO.<br><span class="gradient-text">Use it like an app.</span></h2>
-          <p>WHO's site itself is installable as a PWA, while the real WHO phone app is Android-first during Beta 1.0.</p>
-          <div class="install-actions"><button class="btn btn-primary" id="installBtnLarge" type="button">Install this web app <span>↥</span></button><a class="btn btn-secondary" href="download.html">Android download page</a></div>
-          <div class="platform-row"><span><b>Android</b><small>Beta 1.0 active path</small></span><span><b>iPhone</b><small>planned</small></span><span><b>iPad</b><small>planned</small></span><span><b>Desktop</b><small>planned</small></span></div>
+          <span class="eyebrow">GET WHO</span>
+          <h2>Install WHO.<br><span class="gradient-text">Use it on your phone.</span></h2>
+          <p>WHO is a real phone app. During Beta 1.0, Android is the active platform. This website is only the product site and download point — there is no separate WHO web app to install.</p>
+          <div class="install-actions">
+            <a class="btn btn-primary" href="https://github.com/squashberry/who-app/releases/latest/download/WHO-v1.0.0.apk">Download WHO for Android <span>↓</span></a>
+            <a class="btn btn-secondary" href="#features" data-view="features">See what WHO does</a>
+          </div>
         </div>
         <div class="install-card">
           <div class="install-icon"><span>W</span></div>
-          <strong>WHO Web App</strong><span>Fast, installable, app-like.</span><div class="install-checks"><span>✓ Mobile-first</span><span>✓ Works from the home screen</span><span>✓ No giant image bundles</span><span>✓ Offline shell caching</span></div>
-        </div>
-      </div>
-
-      <div class="shell faq">
-        <div><span class="eyebrow">Quick answers</span><h3>WHO, without the noise.</h3></div>
-        <div class="faq-list">
-          <details open><summary>Is WHO only a caller-ID app?</summary><p>No. Caller intelligence is one part of a larger phone experience that includes dialer, contacts, SMS, call controls, Relay and network features.</p></details>
-          <details><summary>What is WHO Relay?</summary><p>It is the device-to-device internet sharing system inside WHO. One device can host, another can receive, and the connection uses a session-authenticated local path.</p></details>
-          <details><summary>What does WHO VPN do?</summary><p>WHO contains a native Android VPN/tun2socks path used by features such as Relay and network protection flows.</p></details>
-          <details><summary>Can WHO become the default dialer?</summary><p>On supported Android builds, WHO includes the system default-phone and call-screening role flow.</p></details>
+          <strong>WHO Android Beta 1.0</strong>
+          <span>The actual WHO phone app.</span>
+          <div class="install-checks">
+            <span>✓ Caller ID &amp; intelligence</span>
+            <span>✓ Dialer &amp; calls</span>
+            <span>✓ SMS &amp; contacts</span>
+            <span>✓ Relay &amp; network tools</span>
+          </div>
         </div>
       </div>
     </section>
@@ -353,7 +346,7 @@
       <div class="footer-brand"><span class="brand-icon"><span>W</span></span><div><b>WHO</b><small>caller intelligence · calling · network</small></div></div>
       <div class="footer-links"><a href="#home" data-view="home">Home</a><a href="#features" data-view="features">Features</a><a href="#relay" data-view="relay">Relay</a><a href="#vpn" data-view="vpn">Network</a><a href="#install" data-view="install">Get WHO</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="#feedback" data-view="feedback">Feedback</a><a href="admin/">Admin</a></div>
     </div>
-    <div class="shell footer-bottom"><span>© 2026 Squashberry · WHO Beta 1.0</span><span>Built as a lightweight PWA-ready site.</span></div>
+    <div class="shell footer-bottom"><span>© 2026 Squashberry · WHO Beta 1.0</span><span>WHO website · download the phone app here.</span></div>
   </footer>
 
   <nav class="mobile-tabs" aria-label="Mobile navigation">
