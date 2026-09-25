@@ -1,6 +1,6 @@
 # WHO Control API
 
-This is the production control/API layer for the WHO website Admin panel.
+This is the production control/API layer for the WHO website Admin panel. It is intentionally deployed as `who-control-api` so it does not overwrite the existing mobile `who-api` Worker.
 
 ## Important
 
@@ -36,4 +36,4 @@ Set `ADMIN_API_KEY` as a Worker secret. Never commit it.
 
 ## D1
 
-Set `database_id` in `wrangler.toml` to the existing WHO D1 database ID when one already exists. D1 bindings use the configured database ID and binding name. See Cloudflare's current Wrangler/D1 configuration guidance.
+Use the same existing WHO D1 database that backs the mobile API when you want Admin changes to become the app's live remote configuration. The deploy script refuses to create a new database automatically. Do not change the Flutter app's `who-api` URL until the shared D1/schema is verified.
