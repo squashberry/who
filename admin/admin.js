@@ -148,13 +148,17 @@
       announcementRevision:Number(val('annRevision','announcementRevision')||0),
       announcementTitle:val('announcementTitle','announcementTitle')||val('annTitle','announcementTitle'),
       announcementMessage:val('announcementMessage','announcementMessage')||val('annMessage','announcementMessage'),
-      announcementButtonText:val('annButton','announcementButtonText')||'Continue'
+      announcementButtonText:val('annButton','announcementButtonText')||'Continue',
+      announcementActionEnabled:checked('annActionEnabled','announcementActionEnabled'),
+      announcementActionType:val('annActionType','announcementActionType'),
+      announcementActionButtonText:val('annActionButton','announcementActionButtonText'),
+      announcementActionUrl:val('annActionUrl','announcementActionUrl')
     };
   }
 
   function loadForm(){
     const c=state.config||{};
-    ['appVersion','latestVersion','minimumVersion','updateUrl','forceTitle','forceMessage','forceButton','welcomeRevision','welcomeTitle','welcomeEmail','welcomeMessage','welcomeButton','maintenanceTitle','maintenanceMessage','announcementTitle','announcementMessage','annRevision','annTitle','annMessage','annButton'].forEach(id=>{
+    ['appVersion','latestVersion','minimumVersion','updateUrl','forceTitle','forceMessage','forceButton','welcomeRevision','welcomeTitle','welcomeEmail','welcomeMessage','welcomeButton','maintenanceTitle','maintenanceMessage','announcementTitle','announcementMessage','annRevision','annTitle','annMessage','annButton','annActionType','annActionButton','annActionUrl'].forEach(id=>{
       const map={
         forceTitle:'forceUpdateTitle',forceMessage:'forceUpdateMessage',forceButton:'forceUpdateButton',
         welcomeButton:'welcomeButtonText',announcementTitle:'announcementTitle',announcementMessage:'announcementMessage',
@@ -162,11 +166,12 @@
       };
       assign(id,c[map[id]||id]);
     });
-    ['forceUpdate','welcomeEnabled','maintenanceEnabled','announcementEnabled'].forEach(id=>assign(id,c[id]));
+    ['forceUpdate','welcomeEnabled','maintenanceEnabled','announcementEnabled','annActionEnabled'].forEach(id=>assign(id,c[id]));
     toggle('forceToggle',!!c.forceUpdate);
     toggle('welcomeToggle',!!c.welcomeEnabled);
     toggle('maintenanceToggle',!!c.maintenanceEnabled);
     toggle('announcementToggle',!!c.announcementEnabled);
+    assign('annActionEnabled',!!c.announcementActionEnabled);
   }
 
   async function saveConfig(){
@@ -243,7 +248,7 @@
   };
 
   window.publishAnnouncement=async()=>{
-    const c={...state.config,announcementEnabled:true,announcementRevision:Number(document.getElementById('annRevision')?.value||1),announcementTitle:document.getElementById('annTitle')?.value||'',announcementMessage:document.getElementById('annMessage')?.value||'',announcementButtonText:document.getElementById('annButton')?.value||'Continue'};
+    const c={...state.config,announcementEnabled:true,announcementRevision:Number(document.getElementById('annRevision')?.value||1),announcementTitle:document.getElementById('annTitle')?.value||'',announcementMessage:document.getElementById('annMessage')?.value||'',announcementButtonText:document.getElementById('annButton')?.value||'Continue',announcementActionEnabled:!!document.getElementById('annActionEnabled')?.checked,announcementActionType:document.getElementById('annActionType')?.value||'',announcementActionButtonText:document.getElementById('annActionButton')?.value||'',announcementActionUrl:document.getElementById('annActionUrl')?.value||''};
     try{const r=await api('/admin/config',{method:'PUT',body:JSON.stringify({config:c})});state.config=r.config;renderAll();toast('Announcement published.');}catch(e){toast(e.message);}
   };
 
