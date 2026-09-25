@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="60" y1="40" x2="1140" y2="590" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0A1322"/>
+      <stop offset="0.55" stop-color="#060812"/>
+      <stop offset="1" stop-color="#071321"/>
+    </linearGradient>
+    <linearGradient id="blue" x1="190" y1="130" x2="850" y2="500" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#8BE1FF"/>
+      <stop offset="0.5" stop-color="#1687FF"/>
+      <stop offset="1" stop-color="#0751C5"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(920 150) rotate(135) scale(390)">
+      <stop stop-color="#1687FF" stop-opacity=".28"/>
+      <stop offset="1" stop-color="#1687FF" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="shadow" x="-40%" y="-40%" width="180%" height="180%">
+      <feDropShadow dx="0" dy="24" stdDeviation="30" flood-color="#000000" flood-opacity=".42"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="630" rx="34" fill="url(#bg)"/>
+  <rect width="1200" height="630" rx="34" fill="url(#glow)"/>
+
+  <g opacity=".16">
+    <path d="M0 94H1200M0 172H1200M0 250H1200M0 328H1200M0 406H1200M0 484H1200M0 562H1200" stroke="#8EA6C8" stroke-width="1"/>
+    <path d="M76 0V630M176 0V630M276 0V630M376 0V630M476 0V630M576 0V630M676 0V630M776 0V630M876 0V630M976 0V630M1076 0V630" stroke="#8EA6C8" stroke-width="1"/>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="78" y="88" width="112" height="112" rx="31" fill="url(#blue)"/>
+    <path d="M108 111V177H122V140L158 177H172V111H158V148L122 111H108Z" fill="white"/>
+  </g>
+
+  <text x="78" y="265" fill="#72CAFF" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="18" font-weight="800" letter-spacing="4">WHO BETA 1.0</text>
+
+  <text x="78" y="335" fill="#F7F9FF" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="66" font-weight="900" letter-spacing="-3">Your phone,</text>
+  <text x="78" y="405" fill="#72CAFF" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="66" font-weight="900" letter-spacing="-3">understood.</text>
+
+  <text x="78" y="452" fill="#9BA9BE" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="21" font-weight="500">
+    Caller intelligence · calling · SMS · Relay · network tools
+  </text>
+
+  <g transform="translate(820 115)" filter="url(#shadow)">
+    <rect x="0" y="0" width="250" height="408" rx="34" fill="#101927" stroke="#31445F" stroke-width="2"/>
+    <rect x="10" y="10" width="230" height="388" rx="27" fill="#F7F9FF"/>
+    <rect x="78" y="18" width="94" height="17" rx="8.5" fill="#101927"/>
+    <text x="28" y="64" fill="#0C1522" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="15" font-weight="850">WHO</text>
+
+    <rect x="24" y="86" width="202" height="76" rx="18" fill="#EAF6FF"/>
+    <circle cx="52" cy="124" r="18" fill="#1687FF"/>
+    <text x="52" y="130" text-anchor="middle" fill="white" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="15" font-weight="900">K</text>
+    <text x="82" y="113" fill="#718096" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="8" font-weight="800" letter-spacing="1.5">INCOMING CALL</text>
+    <text x="82" y="131" fill="#101927" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="12" font-weight="850">Kairaba Business</text>
+    <text x="82" y="147" fill="#7A879A" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="8">WHO match found</text>
+
+    <rect x="24" y="180" width="202" height="66" rx="17" fill="#0E1827"/>
+    <text x="40" y="202" fill="#6FCBFF" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="8" font-weight="800" letter-spacing="1">CALLER CONFIDENCE</text>
+    <text x="40" y="222" fill="#F7F9FF" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="12" font-weight="850">High confidence</text>
+    <rect x="40" y="230" width="154" height="4" rx="2" fill="#23344B"/>
+    <rect x="40" y="230" width="124" height="4" rx="2" fill="#1687FF"/>
+
+    <rect x="24" y="264" width="202" height="54" rx="16" fill="#F1F5FA" stroke="#D9E3EE"/>
+    <text x="42" y="285" fill="#1687FF" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="14" font-weight="900">✓</text>
+    <text x="64" y="284" fill="#283547" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="9" font-weight="750">Community signal</text>
+    <text x="64" y="301" fill="#7B8899" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="8">Not on your contacts</text>
+
+    <rect x="24" y="338" width="202" height="34" rx="12" fill="#1687FF"/>
+    <text x="125" y="359" text-anchor="middle" fill="white" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="10" font-weight="850">WHO for Android · Beta 1.0</text>
+  </g>
+
+  <text x="78" y="548" fill="#667892" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="15" font-weight="700">squashberry.github.io/who/</text>
+  <circle cx="1092" cy="548" r="5" fill="#1687FF"/>
+</svg>
