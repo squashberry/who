@@ -102,7 +102,7 @@
 
         <section class="page" data-section="crashes">
           <div class="section-title"><span class="eyebrow">CRASH CENTER</span><h2>Find what broke. Fast.</h2><p>These rows come from the live WHO D1 crash_reports table through the existing admin Worker endpoints.</p></div>
-          <div class="stats-grid"><div class="stat-card"><small>Pending</small><strong id="pendingCrash">0</strong><span>Needs review</span></div><div class="stat-card"><small>Fixed</small><strong id="fixedCrash">0</strong><span>Resolved locally</span></div><div class="stat-card"><small>Fatal</small><strong id="fatalCrash">0</strong><span>Preview only</span></div><div class="stat-card"><small>Today</small><strong id="todayCrash">0</strong><span>Preview only</span></div></div>
+          <div class="stats-grid"><div class="stat-card"><small>Pending</small><strong id="pendingCrash">0</strong><span>Needs review</span></div><div class="stat-card"><small>Fixed</small><strong id="fixedCrash">0</strong><span>Marked fixed in backend</span></div><div class="stat-card"><small>Fatal</small><strong id="fatalCrash">0</strong><span>Loaded crash records</span></div><div class="stat-card"><small>Today</small><strong id="todayCrash">0</strong><span>Loaded crash records</span></div></div>
           <div class="panel table-panel"><div class="toolbar"><div class="segmented"><button class="active" data-crash-filter="pending">Pending</button><button data-crash-filter="fixed">Fixed</button><button data-crash-filter="all">All</button></div><button class="ghost-btn" id="refreshCrashes">Refresh</button></div><div class="table-wrap"><table><thead><tr><th>Time</th><th>Severity</th><th>Version</th><th>Platform</th><th>Error</th><th>Status</th><th></th></tr></thead><tbody id="crashBody"></tbody></table></div></div>
         </section>
 
@@ -113,7 +113,7 @@
 
         <section class="page" data-section="audit">
           <div class="section-title"><span class="eyebrow">AUDIT</span><h2>Every admin mutation should leave a trace.</h2><p>The production dashboard should record actor, timestamp, target, old value, new value and result.</p></div>
-          <div class="panel empty-panel"><span class="eyebrow">BACKEND CONTRACT</span><h3>Audit endpoint not exposed</h3><p>The D1 audit_logs table exists, but the current Worker does not expose an admin audit-list route. No local preview entries are displayed as production audit events.</p></div>
+          <div class="panel empty-panel"><span class="eyebrow">BACKEND CONTRACT</span><h3>Audit endpoint not exposed</h3><p>The D1 audit_logs table exists, but the current Worker does not expose an admin audit-list route. No production audit entries are displayed because the Worker does not expose an audit-list endpoint.</p></div>
         </section>
       </main>
     </div>
