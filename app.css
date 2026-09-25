@@ -89,10 +89,8 @@ button{font:inherit}
 @media(max-width:640px){.beta-popup{padding:9px}.beta-popup-card{max-height:calc(100dvh - 18px);padding:20px;border-radius:23px}.beta-popup-card h2{font-size:26px}.beta-popup-card>p{font-size:11px}.beta-popup-actions .btn{width:100%}.reviews-card-head{display:block}.review-count{display:inline-flex;margin-top:10px}.beta-note{margin-bottom:55px}}
 
 
-/* Mobile navigation: familiar icons + active bubble */
+/* Mobile navigation: simple, stable active state */
 .mobile-tabs a{position:relative;display:flex!important;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-decoration:none;min-width:0}
-.mobile-tabs a::before{content:"";position:absolute;top:4px;left:50%;width:56px;height:34px;border-radius:14px;background:transparent;transform:translateX(-50%);transition:.22s ease;z-index:0}
-.mobile-tabs a.active::before{background:rgba(42,157,255,.14);box-shadow:inset 0 0 0 1px rgba(104,203,255,.08),0 5px 18px rgba(22,135,255,.10)}
 .mobile-tabs .mobile-tab-icon,.mobile-tabs small{position:relative;z-index:1}
 .mobile-tab-icon{width:22px!important;height:22px!important;display:grid!important;place-items:center!important}
 .mobile-tab-icon svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
@@ -172,7 +170,6 @@ button{font:inherit}
   .reviews-card-head h3{font-size:17px}
   .mobile-tabs{left:8px;right:8px;bottom:8px;height:64px;padding:6px;border-radius:20px;grid-template-columns:repeat(5,1fr)}
   .mobile-tabs a{gap:1px}
-  .mobile-tabs a::before{top:3px;width:53px;height:35px;border-radius:13px}
   .mobile-tab-icon{width:21px!important;height:21px!important}
   .mobile-tab-icon svg{width:19px;height:19px;stroke-width:2}
   .mobile-tabs small{font-size:6.5px!important}
@@ -286,8 +283,7 @@ body{overflow-x:clip;overscroll-behavior-x:none}
 .feature-card:hover::after,.quick-card:hover::after{opacity:1;animation:whoSweep .8s ease}
 .status-pill{position:relative;overflow:hidden}
 .status-pill::after{content:"";position:absolute;top:0;bottom:0;width:35%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent);transform:translateX(-140%);animation:whoSweep 3.6s ease-in-out infinite}
-.mobile-tabs .active::before{transition:transform .28s cubic-bezier(.2,.8,.2,1),opacity .2s ease;transform:scale(.92)}
-.mobile-tabs .active{animation:whoPulseGlow 3.2s ease-in-out infinite}
+.mobile-tabs .active{animation:none!important}
 .screen-section.active .feature-marquee{animation:whoFadeIn .7s .12s both}
 .fade-up{animation:whoRiseIn .6s both}
 .fade-in{animation:whoFadeIn .5s both}
