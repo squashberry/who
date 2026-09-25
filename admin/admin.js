@@ -1,4 +1,9 @@
 (() => {
+  'use strict';
+
+  const API_BASE = 'https://who-api.who-fe3.workers.dev';
+  const SESSION_KEY = 'who-control.session-token';
+
   const boot = document.getElementById('adminBoot');
   const title = document.getElementById('pageTitle');
   const sub = document.getElementById('pageSub');
@@ -6,215 +11,912 @@
   const navButtons = [...document.querySelectorAll('[data-page]')];
 
   const meta = {
-    overview:['Overview','A light command center for the WHO product.'],
-    users:['Users','Account and device visibility without raw contact content.'],
-    caller:['Caller intelligence','Signals, confidence and corrections.'],
-    reports:['Reports','Community spam and reputation moderation.'],
-    releases:['Releases','Versions, download targets and update gates.'],
-    remote:['Remote config','App copy and behavior controlled remotely.'],
-    announcements:['Announcements','Revisioned product messages.'],
-    crashes:['Crashes','Crash review and local preview triage.'],
-    feedback:['Feedback','Close the beta loop.'],
-    audit:['Audit','Track every administrative mutation.']
+    overview:['Overview','Live WHO backend control and system status.'],
+    users:['Users','The current Worker does not expose an admin user directory.'],
+    caller:['Caller intelligence','The current Worker does not expose caller-admin moderation routes.'],
+    reports:['Reports','The current Worker accepts reports but does not expose an admin queue.'],
+    releases:['Releases','Versions and update gates stored in the live runtime config.'],
+    remote:['Remote config','Live app behavior and copy from the WHO runtime_config row.'],
+    announcements:['Announcements','Live announcement fields in the WHO runtime config.'],
+    crashes:['Crashes','Live crash reports from the WHO D1 crash_reports table.'],
+    feedback:['Feedback','The current Worker does not expose an admin feedback queue.'],
+    audit:['Audit','The current Worker does not expose an admin audit-list route.']
   };
-
-  let deferredPrompt = null;
-  let crashFilter = 'pending';
-  let reportFilter = 'pending';
 
   const defaultConfig = {
-    appVersion:'1.0.0', latestVersion:'1.0.0', minimumVersion:'1.0.0',
-    forceUpdate:false, updateUrl:'https://squashberry.github.io/who/download.html',
+    appVersion:'1.0.0',
+    latestVersion:'1.0.0',
+    minimumVersion:'1.0.0',
+    forceUpdate:false,
+    updateUrl:'https://squashberry.github.io/who/download.html',
     forceUpdateTitle:'WHO update required',
     forceUpdateMessage:'You need to update this app to continue using it.',
-    welcomeEnabled:true, welcomeRevision:1, welcomeTitle:'WHO Beta 1.0',
+    forceUpdateButton:'Update WHO',
+    softUpdateTitle:'A new WHO update is available',
+    softUpdateMessage:'A newer version of WHO is available with improvements and fixes.',
+    softUpdateButton:'Update now',
+    softUpdateLaterButton:'Later',
+    welcomeEnabled:true,
+    welcomeRevision:1,
+    welcomeTitle:'WHO Beta 1.0',
     welcomeMessage:'This is a WHO Beta 1.0 app created by Squashberry.',
+    welcomeEmail:'squashberrypro@gmail.com',
     welcomeButtonText:'Continue',
-    maintenanceEnabled:false, maintenanceTitle:'WHO is temporarily unavailable',
+    welcomeFeedbackButtonText:'Give feedback',
+    welcomeFeedbackUrl:'https://squashberry.github.io/who/feedback.html',
+    maintenanceEnabled:false,
+    maintenanceTitle:'WHO is temporarily unavailable',
     maintenanceMessage:'WHO is undergoing maintenance. Please try again later.',
-    announcementEnabled:false, announcementTitle:'', announcementMessage:''
+    announcementEnabled:false,
+    announcementTitle:'',
+    announcementMessage:'',
+    crashReportUrl:''
   };
 
-  function cfg() {
-    try { return Object.assign({}, defaultConfig, JSON.parse(localStorage.getItem('who_admin_config') || '{}')); }
-    catch (_) { return {...defaultConfig}; }
+  let token = sessionStorage.getItem(SESSION_KEY) || '';
+  let currentUser = null;
+  let serverConfig = {...defaultConfig};
+  let allCrashes = [];
+  let crashFilter = 'pending';
+  let deferredPrompt = null;
+  let authBusy = false;
+
+  function setAdminBootProgress(value, status) {
+    const bar = document.getElementById('adminBootProgress');
+    const percent = document.getElementById('adminBootPercent');
+    const label = document.getElementById('adminBootStatus');
+    const safe = Math.max(0, Math.min(100, Math.round(value)));
+    if (bar) bar.style.width = safe + '%';
+    if (percent) percent.textContent = safe + '%';
+    if (label && status) label.textContent = status;
   }
-  function saveCfg(value) {
-    localStorage.setItem('who_admin_config', JSON.stringify(value));
+
+  function toast(message) {
+    const el = document.getElementById('toast');
+    if (!el) return;
+    el.textContent = message;
+    el.style.display = 'block';
+    clearTimeout(window.__whoToast);
+    window.__whoToast = setTimeout(() => {
+      el.style.display = 'none';
+    }, 2800);
+  }
+
+  function escapeHtml(value) {
+    return String(value ?? '').replace(/[&<>"']/g, (c) => ({
+      '&':'&amp;',
+      '<':'&lt;',
+      '>':'&gt;',
+      '"':'&quot;',
+      "'":'&#39;'
+    }[c]));
+  }
+
+  function extractConfig(payload) {
+    const copy = {...payload};
+    delete copy.success;
+    delete copy.revision;
+    delete copy.updatedAt;
+    delete copy.error;
+    return {...defaultConfig, ...copy};
+  }
+
+  async function apiFetch(path, options = {}) {
+    const {
+      method = 'GET',
+      body,
+      auth = true
+    } = options;
+
+    const headers = {
+      Accept: 'application/json'
+    };
+
+    if (body !== undefined) {
+      headers['Content-Type'] = 'application/json';
+    }
+
+    if (auth && token) {
+      headers.Authorization = 'Bearer ' + token;
+    }
+
+    let response;
+
+    try {
+      response = await fetch(API_BASE + path, {
+        method,
+        headers,
+        body: body === undefined ? undefined : JSON.stringify(body),
+        cache: 'no-store'
+      });
+    } catch (_) {
+      const error = new Error('Unable to reach the WHO API.');
+      error.status = 0;
+      throw error;
+    }
+
+    let data = {};
+    const raw = await response.text();
+
+    if (raw.trim()) {
+      try {
+        data = JSON.parse(raw);
+      } catch (_) {
+        data = {};
+      }
+    }
+
+    if (!response.ok) {
+      const error = new Error(data.error || ('WHO API error (' + response.status + ')'));
+      error.status = response.status;
+      throw error;
+    }
+
+    return data;
+  }
+
+  function setApiState(connected, detail = '') {
+    const chip = document.getElementById('apiChip');
+    const badge = document.getElementById('connectionBadge');
+    const surface = document.getElementById('adminSurfaceStatus');
+
+    if (chip) {
+      chip.innerHTML = '<i></i> ' + (connected ? 'API connected' : 'Authentication required');
+      chip.classList.toggle('connected', connected);
+    }
+
+    if (badge) {
+      badge.textContent = connected ? 'LIVE BACKEND' : 'AUTHENTICATION REQUIRED';
+    }
+
+    if (surface) {
+      surface.textContent = connected ? (currentUser?.role || 'authorized') : 'Not authenticated';
+    }
+
+    if (detail) {
+      const ov = document.getElementById('overviewMessage');
+      if (ov) ov.textContent = detail;
+    }
+  }
+
+  function showAuth(step = 'request', message = '') {
+    const root = document.getElementById('adminAuthRoot');
+    const requestStep = document.getElementById('authStepRequest');
+    const verifyStep = document.getElementById('authStepVerify');
+    const error = document.getElementById('authError');
+
+    if (!root) return;
+
+    root.classList.add('show');
+    root.setAttribute('aria-hidden', 'false');
+
+    if (requestStep) requestStep.hidden = step !== 'request';
+    if (verifyStep) verifyStep.hidden = step !== 'verify';
+    if (error) error.textContent = message || '';
+
+    const target = step === 'verify'
+      ? document.getElementById('authCode')
+      : document.getElementById('authEmail');
+
+    setTimeout(() => target?.focus(), 50);
+  }
+
+  function hideAuth() {
+    const root = document.getElementById('adminAuthRoot');
+    if (!root) return;
+    root.classList.remove('show');
+    root.setAttribute('aria-hidden', 'true');
+  }
+
+  function setAuthError(message) {
+    const error = document.getElementById('authError');
+    if (error) error.textContent = message || '';
+  }
+
+  function setAuthBusy(value) {
+    authBusy = value;
+
+    const send = document.getElementById('authSendCode');
+    const verify = document.getElementById('authVerifyCode');
+
+    if (send) {
+      send.disabled = value;
+      send.textContent = value ? 'Sending…' : 'Send verification code';
+    }
+
+    if (verify) {
+      verify.disabled = value;
+      verify.textContent = value ? 'Verifying…' : 'Verify & enter';
+    }
+  }
+
+  function readAuthForm() {
+    return {
+      name: document.getElementById('authName')?.value.trim() || '',
+      email: document.getElementById('authEmail')?.value.trim().toLowerCase() || '',
+      phoneNumber: document.getElementById('authPhone')?.value.trim() || ''
+    };
+  }
+
+  function validateAuthForm(values) {
+    if (values.name.length < 2) return 'Enter your WHO account name.';
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email)) return 'Enter a valid email address.';
+    if (values.phoneNumber.replace(/\D/g, '').length < 7) return 'Enter a valid phone number.';
+    return '';
+  }
+
+  async function requestAuthCode() {
+    if (authBusy) return;
+
+    const values = readAuthForm();
+    const validation = validateAuthForm(values);
+
+    if (validation) {
+      setAuthError(validation);
+      return;
+    }
+
+    setAuthBusy(true);
+    setAuthError('');
+
+    try {
+      await apiFetch('/auth/request-code', {
+        method: 'POST',
+        auth: false,
+        body: values
+      });
+
+      const echo = document.getElementById('authEmailEcho');
+      if (echo) echo.textContent = values.email;
+
+      toast('Verification code sent.');
+      showAuth('verify');
+    } catch (error) {
+      setAuthError(error.message);
+    } finally {
+      setAuthBusy(false);
+    }
+  }
+
+  async function verifyAuthCode() {
+    if (authBusy) return;
+
+    const values = readAuthForm();
+    const code = document.getElementById('authCode')?.value.trim() || '';
+
+    const validation = validateAuthForm(values);
+
+    if (validation) {
+      setAuthError(validation);
+      showAuth('request', validation);
+      return;
+    }
+
+    if (!/^\d{6}$/.test(code)) {
+      setAuthError('Enter the 6-digit verification code.');
+      return;
+    }
+
+    setAuthBusy(true);
+    setAuthError('');
+
+    try {
+      const result = await apiFetch('/auth/verify-code', {
+        method: 'POST',
+        auth: false,
+        body: {
+          ...values,
+          code
+        }
+      });
+
+      const accessToken =
+        String(result.accessToken || result.sessionToken || result.token || '');
+
+      if (!accessToken) {
+        throw new Error('WHO account was verified, but no session token was returned.');
+      }
+
+      token = accessToken;
+      sessionStorage.setItem(SESSION_KEY, token);
+
+      await validateAdminSession();
+
+      toast('WHO Control authenticated.');
+    } catch (error) {
+      sessionStorage.removeItem(SESSION_KEY);
+      token = '';
+      setAuthError(error.message);
+    } finally {
+      setAuthBusy(false);
+    }
+  }
+
+  async function validateAdminSession() {
+    if (!token) {
+      throw new Error('Authentication required.');
+    }
+
+    const result = await apiFetch('/me', {method:'GET'});
+
+    const user = result.user || {};
+    const role = String(user.role || '').toLowerCase();
+
+    if (role !== 'admin' && role !== 'moderator') {
+      const error = new Error('This WHO account does not have administrator access.');
+      error.status = 403;
+      throw error;
+    }
+
+    currentUser = user;
+
+    hideAuth();
+    setApiState(
+      true,
+      'Authenticated as ' +
+        (user.displayName || user.name || user.email || 'WHO administrator') +
+        ' · ' + role
+    );
+
+    const authIntro = document.getElementById('authIntro');
+    if (authIntro) {
+      authIntro.textContent = 'Authenticated.';
+    }
+
+    const pageSub = document.getElementById('pageSub');
+    if (pageSub && location.hash === '') {
+      pageSub.textContent =
+        'Authenticated as ' +
+        (user.displayName || user.name || user.email) +
+        ' · ' + role;
+    }
+
+    await refreshData();
+  }
+
+  async function signOut(showLogin = true) {
+    token = '';
+    currentUser = null;
+    serverConfig = {...defaultConfig};
+    allCrashes = [];
+
+    sessionStorage.removeItem(SESSION_KEY);
+
+    setApiState(false);
+    renderStats();
+
+    if (showLogin) {
+      showAuth('request', 'Signed out of WHO Control.');
+    }
   }
 
   function setPage(page) {
-    const chosen = sections.some((s)=>s.dataset.section===page) ? page : 'overview';
-    sections.forEach((s)=>s.classList.toggle('active', s.dataset.section===chosen));
-    navButtons.forEach((b)=>b.classList.toggle('active', b.dataset.page===chosen));
+    const chosen = sections.some((s) => s.dataset.section === page)
+      ? page
+      : 'overview';
+
+    sections.forEach((s) => {
+      s.classList.toggle('active', s.dataset.section === chosen);
+    });
+
+    navButtons.forEach((b) => {
+      b.classList.toggle('active', b.dataset.page === chosen);
+    });
+
     title.textContent = meta[chosen][0];
-    sub.textContent = meta[chosen][1];
-    if (location.hash !== '#' + chosen) history.replaceState(null,'','#'+chosen);
-    window.scrollTo({top:0,behavior:'auto'});
+
+    if (currentUser) {
+      sub.textContent = meta[chosen][1] + ' · ' +
+        (currentUser.displayName || currentUser.email);
+    } else {
+      sub.textContent = meta[chosen][1];
+    }
+
+    if (location.hash !== '#' + chosen) {
+      history.replaceState(null, '', '#' + chosen);
+    }
+
+    window.scrollTo({top:0, behavior:'auto'});
   }
 
-  navButtons.forEach((btn)=>btn.addEventListener('click',()=>setPage(btn.dataset.page)));
-  document.querySelectorAll('[data-jump]').forEach((btn)=>btn.addEventListener('click',()=>setPage(btn.dataset.jump)));
+  navButtons.forEach((button) => {
+    button.addEventListener('click', () => setPage(button.dataset.page));
+  });
 
-  function loadConfig() {
-    const c = cfg();
-    document.getElementById('latestVersion').value = c.latestVersion;
-    document.getElementById('minimumVersion').value = c.minimumVersion;
-    document.getElementById('updateUrl').value = c.updateUrl;
-    document.getElementById('forceTitle').value = c.forceUpdateTitle;
-    document.getElementById('forceMessage').value = c.forceUpdateMessage;
-    document.getElementById('welcomeTitle').value = c.welcomeTitle;
-    document.getElementById('welcomeButton').value = c.welcomeButtonText;
-    document.getElementById('welcomeMessage').value = c.welcomeMessage;
-    document.getElementById('maintenanceTitle').value = c.maintenanceTitle;
-    document.getElementById('maintenanceMessage').value = c.maintenanceMessage;
-    document.getElementById('announcementTitle').value = c.announcementTitle;
-    document.getElementById('announcementMessage').value = c.announcementMessage;
-    setToggle('forceToggle', c.forceUpdate);
-    setToggle('welcomeToggle', c.welcomeEnabled);
-    setToggle('maintenanceToggle', c.maintenanceEnabled);
-    setToggle('announcementToggle', c.announcementEnabled);
+  document.querySelectorAll('[data-jump]').forEach((button) => {
+    button.addEventListener('click', () => setPage(button.dataset.jump));
+  });
+
+  function setToggle(id, value) {
+    const el = document.getElementById(id);
+    if (!el) return;
+
+    el.classList.toggle('on', Boolean(value));
+    el.setAttribute('aria-pressed', String(Boolean(value)));
+  }
+
+  function getToggle(id) {
+    return document.getElementById(id)?.classList.contains('on') === true;
+  }
+
+  document.querySelectorAll('.toggle').forEach((el) => {
+    el.addEventListener('click', () => {
+      el.classList.toggle('on');
+      el.setAttribute('aria-pressed', String(el.classList.contains('on')));
+      updateAnnouncementPreview();
+      renderStats();
+    });
+  });
+
+  function applyConfigToUi(config) {
+    document.getElementById('latestVersion').value = config.latestVersion || '';
+    document.getElementById('minimumVersion').value = config.minimumVersion || '';
+    document.getElementById('updateUrl').value = config.updateUrl || '';
+    document.getElementById('forceTitle').value = config.forceUpdateTitle || '';
+    document.getElementById('forceMessage').value = config.forceUpdateMessage || '';
+
+    document.getElementById('welcomeTitle').value = config.welcomeTitle || '';
+    document.getElementById('welcomeButton').value = config.welcomeButtonText || '';
+    document.getElementById('welcomeMessage').value = config.welcomeMessage || '';
+
+    document.getElementById('maintenanceTitle').value = config.maintenanceTitle || '';
+    document.getElementById('maintenanceMessage').value = config.maintenanceMessage || '';
+
+    document.getElementById('announcementTitle').value = config.announcementTitle || '';
+    document.getElementById('announcementMessage').value = config.announcementMessage || '';
+
+    document.getElementById('annTitle').value = config.announcementTitle || '';
+    document.getElementById('annMessage').value = config.announcementMessage || '';
+    document.getElementById('annButton').value = config.announcementButton || 'Continue';
+    document.getElementById('annRevision').value = config.announcementRevision || 1;
+
+    setToggle('forceToggle', config.forceUpdate);
+    setToggle('welcomeToggle', config.welcomeEnabled);
+    setToggle('maintenanceToggle', config.maintenanceEnabled);
+    setToggle('announcementToggle', config.announcementEnabled);
+
+    const releaseTag = document.querySelector('[data-section="releases"] .tag.blue');
+    if (releaseTag) releaseTag.textContent = config.appVersion || config.latestVersion || '—';
+
+    updateAnnouncementPreview();
     renderStats();
   }
 
   function readConfigFromUi() {
-    const c = cfg();
-    c.latestVersion = document.getElementById('latestVersion').value.trim();
-    c.minimumVersion = document.getElementById('minimumVersion').value.trim();
-    c.updateUrl = document.getElementById('updateUrl').value.trim();
-    c.forceUpdateTitle = document.getElementById('forceTitle').value;
-    c.forceUpdateMessage = document.getElementById('forceMessage').value;
-    c.welcomeTitle = document.getElementById('welcomeTitle').value;
-    c.welcomeButtonText = document.getElementById('welcomeButton').value;
-    c.welcomeMessage = document.getElementById('welcomeMessage').value;
-    c.maintenanceTitle = document.getElementById('maintenanceTitle').value;
-    c.maintenanceMessage = document.getElementById('maintenanceMessage').value;
-    c.announcementTitle = document.getElementById('announcementTitle').value;
-    c.announcementMessage = document.getElementById('announcementMessage').value;
-    c.forceUpdate = getToggle('forceToggle');
-    c.welcomeEnabled = getToggle('welcomeToggle');
-    c.maintenanceEnabled = getToggle('maintenanceToggle');
-    c.announcementEnabled = getToggle('announcementToggle');
-    return c;
+    return {
+      ...serverConfig,
+      latestVersion: document.getElementById('latestVersion').value.trim(),
+      minimumVersion: document.getElementById('minimumVersion').value.trim(),
+      updateUrl: document.getElementById('updateUrl').value.trim(),
+
+      forceUpdate: getToggle('forceToggle'),
+      forceUpdateTitle: document.getElementById('forceTitle').value,
+      forceUpdateMessage: document.getElementById('forceMessage').value,
+
+      welcomeEnabled: getToggle('welcomeToggle'),
+      welcomeTitle: document.getElementById('welcomeTitle').value,
+      welcomeButtonText: document.getElementById('welcomeButton').value,
+      welcomeMessage: document.getElementById('welcomeMessage').value,
+
+      maintenanceEnabled: getToggle('maintenanceToggle'),
+      maintenanceTitle: document.getElementById('maintenanceTitle').value,
+      maintenanceMessage: document.getElementById('maintenanceMessage').value,
+
+      announcementEnabled: getToggle('announcementToggle'),
+      announcementTitle: document.getElementById('announcementTitle').value,
+      announcementMessage: document.getElementById('announcementMessage').value,
+      announcementButton: document.getElementById('annButton').value,
+      announcementRevision: Number(document.getElementById('annRevision').value) || 1
+    };
   }
 
-  function saveConfig() { saveCfg(readConfigFromUi()); renderStats(); toast('Remote config draft saved locally.'); }
-  function saveRelease() { saveCfg(readConfigFromUi()); toast('Release draft saved locally.'); }
+  async function loadConfig() {
+    if (!token) {
+      showAuth();
+      return;
+    }
 
-  function setToggle(id,on) {
-    const el=document.getElementById(id);
-    if (!el) return;
-    el.classList.toggle('on', !!on);
-    el.setAttribute('aria-pressed',String(!!on));
+    try {
+      const result = await apiFetch('/admin/config', {method:'GET'});
+      serverConfig = extractConfig(result);
+      applyConfigToUi(serverConfig);
+      toast(
+        'Backend config loaded · revision ' +
+        String(result.revision ?? '—')
+      );
+    } catch (error) {
+      if (error.status === 401) {
+        await signOut(false);
+        showAuth('request', 'Your WHO session expired. Please sign in again.');
+        return;
+      }
+
+      if (error.status === 403) {
+        await signOut(false);
+        showAuth('request', 'This WHO account is not authorized for the control panel.');
+        return;
+      }
+
+      toast(error.message);
+    }
   }
-  function getToggle(id) { return document.getElementById(id)?.classList.contains('on') === true; }
-  document.querySelectorAll('.toggle').forEach((el)=>el.addEventListener('click',()=>{
-    el.classList.toggle('on');
-    el.setAttribute('aria-pressed',String(el.classList.contains('on')));
-    renderStats();
-  }));
+
+  async function saveServerConfig(nextConfig, successMessage) {
+    try {
+      const result = await apiFetch('/admin/config', {
+        method:'PATCH',
+        body:nextConfig
+      });
+
+      serverConfig = extractConfig(result);
+      applyConfigToUi(serverConfig);
+      toast(successMessage || 'WHO backend configuration saved.');
+      return true;
+    } catch (error) {
+      if (error.status === 401) {
+        await signOut(false);
+        showAuth('request', 'Your WHO session expired. Please sign in again.');
+      } else {
+        toast(error.message);
+      }
+
+      return false;
+    }
+  }
+
+  async function saveConfig() {
+    await saveServerConfig(
+      readConfigFromUi(),
+      'Remote configuration saved to WHO.'
+    );
+  }
+
+  async function saveRelease() {
+    await saveServerConfig(
+      readConfigFromUi(),
+      'Release settings saved to WHO.'
+    );
+  }
+
+  function updateAnnouncementPreview() {
+    const titleValue =
+      document.getElementById('annTitle')?.value.trim() || 'Your WHO message';
+
+    const messageValue =
+      document.getElementById('annMessage')?.value.trim() ||
+      'Write an announcement and see how it will look inside the app.';
+
+    const titleEl = document.getElementById('previewAnnouncementTitle');
+    const messageEl = document.getElementById('previewAnnouncementMessage');
+
+    if (titleEl) titleEl.textContent = titleValue;
+    if (messageEl) messageEl.textContent = messageValue;
+  }
+
+  async function publishAnnouncement() {
+    const nextConfig = {
+      ...serverConfig,
+      announcementEnabled: true,
+      announcementTitle: document.getElementById('annTitle').value.trim(),
+      announcementMessage: document.getElementById('annMessage').value,
+      announcementRevision: Number(document.getElementById('annRevision').value) || 1,
+      announcementButton: document.getElementById('annButton').value.trim() || 'Continue'
+    };
+
+    await saveServerConfig(
+      nextConfig,
+      'Announcement published to WHO.'
+    );
+  }
+
+  function copyConfig() {
+    const text = JSON.stringify(readConfigFromUi(), null, 2);
+
+    navigator.clipboard?.writeText(text)
+      .then(() => toast('Live config JSON copied.'))
+      .catch(() => window.prompt('Copy WHO runtime config JSON', text));
+  }
 
   function renderStats() {
-    const c=cfg();
-    document.getElementById('forceStat').textContent=c.forceUpdate?'ON':'OFF';
-    document.getElementById('announceStat').textContent=c.announcementEnabled?'ON':'OFF';
-    const crashes=readCrashes();
-    document.getElementById('crashStat').textContent=String(crashes.length);
+    const appVersion = serverConfig.appVersion || serverConfig.latestVersion || '—';
+    const force = Boolean(serverConfig.forceUpdate);
+    const announcement = Boolean(serverConfig.announcementEnabled);
+
+    document.getElementById('appVersionStat').textContent = appVersion;
+    document.getElementById('appVersionSub').textContent =
+      'Latest ' + (serverConfig.latestVersion || '—');
+
+    document.getElementById('forceStat').textContent = force ? 'ON' : 'OFF';
+    document.getElementById('announceStat').textContent = announcement ? 'ON' : 'OFF';
+
+    document.getElementById('crashStat').textContent = String(allCrashes.length);
+    document.getElementById('crashStatSub').textContent =
+      allCrashes.length
+        ? 'Latest records loaded'
+        : 'No crash records returned';
   }
 
-  function readCrashes() {
-    try{return JSON.parse(localStorage.getItem('who_admin_crash_preview')||'[]')}catch(_){return[]}
-  }
-  function writeCrashes(rows){localStorage.setItem('who_admin_crash_preview',JSON.stringify(rows))}
-  function addPreviewCrash(){
-    const now=new Date().toISOString();
-    const rows=readCrashes();
-    rows.unshift({id:'preview-'+Date.now(),received_at:now,app_version:'1.0.0',platform:'android',fatal:true,error:'Preview crash report — not a real user crash.',status:'pending'});
-    writeCrashes(rows); renderCrashes(); renderStats(); setPage('crashes'); toast('Preview crash added.');
-  }
-  function renderCrashes(){
-    const rows=readCrashes().filter(r=>crashFilter==='all' || (r.status||'pending')===crashFilter);
-    const body=document.getElementById('crashBody');
-    body.innerHTML=rows.length?rows.map(r=>'<tr><td>'+new Date(r.received_at).toLocaleString()+'</td><td><span class="tag '+(r.fatal?'red':'amber')+'">'+(r.fatal?'Fatal':'Non-fatal')+'</span></td><td>'+r.app_version+'</td><td>'+r.platform+'</td><td>'+escapeHtml(r.error)+'</td><td><span class="tag '+(r.status==='fixed'?'green':'amber')+'">'+(r.status||'pending')+'</span></td><td><button class="ghost-btn" data-fix="'+r.id+'">'+(r.status==='fixed'?'Reopen':'Fix')+'</button></td></tr>').join(''):'<tr><td colspan="7">No preview crashes in this view.</td></tr>';
-    document.getElementById('pendingCrash').textContent=readCrashes().filter(r=>(r.status||'pending')==='pending').length;
-    document.getElementById('fixedCrash').textContent=readCrashes().filter(r=>r.status==='fixed').length;
-    document.getElementById('fatalCrash').textContent=readCrashes().filter(r=>r.fatal).length;
-    const today=new Date().toISOString().slice(0,10);document.getElementById('todayCrash').textContent=readCrashes().filter(r=>String(r.received_at).slice(0,10)===today).length;
-    body.querySelectorAll('[data-fix]').forEach(btn=>btn.addEventListener('click',()=>{const all=readCrashes();const row=all.find(r=>r.id===btn.dataset.fix);if(row){row.status=row.status==='fixed'?'pending':'fixed';row.fixed_at=row.status==='fixed'?new Date().toISOString():null;writeCrashes(all);renderCrashes();renderStats();toast(row.status==='fixed'?'Crash marked fixed.':'Crash reopened.')}}));
-  }
-  document.querySelectorAll('[data-crash-filter]').forEach(btn=>btn.addEventListener('click',()=>{crashFilter=btn.dataset.crashFilter;document.querySelectorAll('[data-crash-filter]').forEach(b=>b.classList.toggle('active',b===btn));renderCrashes()}));
+  function renderCrashStats() {
+    const pending = allCrashes.filter((r) => (r.status || 'pending') === 'pending');
+    const fixed = allCrashes.filter((r) => r.status === 'fixed');
+    const fatal = allCrashes.filter((r) => Number(r.fatal) === 1 || r.fatal === true);
 
-  const previewReports=[
-    {number:'+220 3XX XXX',reason:'Suspected spam',count:4,status:'pending'},
-    {number:'+220 7XX XXX',reason:'Telemarketing',count:2,status:'pending'},
-    {number:'+220 2XX XXX',reason:'Resolved false positive',count:1,status:'resolved'}
-  ];
-  function renderReports(){
-    const q=(document.getElementById('reportSearch').value||'').toLowerCase();
-    const rows=previewReports.filter(r=>(reportFilter==='all'||r.status===reportFilter)&&(!q||JSON.stringify(r).toLowerCase().includes(q)));
-    document.getElementById('reportBody').innerHTML=rows.map((r,i)=>'<tr><td>'+r.number+'</td><td>'+r.reason+'</td><td>'+r.count+'</td><td><span class="tag '+(r.status==='resolved'?'green':'amber')+'">'+r.status+'</span></td><td><button class="ghost-btn" data-report="'+i+'">'+(r.status==='resolved'?'Reopen':'Resolve')+'</button></td></tr>').join('') || '<tr><td colspan="5">No reports match.</td></tr>';
-    document.getElementById('reportBody').querySelectorAll('[data-report]').forEach(btn=>btn.addEventListener('click',()=>{previewReports[Number(btn.dataset.report)].status=previewReports[Number(btn.dataset.report)].status==='resolved'?'pending':'resolved';renderReports();toast('Preview report updated.');}));
-  }
-  document.getElementById('reportSearch').addEventListener('input',renderReports);
-  document.querySelectorAll('[data-report-filter]').forEach(btn=>btn.addEventListener('click',()=>{reportFilter=btn.dataset.reportFilter;document.querySelectorAll('[data-report-filter]').forEach(b=>b.classList.toggle('active',b===btn));renderReports()}));
+    const today = new Date().toISOString().slice(0, 10);
+    const todayRows = allCrashes.filter((r) =>
+      String(r.received_at || '').slice(0, 10) === today
+    );
 
-  function publishAnnouncement(){
-    const c=cfg();
-    c.announcementEnabled=true;
-    c.announcementTitle=document.getElementById('annTitle').value;
-    c.announcementMessage=document.getElementById('annMessage').value;
-    c.announcementRevision=Number(document.getElementById('annRevision').value)||1;
-    c.announcementButton=document.getElementById('annButton').value;
-    saveCfg(c);
-    document.getElementById('previewAnnouncementTitle').textContent=c.announcementTitle||'Your WHO message';
-    document.getElementById('previewAnnouncementMessage').textContent=c.announcementMessage||'Write an announcement and see how it will look inside the app.';
+    document.getElementById('pendingCrash').textContent = String(pending.length);
+    document.getElementById('fixedCrash').textContent = String(fixed.length);
+    document.getElementById('fatalCrash').textContent = String(fatal.length);
+    document.getElementById('todayCrash').textContent = String(todayRows.length);
+  }
+
+  function renderCrashes() {
+    const body = document.getElementById('crashBody');
+    if (!body) return;
+
+    const rows = allCrashes.filter((row) => {
+      const status = row.status || 'pending';
+      return crashFilter === 'all' || status === crashFilter;
+    });
+
+    body.innerHTML = rows.length
+      ? rows.map((row) => {
+          const fatal = Number(row.fatal) === 1 || row.fatal === true;
+          const status = row.status || 'pending';
+          const when = row.received_at
+            ? new Date(row.received_at).toLocaleString()
+            : '—';
+
+          return '<tr>' +
+            '<td>' + escapeHtml(when) + '</td>' +
+            '<td><span class="tag ' + (fatal ? 'red' : 'amber') + '">' +
+              (fatal ? 'Fatal' : 'Non-fatal') +
+            '</span></td>' +
+            '<td>' + escapeHtml(row.app_version || '—') + '</td>' +
+            '<td>' + escapeHtml(row.platform || '—') + '</td>' +
+            '<td title="' + escapeHtml(row.error || '') + '">' +
+              escapeHtml((row.error || row.stack || 'No error text').slice(0, 180)) +
+            '</td>' +
+            '<td><span class="tag ' + (status === 'fixed' ? 'green' : 'amber') + '">' +
+              escapeHtml(status) +
+            '</span></td>' +
+            '<td><button class="ghost-btn" data-crash-action="' +
+              escapeHtml(row.id) + '" data-crash-status="' + status + '">' +
+              (status === 'fixed' ? 'Reopen' : 'Fix') +
+            '</button></td>' +
+            '</tr>';
+        }).join('')
+      : '<tr><td colspan="7">No real crash reports in this view.</td></tr>';
+
+    body.querySelectorAll('[data-crash-action]').forEach((button) => {
+      button.addEventListener('click', () =>
+        updateCrash(
+          button.dataset.crashAction,
+          button.dataset.crashStatus === 'fixed' ? 'pending' : 'fixed'
+        )
+      );
+    });
+
+    renderCrashStats();
     renderStats();
-    toast('Announcement saved as a local preview.');
   }
 
-  function copyConfig(){
-    const text=JSON.stringify(readConfigFromUi(),null,2);
-    navigator.clipboard?.writeText(text).then(()=>toast('Config JSON copied.')).catch(()=>{window.prompt('Copy WHO config JSON',text)});
+  async function loadCrashes() {
+    if (!token) return;
+
+    try {
+      const result = await apiFetch('/admin/crashes?limit=200', {method:'GET'});
+      allCrashes = Array.isArray(result.reports) ? result.reports : [];
+      renderCrashes();
+    } catch (error) {
+      if (error.status === 401) {
+        await signOut(false);
+        showAuth('request', 'Your WHO session expired. Please sign in again.');
+        return;
+      }
+
+      if (error.status === 403) {
+        await signOut(false);
+        showAuth('request', 'This WHO account is not authorized for crash management.');
+        return;
+      }
+
+      toast(error.message);
+      allCrashes = [];
+      renderCrashes();
+    }
   }
-  function escapeHtml(value){return String(value).replace(/[&<>"']/g,(c)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 
-  function toast(message){const el=document.getElementById('toast');el.textContent=message;el.style.display='block';clearTimeout(window.__whoToast);window.__whoToast=setTimeout(()=>el.style.display='none',2200)}
+  async function updateCrash(crashId, status) {
+    if (!crashId) return;
 
-  document.getElementById('refreshButton').addEventListener('click',()=>{loadConfig();renderReports();renderCrashes();toast('Preview data refreshed.')});
-  document.querySelectorAll('.side-nav button,.mobile-admin-nav button').forEach(()=>{});
+    let fixNote = '';
 
-  window.addPreviewCrash=addPreviewCrash;
-  window.saveRelease=saveRelease;
-  window.saveConfig=saveConfig;
-  window.loadConfig=loadConfig;
-  window.copyConfig=copyConfig;
-  window.publishAnnouncement=publishAnnouncement;
-  window.toast=toast;
+    if (status === 'fixed') {
+      fixNote = window.prompt(
+        'Optional fix note for this crash:',
+        ''
+      ) || '';
+    }
 
-  window.addEventListener('beforeinstallprompt',(e)=>{e.preventDefault();deferredPrompt=e});
-  document.getElementById('adminInstall').addEventListener('click',()=>{
-    if(deferredPrompt){deferredPrompt.prompt();deferredPrompt=null}else alert('Use the browser menu to install WHO Control when the install option is available.');
+    try {
+      await apiFetch('/admin/crashes/' + encodeURIComponent(crashId), {
+        method:'PATCH',
+        body:{
+          status,
+          fixNote
+        }
+      });
+
+      toast(status === 'fixed'
+        ? 'Crash marked fixed.'
+        : 'Crash reopened.'
+      );
+
+      await loadCrashes();
+    } catch (error) {
+      if (error.status === 401) {
+        await signOut(false);
+        showAuth('request', 'Your WHO session expired. Please sign in again.');
+        return;
+      }
+
+      toast(error.message);
+    }
+  }
+
+  function refreshAnnouncementInputs() {
+    ['annTitle','annMessage','annButton','annRevision'].forEach((id) => {
+      document.getElementById(id)?.addEventListener('input', updateAnnouncementPreview);
+    });
+  }
+
+  async function refreshData() {
+    if (!token) return;
+
+    setApiState(
+      true,
+      'Authenticated as ' +
+      (currentUser?.displayName || currentUser?.email || 'WHO administrator') +
+      ' · loading live data'
+    );
+
+    setAdminBootProgress(72, 'Loading live WHO configuration…');
+
+    await Promise.all([
+      loadConfig(),
+      loadCrashes()
+    ]);
+
+    setAdminBootProgress(90, 'Live backend data loaded.');
+    setApiState(
+      true,
+      'Authenticated as ' +
+      (currentUser?.displayName || currentUser?.email || 'WHO administrator') +
+      ' · ' + (currentUser?.role || 'authorized')
+    );
+  }
+
+  document.getElementById('authSendCode')?.addEventListener('click', requestAuthCode);
+  document.getElementById('authVerifyCode')?.addEventListener('click', verifyAuthCode);
+
+  document.getElementById('authBack')?.addEventListener('click', () => {
+    setAuthError('');
+    showAuth('request');
   });
-  function setAdminBootProgress(value, status) {
-    const bar=document.getElementById('adminBootProgress');
-    const percent=document.getElementById('adminBootPercent');
-    const label=document.getElementById('adminBootStatus');
-    const safe=Math.max(0,Math.min(100,Math.round(value)));
-    if(bar) bar.style.width=safe+'%';
-    if(percent) percent.textContent=safe+'%';
-    if(label && status) label.textContent=status;
+
+  document.getElementById('authCode')?.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') verifyAuthCode();
+  });
+
+  document.getElementById('authEmail')?.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') requestAuthCode();
+  });
+
+  document.getElementById('refreshButton')?.addEventListener('click', async () => {
+    if (!token) {
+      showAuth();
+      return;
+    }
+
+    await refreshData();
+    toast('Live backend data refreshed.');
+  });
+
+  document.getElementById('refreshCrashes')?.addEventListener('click', async () => {
+    await loadCrashes();
+    toast('Crash reports refreshed.');
+  });
+
+  document.getElementById('adminSignOut')?.addEventListener('click', async () => {
+    await signOut(true);
+  });
+
+  document.querySelectorAll('[data-crash-filter]').forEach((button) => {
+    button.addEventListener('click', () => {
+      crashFilter = button.dataset.crashFilter;
+      document.querySelectorAll('[data-crash-filter]').forEach((b) => {
+        b.classList.toggle('active', b === button);
+      });
+      renderCrashes();
+    });
+  });
+
+  window.addEventListener('beforeinstallprompt', (event) => {
+    event.preventDefault();
+    deferredPrompt = event;
+  });
+
+  document.getElementById('adminInstall')?.addEventListener('click', () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      deferredPrompt = null;
+    } else {
+      alert('Use the browser menu to install WHO Control when the install option is available.');
+    }
+  });
+
+  window.addEventListener('hashchange', () => {
+    if (location.hash) setPage(location.hash.slice(1));
+  });
+
+  window.addEventListener('DOMContentLoaded', () => {
+    setAdminBootProgress(22, 'Preparing WHO Control…');
+    refreshAnnouncementInputs();
+
+    setTimeout(() => setAdminBootProgress(40, 'Checking WHO session…'), 120);
+  });
+
+  window.addEventListener('load', async () => {
+    setAdminBootProgress(55, 'Authenticating control center…');
+
+    try {
+      if (token) {
+        await validateAdminSession();
+      } else {
+        showAuth('request');
+      }
+
+      if (location.hash) {
+        setPage(location.hash.slice(1));
+      }
+
+      setAdminBootProgress(100, token ? 'WHO Control is ready.' : 'Sign in to continue.');
+    } catch (error) {
+      token = '';
+      currentUser = null;
+      sessionStorage.removeItem(SESSION_KEY);
+
+      setApiState(false);
+      showAuth(
+        'request',
+        error.status === 403
+          ? 'This WHO account does not have administrator access.'
+          : error.message
+      );
+
+      setAdminBootProgress(100, 'Administrator sign-in required.');
+    }
+
+    setTimeout(() => boot?.classList.add('hide'), 350);
+  });
+
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
   }
 
-  setAdminBootProgress(10,'Preparing control center…');
-  setTimeout(()=>setAdminBootProgress(34,'Loading dashboard…'),140);
-  setTimeout(()=>setAdminBootProgress(58,'Loading local preview data…'),280);
-  setTimeout(()=>setAdminBootProgress(78,'Preparing controls…'),420);
+  window.saveRelease = saveRelease;
+  window.saveConfig = saveConfig;
+  window.loadConfig = loadConfig;
+  window.copyConfig = copyConfig;
+  window.publishAnnouncement = publishAnnouncement;
+  window.toast = toast;
+  window.updateCrash = updateCrash;
 
-  if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(()=>{}); }
-  window.addEventListener('DOMContentLoaded',()=>setAdminBootProgress(62,'Dashboard ready…'));
-  window.addEventListener('load',()=>{
-    setAdminBootProgress(100,'Control center is ready.');
-    setTimeout(()=>boot.classList.add('hide'),430);
-    loadConfig();renderReports();renderCrashes();if(location.hash) setPage(location.hash.slice(1));
-  });
+  setApiState(Boolean(token));
+  renderStats();
+  renderCrashStats();
+  renderCrashes();
 })();
