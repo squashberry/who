@@ -133,6 +133,28 @@ async function stats(env) {
   };
 }
 
+async function normalizePhone(phone) {
+  let value = String(phone || "").trim().replace(/[^0-9+]/g, "");
+  if (value.startsWith("00")) value = "+" + value.slice(2);
+  if (!value.startsWith("+") && value.length >= 7) value = "+220" + value.replace(/^0+/, "");
+  return value;
+}
+
+async function lookupKey(phone, env) {
+  const normalized = await normalizePhone(phone);
+  if (!normalized) throw new Error("NUMBER_INVALID");
+  if (!env.PHONE_LOOKUP_SECRET) return normalized;
+  const key = await crypto.subtle.importKey(
+    "raw",
+    new TextEncoder().encode(env.PHONE_LOOKUP_SECRET),
+    { name:"HMAC", hash:"SHA-256" },
+    false,
+    ["sign"]
+  );
+  const digest = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(normalized));
+  return [...new Uint8Array(digest)].map(b => b.toString(16).padStart(2,"0")).join("");
+}
+
 async function routeAdmin(request, env, url) {
   const denied = await requireAdmin(request, env);
   if (denied) return denied;
@@ -238,7 +260,7 @@ async function routeAdmin(request, env, url) {
 
   if (path === "/admin/intelligence/lookup" && method === "POST") {
     const body = await readBody(request);
-    const key = String(body.lookup_key || "").trim();
+    const key = body.phone ? await lookupKey(body.phone, env) : String(body.lookup_key || "").trim();
     if (!key) return json(request, env, {success:false, error:"LOOKUP_KEY_REQUIRED"}, 400);
     const rows = await env.DB.prepare(
       "SELECT candidate_name, confidence, contribution_count FROM number_identity_candidates WHERE lookup_key = ? ORDER BY confidence DESC LIMIT 10"
