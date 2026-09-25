@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#05070c">
   <meta name="color-scheme" content="dark">
+  <meta name="who-admin-api" content="https://who-control-api.who-fe3.workers.dev">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="WHO Control">
@@ -26,7 +27,7 @@
   <div class="admin-app">
     <aside class="sidebar">
       <div class="side-brand"><span class="brand-mark">W</span><div><b>WHO Control</b><small>Squashberry</small></div></div>
-      <div class="preview-badge">PREVIEW MODE</div>
+      <div class="preview-badge">CONTROL API</div>
       <nav class="side-nav" id="sideNav">
         <button class="active" data-page="overview"><span>⌂</span>Overview</button>
         <button data-page="users"><span>◉</span>Users</button>
@@ -45,7 +46,7 @@
     <div class="main-shell">
       <header class="admin-topbar">
         <div><span class="crumb">WHO CONTROL</span><h1 id="pageTitle">Overview</h1><p id="pageSub">A light command center for the WHO product.</p></div>
-        <div class="top-right"><span class="api-chip"><i></i> API not connected</span><button class="top-icon" id="refreshButton" aria-label="Refresh">↻</button></div>
+        <div class="top-right"><span class="api-chip" id="apiState"><i></i> API not connected</span><button class="top-icon" id="refreshButton" aria-label="Refresh">↻</button></div>
       </header>
 
       <main class="content">
@@ -68,7 +69,7 @@
 
         <section class="page" data-section="users">
           <div class="section-title"><span class="eyebrow">USERS</span><h2>Device & account surface.</h2><p>Privacy-preserving administration only. Do not put raw contact contents into this dashboard.</p></div>
-          <div class="panel table-panel"><div class="panel-head"><div><h3>Recent devices</h3><small>Preview dataset</small></div><button class="ghost-btn" onclick="toast('Backend connection required for live users.')">Refresh</button></div><div class="table-wrap"><table><thead><tr><th>Device</th><th>Platform</th><th>Version</th><th>Last seen</th><th>Status</th></tr></thead><tbody><tr><td>preview-01</td><td>Android</td><td>1.0.0</td><td>Just now</td><td><span class="tag green">active</span></td></tr><tr><td>preview-02</td><td>Android</td><td>1.0.0</td><td>18m ago</td><td><span class="tag amber">idle</span></td></tr></tbody></table></div></div>
+          <div class="panel table-panel"><div class="panel-head"><div><h3>Recent devices</h3><small>Live API</small></div><button class="ghost-btn" onclick="toast('Live WHO Control API')">Refresh</button></div><div class="table-wrap"><table><thead><tr><th>Device</th><th>Platform</th><th>Version</th><th>Last seen</th><th>Status</th></tr></thead><tbody><tr><td>preview-01</td><td>Android</td><td>1.0.0</td><td>Just now</td><td><span class="tag green">active</span></td></tr><tr><td>preview-02</td><td>Android</td><td>1.0.0</td><td>18m ago</td><td><span class="tag amber">idle</span></td></tr></tbody></table></div></div>
         </section>
 
         <section class="page" data-section="caller">
@@ -92,7 +93,7 @@
 
         <section class="page" data-section="remote">
           <div class="section-title"><span class="eyebrow">REMOTE CONFIG</span><h2>Change the app without rebuilding it.</h2><p>Matches the current <b>who-config.json</b> architecture while keeping the editor lightweight.</p></div>
-          <div class="panel config-panel"><div class="toggle-row"><div><b>Welcome modal</b><small>Show the Beta 1.0 message on first entry.</small></div><button class="toggle on" id="welcomeToggle" aria-pressed="true"><i></i></button></div><div class="toggle-row"><div><b>Maintenance mode</b><small>Temporarily prevent normal sessions.</small></div><button class="toggle" id="maintenanceToggle" aria-pressed="false"><i></i></button></div><div class="toggle-row"><div><b>Announcement</b><small>Publish a versioned message/banner.</small></div><button class="toggle" id="announcementToggle" aria-pressed="false"><i></i></button></div><div class="config-grid"><label>Welcome title<input id="welcomeTitle" value="WHO Beta 1.0"></label><label>Welcome button<input id="welcomeButton" value="Continue"></label><label class="full">Welcome message<textarea id="welcomeMessage">This is a WHO Beta 1.0 app created by Squashberry.</textarea></label><label>Maintenance title<input id="maintenanceTitle" value="WHO is temporarily unavailable"></label><label>Maintenance message<textarea id="maintenanceMessage">WHO is undergoing maintenance. Please try again later.</textarea></label><label>Announcement title<input id="announcementTitle" value=""></label><label>Announcement message<textarea id="announcementMessage"></textarea></label></div><div class="panel-actions"><button class="ghost-btn" onclick="loadConfig()">Reload local draft</button><button class="primary-btn" onclick="saveConfig()">Save local draft</button><button class="ghost-btn" onclick="copyConfig()">Copy JSON</button></div></div>
+          <div class="panel config-panel"><div class="toggle-row"><div><b>Welcome modal</b><small>Show the Beta 1.0 message on first entry.</small></div><button class="toggle on" id="welcomeToggle" aria-pressed="true"><i></i></button></div><div class="toggle-row"><div><b>Maintenance mode</b><small>Temporarily prevent normal sessions.</small></div><button class="toggle" id="maintenanceToggle" aria-pressed="false"><i></i></button></div><div class="toggle-row"><div><b>Announcement</b><small>Publish a versioned message/banner.</small></div><button class="toggle" id="announcementToggle" aria-pressed="false"><i></i></button></div><div class="config-grid"><label>Welcome title<input id="welcomeTitle" value="WHO Beta 1.0"></label><label>Welcome button<input id="welcomeButton" value="Continue"></label><label class="full">Welcome message<textarea id="welcomeMessage">This is a WHO Beta 1.0 app created by Squashberry.</textarea></label><label>Maintenance title<input id="maintenanceTitle" value="WHO is temporarily unavailable"></label><label>Maintenance message<textarea id="maintenanceMessage">WHO is undergoing maintenance. Please try again later.</textarea></label><label>Announcement title<input id="announcementTitle" value=""></label><label>Announcement message<textarea id="announcementMessage"></textarea></label></div><div class="panel-actions"><button class="ghost-btn" onclick="loadConfig()">Reload local draft</button><button class="primary-btn" onclick="saveConfig()">Save to API</button><button class="ghost-btn" onclick="copyConfig()">Copy JSON</button></div></div>
         </section>
 
         <section class="page" data-section="announcements">
