@@ -17,7 +17,7 @@
     #adminBoot.hide{opacity:0;visibility:hidden}
     .admin-boot-mark{width:68px;height:68px;border-radius:23px;display:grid;place-items:center;background:linear-gradient(145deg,#8cdaff,#1687ff 62%,#0751c5);box-shadow:0 20px 70px rgba(22,135,255,.32);font-weight:950;font-size:21px}
     .admin-boot-sub{margin-top:5px;color:#667792;font-size:9px}.admin-boot-progress{width:min(250px,calc(100vw - 64px));height:5px;background:#172438;border-radius:99px;margin:16px auto 0;overflow:hidden}.admin-boot-progress i{display:block;width:0;height:100%;background:linear-gradient(90deg,#46bbff,#1687ff);border-radius:99px;transition:width .3s cubic-bezier(.2,.8,.2,1)}.admin-boot-status{display:flex;justify-content:space-between;width:min(250px,calc(100vw - 64px));margin:8px auto 0;color:#576781;font-size:8px}.admin-boot-status strong{color:#81caf0}.admin-boot-mark{animation:adminBootIn .7s cubic-bezier(.2,.8,.2,1) both}@keyframes adminBootIn{from{opacity:0;transform:translateY(12px) scale(.92)}to{opacity:1;transform:none}}
-  </style>
+  #adminAuthRoot{position:fixed;inset:0;z-index:12000;display:none;align-items:center;justify-content:center;padding:20px}#adminAuthRoot.show{display:flex}.auth-backdrop{position:absolute;inset:0;background:rgba(1,4,10,.82);backdrop-filter:blur(18px)}.auth-card{position:relative;width:min(460px,100%);padding:30px;border:1px solid rgba(120,170,255,.16);border-radius:28px;background:linear-gradient(180deg,rgba(12,19,31,.98),rgba(7,11,19,.98));box-shadow:0 40px 100px rgba(0,0,0,.55)}.auth-logo{width:54px;height:54px;border-radius:17px;display:grid;place-items:center;background:linear-gradient(145deg,#8cdaff,#1687ff 62%,#0751c5);font-weight:950;font-size:19px;box-shadow:0 16px 44px rgba(22,135,255,.25);margin-bottom:18px}.auth-card h2{margin:7px 0 8px;font-size:28px}.auth-card p{color:#7e8ca4;line-height:1.55}.auth-step{display:grid;gap:14px;margin-top:20px}.auth-card label{display:grid;gap:7px;color:#aebbd0;font-size:12px}.auth-card input{width:100%;box-sizing:border-box;padding:13px 14px;border-radius:14px;border:1px solid #243247;background:#09101b;color:#f6f9ff;outline:none}.auth-card input:focus{border-color:#3a91ff;box-shadow:0 0 0 3px rgba(58,145,255,.12)}.auth-sent{padding:12px 14px;border-radius:14px;background:#0d1724;border:1px solid #20334b;color:#9fb0c8;font-size:12px}.auth-error{min-height:20px;color:#ff8e8e!important;margin:12px 0 0!important}.auth-back-btn{margin-top:0}.auth-foot{margin-top:18px;color:#506078;font-size:10px}.empty-panel{padding:24px}.empty-panel p{max-width:760px}</style>
   <link rel="stylesheet" href="admin.css">
 </head>
 <body>
@@ -26,7 +26,7 @@
   <div class="admin-app">
     <aside class="sidebar">
       <div class="side-brand"><span class="brand-mark">W</span><div><b>WHO Control</b><small>Squashberry</small></div></div>
-      <div class="preview-badge">PREVIEW MODE</div>
+      <div class="preview-badge" id="connectionBadge">AUTHENTICATION REQUIRED</div>
       <nav class="side-nav" id="sideNav">
         <button class="active" data-page="overview"><span>⌂</span>Overview</button>
         <button data-page="users"><span>◉</span>Users</button>
@@ -39,47 +39,47 @@
         <button data-page="feedback"><span>☷</span>Feedback</button>
         <button data-page="audit"><span>◌</span>Audit</button>
       </nav>
-      <div class="sidebar-bottom"><a href="../">↩ Public WHO</a><button id="adminInstall">↥ Install Control</button></div>
+      <div class="sidebar-bottom"><a href="../">↩ Public WHO</a><button id="adminInstall">↥ Install Control</button><button id="adminSignOut">↪ Sign out</button></div>
     </aside>
 
     <div class="main-shell">
       <header class="admin-topbar">
         <div><span class="crumb">WHO CONTROL</span><h1 id="pageTitle">Overview</h1><p id="pageSub">A light command center for the WHO product.</p></div>
-        <div class="top-right"><span class="api-chip"><i></i> API not connected</span><button class="top-icon" id="refreshButton" aria-label="Refresh">↻</button></div>
+        <div class="top-right"><span class="api-chip" id="apiChip"><i></i> Authentication required</span><button class="top-icon" id="refreshButton" aria-label="Refresh">↻</button></div>
       </header>
 
       <main class="content">
         <section class="page active" data-section="overview">
           <div class="hero-panel">
-            <div><span class="eyebrow">PRODUCT COMMAND CENTER</span><h2>See the whole WHO system at a glance.</h2><p>Designed for quick decisions on mobile, tablet and desktop. Connect it to the WHO backend later; the shell is already ready for remote config, releases, feedback and crash workflows.</p></div>
+            <div><span class="eyebrow">PRODUCT COMMAND CENTER</span><h2>Control the live WHO backend.</h2><p id="overviewMessage">Authenticate with the existing WHO account system to manage remote configuration and real crash reports.</p></div>
             <div class="hero-orbit"><span>W</span><i></i><i></i><i></i><b>WHO</b></div>
           </div>
           <div class="stats-grid">
-            <div class="stat-card"><small>App version</small><strong>1.0.0</strong><span>Beta 1.0</span></div>
-            <div class="stat-card"><small>Force update</small><strong id="forceStat">OFF</strong><span>Remote controlled</span></div>
-            <div class="stat-card"><small>Announcements</small><strong id="announceStat">OFF</strong><span>Revisioned copy</span></div>
-            <div class="stat-card"><small>Crash reports</small><strong id="crashStat">0</strong><span>Local preview records</span></div>
+            <div class="stat-card"><small>App version</small><strong id="appVersionStat">—</strong><span id="appVersionSub">Not loaded</span></div>
+            <div class="stat-card"><small>Force update</small><strong id="forceStat">—</strong><span>Remote controlled</span></div>
+            <div class="stat-card"><small>Announcements</small><strong id="announceStat">—</strong><span>Remote controlled</span></div>
+            <div class="stat-card"><small>Crash reports</small><strong id="crashStat">—</strong><span id="crashStatSub">Not loaded</span></div>
           </div>
           <div class="two-col">
-            <div class="panel"><div class="panel-head"><div><span class="eyebrow">SYSTEM MAP</span><h3>WHO product surfaces</h3></div></div><div class="surface-list"><div><span>Caller ID</span><b>Active</b></div><div><span>Dialer / contacts</span><b>Active</b></div><div><span>SMS</span><b>Active</b></div><div><span>WHO Relay</span><b>Active</b></div><div><span>VPN / network</span><b>Active</b></div><div><span>Backup</span><b>Architecture ready</b></div></div></div>
+            <div class="panel"><div class="panel-head"><div><span class="eyebrow">SYSTEM MAP</span><h3>WHO product surfaces</h3></div></div><div class="surface-list"><div><span>Caller ID</span><b>App surface</b></div><div><span>Dialer / contacts</span><b>App surface</b></div><div><span>SMS</span><b>App surface</b></div><div><span>WHO Relay</span><b>App surface</b></div><div><span>VPN / network</span><b>App surface</b></div><div><span>Admin API</span><b id="adminSurfaceStatus">Not authenticated</b></div></div></div>
             <div class="panel"><div class="panel-head"><div><span class="eyebrow">QUICK ACTIONS</span><h3>Do the useful thing first.</h3></div></div><div class="action-grid"><button data-jump="remote">Edit remote config</button><button data-jump="announcements">Publish announcement</button><button data-jump="releases">Manage release</button><button data-jump="crashes">Review crashes</button></div></div>
           </div>
         </section>
 
         <section class="page" data-section="users">
-          <div class="section-title"><span class="eyebrow">USERS</span><h2>Device & account surface.</h2><p>Privacy-preserving administration only. Do not put raw contact contents into this dashboard.</p></div>
-          <div class="panel table-panel"><div class="panel-head"><div><h3>Recent devices</h3><small>Preview dataset</small></div><button class="ghost-btn" onclick="toast('Backend connection required for live users.')">Refresh</button></div><div class="table-wrap"><table><thead><tr><th>Device</th><th>Platform</th><th>Version</th><th>Last seen</th><th>Status</th></tr></thead><tbody><tr><td>preview-01</td><td>Android</td><td>1.0.0</td><td>Just now</td><td><span class="tag green">active</span></td></tr><tr><td>preview-02</td><td>Android</td><td>1.0.0</td><td>18m ago</td><td><span class="tag amber">idle</span></td></tr></tbody></table></div></div>
+          <div class="section-title"><span class="eyebrow">USERS</span><h2>Device & account surface.</h2><p>This Worker currently does not expose an admin user-directory endpoint. No fabricated user records are shown.</p></div>
+          <div class="panel empty-panel"><span class="eyebrow">BACKEND CONTRACT</span><h3>User directory not exposed</h3><p>The current WHO Worker exposes admin configuration and crash management, but no admin users/devices route. The dashboard will not invent or scrape user records.</p></div>
         </section>
 
         <section class="page" data-section="caller">
           <div class="section-title"><span class="eyebrow">CALLER INTELLIGENCE</span><h2>Signals, not guesses.</h2><p>Use this space for confidence scoring, corrections and community observations once the backend is connected.</p></div>
-          <div class="stats-grid"><div class="stat-card"><small>Observed signals</small><strong>—</strong><span>Awaiting API</span></div><div class="stat-card"><small>Corrections</small><strong>—</strong><span>Awaiting API</span></div><div class="stat-card"><small>Reports</small><strong id="callerReportCount">0</strong><span>Local preview</span></div><div class="stat-card"><small>Raw numbers stored</small><strong>0</strong><span>Design target</span></div></div>
+          <div class="stats-grid"><div class="stat-card"><small>Observed signals</small><strong>—</strong><span>Admin endpoint not exposed</span></div><div class="stat-card"><small>Corrections</small><strong>—</strong><span>Admin endpoint not exposed</span></div><div class="stat-card"><small>Reports</small><strong>—</strong><span>Admin endpoint not exposed</span></div><div class="stat-card"><small>Raw numbers stored</small><strong>—</strong><span>Not displayed here</span></div></div>
           <div class="panel callout-panel"><div class="signal-ring"><span>WHO</span></div><div><span class="eyebrow">ARCHITECTURE</span><h3>Consent → observation → confidence → correction</h3><p>WHO can compare names from contacts with anonymized caller observations while keeping raw numbers out of the caller database design.</p></div></div>
         </section>
 
         <section class="page" data-section="reports">
           <div class="section-title"><span class="eyebrow">REPORTS</span><h2>Keep reputation explainable.</h2><p>Moderate spam/scam reports without turning reports into permanent identity claims.</p></div>
-          <div class="panel table-panel"><div class="toolbar"><div class="segmented"><button class="active" data-report-filter="pending">Pending</button><button data-report-filter="resolved">Resolved</button><button data-report-filter="all">All</button></div><input id="reportSearch" placeholder="Search preview reports"></div><div class="table-wrap"><table><thead><tr><th>Number</th><th>Reason</th><th>Reports</th><th>Status</th><th></th></tr></thead><tbody id="reportBody"></tbody></table></div></div>
+          <div class="panel empty-panel"><span class="eyebrow">BACKEND CONTRACT</span><h3>Moderation queue not exposed</h3><p>The current Worker accepts number reports from the app but does not expose an admin report-list endpoint. No fake report rows are shown.</p></div>
         </section>
 
         <section class="page" data-section="releases">
@@ -91,29 +91,29 @@
         </section>
 
         <section class="page" data-section="remote">
-          <div class="section-title"><span class="eyebrow">REMOTE CONFIG</span><h2>Change the app without rebuilding it.</h2><p>Matches the current <b>who-config.json</b> architecture while keeping the editor lightweight.</p></div>
-          <div class="panel config-panel"><div class="toggle-row"><div><b>Welcome modal</b><small>Show the Beta 1.0 message on first entry.</small></div><button class="toggle on" id="welcomeToggle" aria-pressed="true"><i></i></button></div><div class="toggle-row"><div><b>Maintenance mode</b><small>Temporarily prevent normal sessions.</small></div><button class="toggle" id="maintenanceToggle" aria-pressed="false"><i></i></button></div><div class="toggle-row"><div><b>Announcement</b><small>Publish a versioned message/banner.</small></div><button class="toggle" id="announcementToggle" aria-pressed="false"><i></i></button></div><div class="config-grid"><label>Welcome title<input id="welcomeTitle" value="WHO Beta 1.0"></label><label>Welcome button<input id="welcomeButton" value="Continue"></label><label class="full">Welcome message<textarea id="welcomeMessage">This is a WHO Beta 1.0 app created by Squashberry.</textarea></label><label>Maintenance title<input id="maintenanceTitle" value="WHO is temporarily unavailable"></label><label>Maintenance message<textarea id="maintenanceMessage">WHO is undergoing maintenance. Please try again later.</textarea></label><label>Announcement title<input id="announcementTitle" value=""></label><label>Announcement message<textarea id="announcementMessage"></textarea></label></div><div class="panel-actions"><button class="ghost-btn" onclick="loadConfig()">Reload local draft</button><button class="primary-btn" onclick="saveConfig()">Save local draft</button><button class="ghost-btn" onclick="copyConfig()">Copy JSON</button></div></div>
+          <div class="section-title"><span class="eyebrow">REMOTE CONFIG</span><h2>Change the app without rebuilding it.</h2><p>Edits the live <b>runtime_config</b> row through the existing WHO Worker.</p></div>
+          <div class="panel config-panel"><div class="toggle-row"><div><b>Welcome modal</b><small>Show the Beta 1.0 message on first entry.</small></div><button class="toggle on" id="welcomeToggle" aria-pressed="true"><i></i></button></div><div class="toggle-row"><div><b>Maintenance mode</b><small>Temporarily prevent normal sessions.</small></div><button class="toggle" id="maintenanceToggle" aria-pressed="false"><i></i></button></div><div class="toggle-row"><div><b>Announcement</b><small>Publish a versioned message/banner.</small></div><button class="toggle" id="announcementToggle" aria-pressed="false"><i></i></button></div><div class="config-grid"><label>Welcome title<input id="welcomeTitle" value="WHO Beta 1.0"></label><label>Welcome button<input id="welcomeButton" value="Continue"></label><label class="full">Welcome message<textarea id="welcomeMessage">This is a WHO Beta 1.0 app created by Squashberry.</textarea></label><label>Maintenance title<input id="maintenanceTitle" value="WHO is temporarily unavailable"></label><label>Maintenance message<textarea id="maintenanceMessage">WHO is undergoing maintenance. Please try again later.</textarea></label><label>Announcement title<input id="announcementTitle" value=""></label><label>Announcement message<textarea id="announcementMessage"></textarea></label></div><div class="panel-actions"><button class="ghost-btn" onclick="loadConfig()">Reload from backend</button><button class="primary-btn" onclick="saveConfig()">Save to WHO backend</button><button class="ghost-btn" onclick="copyConfig()">Copy JSON</button></div></div>
         </section>
 
         <section class="page" data-section="announcements">
           <div class="section-title"><span class="eyebrow">ANNOUNCEMENTS</span><h2>Ship product messages cleanly.</h2><p>Use revisioned copy for beta notices, release notes, feature launches and maintenance windows.</p></div>
-          <div class="panel announcement-editor"><div class="announcement-preview"><span class="preview-kicker">PREVIEW</span><h3 id="previewAnnouncementTitle">Your WHO message</h3><p id="previewAnnouncementMessage">Write an announcement and see how it will look inside the app.</p><div class="preview-actions"><button>Not now</button><button class="preview-primary">Continue</button></div></div><div class="announcement-fields"><label>Title<input id="annTitle" value="WHO Beta 1.0"></label><label>Message<textarea id="annMessage" placeholder="What should users know?"></textarea></label><div class="field-row"><label>Button text<input id="annButton" value="Continue"></label><label>Revision<input id="annRevision" value="1"></label></div><button class="primary-btn" onclick="publishAnnouncement()">Publish preview announcement</button></div></div>
+          <div class="panel announcement-editor"><div class="announcement-preview"><span class="preview-kicker">PREVIEW</span><h3 id="previewAnnouncementTitle">Your WHO message</h3><p id="previewAnnouncementMessage">Write an announcement and see how it will look inside the app.</p><div class="preview-actions"><button>Not now</button><button class="preview-primary">Continue</button></div></div><div class="announcement-fields"><label>Title<input id="annTitle" value="WHO Beta 1.0"></label><label>Message<textarea id="annMessage" placeholder="What should users know?"></textarea></label><div class="field-row"><label>Button text<input id="annButton" value="Continue"></label><label>Revision<input id="annRevision" value="1"></label></div><button class="primary-btn" onclick="publishAnnouncement()">Publish announcement to WHO</button></div></div>
         </section>
 
         <section class="page" data-section="crashes">
-          <div class="section-title"><span class="eyebrow">CRASH CENTER</span><h2>Find what broke. Fast.</h2><p>Local preview storage is used here until the WHO crash endpoint is connected.</p></div>
+          <div class="section-title"><span class="eyebrow">CRASH CENTER</span><h2>Find what broke. Fast.</h2><p>These rows come from the live WHO D1 crash_reports table through the existing admin Worker endpoints.</p></div>
           <div class="stats-grid"><div class="stat-card"><small>Pending</small><strong id="pendingCrash">0</strong><span>Needs review</span></div><div class="stat-card"><small>Fixed</small><strong id="fixedCrash">0</strong><span>Resolved locally</span></div><div class="stat-card"><small>Fatal</small><strong id="fatalCrash">0</strong><span>Preview only</span></div><div class="stat-card"><small>Today</small><strong id="todayCrash">0</strong><span>Preview only</span></div></div>
-          <div class="panel table-panel"><div class="toolbar"><div class="segmented"><button class="active" data-crash-filter="pending">Pending</button><button data-crash-filter="fixed">Fixed</button><button data-crash-filter="all">All</button></div><button class="ghost-btn" onclick="addPreviewCrash()">Add preview crash</button></div><div class="table-wrap"><table><thead><tr><th>Time</th><th>Severity</th><th>Version</th><th>Platform</th><th>Error</th><th>Status</th><th></th></tr></thead><tbody id="crashBody"></tbody></table></div></div>
+          <div class="panel table-panel"><div class="toolbar"><div class="segmented"><button class="active" data-crash-filter="pending">Pending</button><button data-crash-filter="fixed">Fixed</button><button data-crash-filter="all">All</button></div><button class="ghost-btn" id="refreshCrashes">Refresh</button></div><div class="table-wrap"><table><thead><tr><th>Time</th><th>Severity</th><th>Version</th><th>Platform</th><th>Error</th><th>Status</th><th></th></tr></thead><tbody id="crashBody"></tbody></table></div></div>
         </section>
 
         <section class="page" data-section="feedback">
           <div class="section-title"><span class="eyebrow">FEEDBACK</span><h2>Close the beta loop.</h2><p>Keep user feedback close to releases, announcements and crash patterns.</p></div>
-          <div class="feedback-grid"><article><span class="tag blue">FEATURE</span><h3>Relay pairing is clear</h3><p>Preview feedback from beta testers will appear here when the feedback endpoint is connected.</p><small>preview-user · 2h ago</small></article><article><span class="tag amber">BUG</span><h3>Call-screening setup needs explanation</h3><p>Use feedback to improve the onboarding path instead of hiding complexity behind settings.</p><small>preview-user · 5h ago</small></article><article><span class="tag green">PRAISE</span><h3>The new dialer feels native</h3><p>A lightweight design should make the product easier to learn at first launch.</p><small>preview-user · 1d ago</small></article></div>
+          <div class="panel empty-panel"><span class="eyebrow">BACKEND CONTRACT</span><h3>Feedback endpoint not exposed</h3><p>The current Worker does not provide an admin feedback queue. No preview feedback is presented as real user feedback.</p></div>
         </section>
 
         <section class="page" data-section="audit">
           <div class="section-title"><span class="eyebrow">AUDIT</span><h2>Every admin mutation should leave a trace.</h2><p>The production dashboard should record actor, timestamp, target, old value, new value and result.</p></div>
-          <div class="panel table-panel"><table><thead><tr><th>Time</th><th>Actor</th><th>Action</th><th>Result</th></tr></thead><tbody><tr><td>—</td><td>PREVIEW</td><td>Opened WHO Control</td><td><span class="tag blue">local</span></td></tr><tr><td>—</td><td>PREVIEW</td><td>Loaded remote config draft</td><td><span class="tag blue">local</span></td></tr></tbody></table></div>
+          <div class="panel empty-panel"><span class="eyebrow">BACKEND CONTRACT</span><h3>Audit endpoint not exposed</h3><p>The D1 audit_logs table exists, but the current Worker does not expose an admin audit-list route. No local preview entries are displayed as production audit events.</p></div>
         </section>
       </main>
     </div>
@@ -127,7 +127,30 @@
     <button data-page="audit"><span>◌</span><small>Audit</small></button>
   </nav>
 
-  <div class="toast" id="toast"></div>
+  <div id="adminAuthRoot" class="auth-root" aria-hidden="true">
+  <div class="auth-backdrop"></div>
+  <section class="auth-card" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+    <div class="auth-logo">W</div>
+    <span class="eyebrow">WHO CONTROL</span>
+    <h2 id="authTitle">Administrator sign in</h2>
+    <p id="authIntro">Use the existing WHO account verification system. Only accounts with an <b>admin</b> or <b>moderator</b> role can enter this control panel.</p>
+    <div id="authStepRequest" class="auth-step">
+      <label>Name<input id="authName" autocomplete="name" placeholder="Your WHO account name"></label>
+      <label>Email<input id="authEmail" type="email" autocomplete="email" placeholder="name@example.com"></label>
+      <label>Phone number<input id="authPhone" autocomplete="tel" placeholder="+220 …"></label>
+      <button class="primary-btn" id="authSendCode">Send verification code</button>
+    </div>
+    <div id="authStepVerify" class="auth-step" hidden>
+      <div class="auth-sent">A verification code was sent to <b id="authEmailEcho">your email</b>.</div>
+      <label>6-digit code<input id="authCode" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="000000"></label>
+      <button class="primary-btn" id="authVerifyCode">Verify & enter</button>
+      <button class="ghost-btn auth-back-btn" id="authBack">Use another account</button>
+    </div>
+    <p id="authError" class="auth-error" role="alert"></p>
+    <div class="auth-foot">WHO API · existing session authentication · no admin API key</div>
+  </section>
+</div>
+<div class="toast" id="toast"></div>
   <script src="admin.js" defer></script>
 </body>
 </html>
