@@ -1,0 +1,13 @@
+name = "who-control-api"
+main = "src/index.js"
+compatibility_date = "2026-09-25"
+workers_dev = true
+
+[vars]
+PUBLIC_ORIGIN = "https://squashberry.github.io"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "who-db"
+database_id = "REPLACE_WITH_EXISTING_WHO_D1_DATABASE_ID"
+migrations_dir = "migrations"
