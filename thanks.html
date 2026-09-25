@@ -1,0 +1,29 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#060812"><meta name="color-scheme" content="dark">
+<title>Thank you for installing WHO · WHO</title><link rel="icon" href="favicon.svg" type="image/svg+xml">
+<style>
+html,body{height:100%;margin:0;background:#060812;color:#f7f9ff;font-family:Inter,system-ui,sans-serif}
+body{display:grid;place-items:center}.wrap{width:min(560px,calc(100% - 36px));padding:28px;text-align:center}
+.mark{width:68px;height:68px;border-radius:22px;display:grid;place-items:center;margin:0 auto 22px;background:linear-gradient(145deg,#7ad6ff,#1687ff 60%,#0751c5);font-weight:950;font-size:22px;box-shadow:0 20px 70px rgba(22,135,255,.22)}
+h1{font-size:38px;letter-spacing:-.055em;line-height:1.02;margin:0 0 12px}.accent{color:#72caff}p{color:#93a0b4;font-size:14px;line-height:1.8}
+.status{margin:24px auto 16px;padding:14px 16px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.035);border-radius:16px;color:#cbd7e7;font-size:12px}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#53c8ff;box-shadow:0 0 14px rgba(83,200,255,.5);margin-right:8px}
+.actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:18px}
+a{display:inline-flex;padding:12px 17px;border-radius:13px;background:#1687ff;color:#fff;text-decoration:none;font-weight:800;font-size:12px}.secondary{background:#101722;border:1px solid rgba(255,255,255,.09)}
+.small{margin-top:18px;color:#63728a;font-size:10px}
+</style></head><body>
+<main class="wrap"><div class="mark">W</div><h1>Thank you for installing <span class="accent">WHO.</span></h1>
+<p>Your WHO Android download is starting automatically. Once the APK finishes downloading, open it from your browser's download area to install or update WHO.</p>
+<div class="status" id="status"><span class="dot"></span>Starting WHO download…</div>
+<div class="actions"><a id="manual" href="https://github.com/squashberry/who-app/releases/latest/download/WHO-v1.0.0.apk">Having issues? Download it manually</a><a class="secondary" href="./">Back to WHO</a></div>
+<div class="small">Beta 1.0 · Android · Squashberry</div></main>
+<script>
+const apk="https://github.com/squashberry/who-app/releases/latest/download/WHO-v1.0.0.apk";
+const status=document.getElementById("status");
+const frame=document.createElement("iframe");
+frame.hidden=true;
+frame.setAttribute("aria-hidden","true");
+frame.src=apk;
+document.body.appendChild(frame);
+setTimeout(()=>{status.innerHTML='<span class="dot"></span>WHO should be downloading now. If nothing started, use the manual download button.';},2200);
+</script></body></html>
