@@ -28,12 +28,6 @@ const apk = "https://raw.githubusercontent.com/squashberry/who-app/main/WHO-v1.0
 const status = document.getElementById("status");
 
 function startDownload() {
-  const frame = document.createElement("iframe");
-  frame.hidden = true;
-  frame.setAttribute("aria-hidden", "true");
-  frame.src = apk;
-  document.body.appendChild(frame);
-
   const link = document.createElement("a");
   link.href = apk;
   link.rel = "noopener";
