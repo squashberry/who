@@ -1,220 +1,271 @@
 (() => {
-  const boot = document.getElementById('adminBoot');
-  const title = document.getElementById('pageTitle');
-  const sub = document.getElementById('pageSub');
+  const API_BASE = (document.querySelector('meta[name="who-admin-api"]')?.content || '').replace(/\/+$/, '');
+  const KEY = 'whoAdminApiKey';
   const sections = [...document.querySelectorAll('.page')];
-  const navButtons = [...document.querySelectorAll('[data-page]')];
-
+  const nav = [...document.querySelectorAll('[data-page]')];
   const meta = {
-    overview:['Overview','A light command center for the WHO product.'],
-    users:['Users','Account and device visibility without raw contact content.'],
+    overview:['Overview','Live WHO product command center.'],
+    users:['Users','Account and device visibility.'],
     caller:['Caller intelligence','Signals, confidence and corrections.'],
     reports:['Reports','Community spam and reputation moderation.'],
-    releases:['Releases','Versions, download targets and update gates.'],
-    remote:['Remote config','App copy and behavior controlled remotely.'],
+    releases:['Releases','Versions and update gates.'],
+    remote:['Remote config','App behavior controlled remotely.'],
     announcements:['Announcements','Revisioned product messages.'],
-    crashes:['Crashes','Crash review and local preview triage.'],
+    crashes:['Crashes','Crash review and triage.'],
     feedback:['Feedback','Close the beta loop.'],
-    audit:['Audit','Track every administrative mutation.']
+    audit:['Audit','Administrative activity.']
   };
+  let state={config:{},summary:{},users:[],reports:[],crashes:[],feedback:[],audit:[]};
+  let reportFilter='pending', crashFilter='pending';
 
-  let deferredPrompt = null;
-  let crashFilter = 'pending';
-  let reportFilter = 'pending';
-
-  const defaultConfig = {
-    appVersion:'1.0.0', latestVersion:'1.0.0', minimumVersion:'1.0.0',
-    forceUpdate:false, updateUrl:'https://squashberry.github.io/who/download.html',
-    forceUpdateTitle:'WHO update required',
-    forceUpdateMessage:'You need to update this app to continue using it.',
-    welcomeEnabled:true, welcomeRevision:1, welcomeTitle:'WHO Beta 1.0',
-    welcomeMessage:'This is a WHO Beta 1.0 app created by Squashberry.',
-    welcomeButtonText:'Continue',
-    maintenanceEnabled:false, maintenanceTitle:'WHO is temporarily unavailable',
-    maintenanceMessage:'WHO is undergoing maintenance. Please try again later.',
-    announcementEnabled:false, announcementTitle:'', announcementMessage:''
-  };
-
-  function cfg() {
-    try { return Object.assign({}, defaultConfig, JSON.parse(localStorage.getItem('who_admin_config') || '{}')); }
-    catch (_) { return {...defaultConfig}; }
+  function toast(msg){
+    const el=document.getElementById('toast');
+    if(!el)return;
+    el.textContent=msg;
+    el.style.display='block';
+    clearTimeout(window.__whoToast);
+    window.__whoToast=setTimeout(()=>el.style.display='none',2400);
   }
-  function saveCfg(value) {
-    localStorage.setItem('who_admin_config', JSON.stringify(value));
-  }
-
-  function setPage(page) {
-    const chosen = sections.some((s)=>s.dataset.section===page) ? page : 'overview';
-    sections.forEach((s)=>s.classList.toggle('active', s.dataset.section===chosen));
-    navButtons.forEach((b)=>b.classList.toggle('active', b.dataset.page===chosen));
-    title.textContent = meta[chosen][0];
-    sub.textContent = meta[chosen][1];
-    if (location.hash !== '#' + chosen) history.replaceState(null,'','#'+chosen);
-    window.scrollTo({top:0,behavior:'auto'});
-  }
-
-  navButtons.forEach((btn)=>btn.addEventListener('click',()=>setPage(btn.dataset.page)));
-  document.querySelectorAll('[data-jump]').forEach((btn)=>btn.addEventListener('click',()=>setPage(btn.dataset.jump)));
-
-  function loadConfig() {
-    const c = cfg();
-    document.getElementById('latestVersion').value = c.latestVersion;
-    document.getElementById('minimumVersion').value = c.minimumVersion;
-    document.getElementById('updateUrl').value = c.updateUrl;
-    document.getElementById('forceTitle').value = c.forceUpdateTitle;
-    document.getElementById('forceMessage').value = c.forceUpdateMessage;
-    document.getElementById('welcomeTitle').value = c.welcomeTitle;
-    document.getElementById('welcomeButton').value = c.welcomeButtonText;
-    document.getElementById('welcomeMessage').value = c.welcomeMessage;
-    document.getElementById('maintenanceTitle').value = c.maintenanceTitle;
-    document.getElementById('maintenanceMessage').value = c.maintenanceMessage;
-    document.getElementById('announcementTitle').value = c.announcementTitle;
-    document.getElementById('announcementMessage').value = c.announcementMessage;
-    setToggle('forceToggle', c.forceUpdate);
-    setToggle('welcomeToggle', c.welcomeEnabled);
-    setToggle('maintenanceToggle', c.maintenanceEnabled);
-    setToggle('announcementToggle', c.announcementEnabled);
-    renderStats();
-  }
-
-  function readConfigFromUi() {
-    const c = cfg();
-    c.latestVersion = document.getElementById('latestVersion').value.trim();
-    c.minimumVersion = document.getElementById('minimumVersion').value.trim();
-    c.updateUrl = document.getElementById('updateUrl').value.trim();
-    c.forceUpdateTitle = document.getElementById('forceTitle').value;
-    c.forceUpdateMessage = document.getElementById('forceMessage').value;
-    c.welcomeTitle = document.getElementById('welcomeTitle').value;
-    c.welcomeButtonText = document.getElementById('welcomeButton').value;
-    c.welcomeMessage = document.getElementById('welcomeMessage').value;
-    c.maintenanceTitle = document.getElementById('maintenanceTitle').value;
-    c.maintenanceMessage = document.getElementById('maintenanceMessage').value;
-    c.announcementTitle = document.getElementById('announcementTitle').value;
-    c.announcementMessage = document.getElementById('announcementMessage').value;
-    c.forceUpdate = getToggle('forceToggle');
-    c.welcomeEnabled = getToggle('welcomeToggle');
-    c.maintenanceEnabled = getToggle('maintenanceToggle');
-    c.announcementEnabled = getToggle('announcementToggle');
-    return c;
-  }
-
-  function saveConfig() { saveCfg(readConfigFromUi()); renderStats(); toast('Remote config draft saved locally.'); }
-  function saveRelease() { saveCfg(readConfigFromUi()); toast('Release draft saved locally.'); }
-
-  function setToggle(id,on) {
-    const el=document.getElementById(id);
-    if (!el) return;
-    el.classList.toggle('on', !!on);
-    el.setAttribute('aria-pressed',String(!!on));
-  }
-  function getToggle(id) { return document.getElementById(id)?.classList.contains('on') === true; }
-  document.querySelectorAll('.toggle').forEach((el)=>el.addEventListener('click',()=>{
-    el.classList.toggle('on');
-    el.setAttribute('aria-pressed',String(el.classList.contains('on')));
-    renderStats();
-  }));
-
-  function renderStats() {
-    const c=cfg();
-    document.getElementById('forceStat').textContent=c.forceUpdate?'ON':'OFF';
-    document.getElementById('announceStat').textContent=c.announcementEnabled?'ON':'OFF';
-    const crashes=readCrashes();
-    document.getElementById('crashStat').textContent=String(crashes.length);
-  }
-
-  function readCrashes() {
-    try{return JSON.parse(localStorage.getItem('who_admin_crash_preview')||'[]')}catch(_){return[]}
-  }
-  function writeCrashes(rows){localStorage.setItem('who_admin_crash_preview',JSON.stringify(rows))}
-  function addPreviewCrash(){
-    const now=new Date().toISOString();
-    const rows=readCrashes();
-    rows.unshift({id:'preview-'+Date.now(),received_at:now,app_version:'1.0.0',platform:'android',fatal:true,error:'Preview crash report — not a real user crash.',status:'pending'});
-    writeCrashes(rows); renderCrashes(); renderStats(); setPage('crashes'); toast('Preview crash added.');
-  }
-  function renderCrashes(){
-    const rows=readCrashes().filter(r=>crashFilter==='all' || (r.status||'pending')===crashFilter);
-    const body=document.getElementById('crashBody');
-    body.innerHTML=rows.length?rows.map(r=>'<tr><td>'+new Date(r.received_at).toLocaleString()+'</td><td><span class="tag '+(r.fatal?'red':'amber')+'">'+(r.fatal?'Fatal':'Non-fatal')+'</span></td><td>'+r.app_version+'</td><td>'+r.platform+'</td><td>'+escapeHtml(r.error)+'</td><td><span class="tag '+(r.status==='fixed'?'green':'amber')+'">'+(r.status||'pending')+'</span></td><td><button class="ghost-btn" data-fix="'+r.id+'">'+(r.status==='fixed'?'Reopen':'Fix')+'</button></td></tr>').join(''):'<tr><td colspan="7">No preview crashes in this view.</td></tr>';
-    document.getElementById('pendingCrash').textContent=readCrashes().filter(r=>(r.status||'pending')==='pending').length;
-    document.getElementById('fixedCrash').textContent=readCrashes().filter(r=>r.status==='fixed').length;
-    document.getElementById('fatalCrash').textContent=readCrashes().filter(r=>r.fatal).length;
-    const today=new Date().toISOString().slice(0,10);document.getElementById('todayCrash').textContent=readCrashes().filter(r=>String(r.received_at).slice(0,10)===today).length;
-    body.querySelectorAll('[data-fix]').forEach(btn=>btn.addEventListener('click',()=>{const all=readCrashes();const row=all.find(r=>r.id===btn.dataset.fix);if(row){row.status=row.status==='fixed'?'pending':'fixed';row.fixed_at=row.status==='fixed'?new Date().toISOString():null;writeCrashes(all);renderCrashes();renderStats();toast(row.status==='fixed'?'Crash marked fixed.':'Crash reopened.')}}));
-  }
-  document.querySelectorAll('[data-crash-filter]').forEach(btn=>btn.addEventListener('click',()=>{crashFilter=btn.dataset.crashFilter;document.querySelectorAll('[data-crash-filter]').forEach(b=>b.classList.toggle('active',b===btn));renderCrashes()}));
-
-  const previewReports=[
-    {number:'+220 3XX XXX',reason:'Suspected spam',count:4,status:'pending'},
-    {number:'+220 7XX XXX',reason:'Telemarketing',count:2,status:'pending'},
-    {number:'+220 2XX XXX',reason:'Resolved false positive',count:1,status:'resolved'}
-  ];
-  function renderReports(){
-    const q=(document.getElementById('reportSearch').value||'').toLowerCase();
-    const rows=previewReports.filter(r=>(reportFilter==='all'||r.status===reportFilter)&&(!q||JSON.stringify(r).toLowerCase().includes(q)));
-    document.getElementById('reportBody').innerHTML=rows.map((r,i)=>'<tr><td>'+r.number+'</td><td>'+r.reason+'</td><td>'+r.count+'</td><td><span class="tag '+(r.status==='resolved'?'green':'amber')+'">'+r.status+'</span></td><td><button class="ghost-btn" data-report="'+i+'">'+(r.status==='resolved'?'Reopen':'Resolve')+'</button></td></tr>').join('') || '<tr><td colspan="5">No reports match.</td></tr>';
-    document.getElementById('reportBody').querySelectorAll('[data-report]').forEach(btn=>btn.addEventListener('click',()=>{previewReports[Number(btn.dataset.report)].status=previewReports[Number(btn.dataset.report)].status==='resolved'?'pending':'resolved';renderReports();toast('Preview report updated.');}));
-  }
-  document.getElementById('reportSearch').addEventListener('input',renderReports);
-  document.querySelectorAll('[data-report-filter]').forEach(btn=>btn.addEventListener('click',()=>{reportFilter=btn.dataset.reportFilter;document.querySelectorAll('[data-report-filter]').forEach(b=>b.classList.toggle('active',b===btn));renderReports()}));
-
-  function publishAnnouncement(){
-    const c=cfg();
-    c.announcementEnabled=true;
-    c.announcementTitle=document.getElementById('annTitle').value;
-    c.announcementMessage=document.getElementById('annMessage').value;
-    c.announcementRevision=Number(document.getElementById('annRevision').value)||1;
-    c.announcementButton=document.getElementById('annButton').value;
-    saveCfg(c);
-    document.getElementById('previewAnnouncementTitle').textContent=c.announcementTitle||'Your WHO message';
-    document.getElementById('previewAnnouncementMessage').textContent=c.announcementMessage||'Write an announcement and see how it will look inside the app.';
-    renderStats();
-    toast('Announcement saved as a local preview.');
-  }
-
-  function copyConfig(){
-    const text=JSON.stringify(readConfigFromUi(),null,2);
-    navigator.clipboard?.writeText(text).then(()=>toast('Config JSON copied.')).catch(()=>{window.prompt('Copy WHO config JSON',text)});
-  }
-  function escapeHtml(value){return String(value).replace(/[&<>"']/g,(c)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-
-  function toast(message){const el=document.getElementById('toast');el.textContent=message;el.style.display='block';clearTimeout(window.__whoToast);window.__whoToast=setTimeout(()=>el.style.display='none',2200)}
-
-  document.getElementById('refreshButton').addEventListener('click',()=>{loadConfig();renderReports();renderCrashes();toast('Preview data refreshed.')});
-  document.querySelectorAll('.side-nav button,.mobile-admin-nav button').forEach(()=>{});
-
-  window.addPreviewCrash=addPreviewCrash;
-  window.saveRelease=saveRelease;
-  window.saveConfig=saveConfig;
-  window.loadConfig=loadConfig;
-  window.copyConfig=copyConfig;
-  window.publishAnnouncement=publishAnnouncement;
   window.toast=toast;
+  window.showAdminToast=toast;
 
-  window.addEventListener('beforeinstallprompt',(e)=>{e.preventDefault();deferredPrompt=e});
-  document.getElementById('adminInstall').addEventListener('click',()=>{
-    if(deferredPrompt){deferredPrompt.prompt();deferredPrompt=null}else alert('Use the browser menu to install WHO Control when the install option is available.');
-  });
-  function setAdminBootProgress(value, status) {
-    const bar=document.getElementById('adminBootProgress');
-    const percent=document.getElementById('adminBootPercent');
-    const label=document.getElementById('adminBootStatus');
-    const safe=Math.max(0,Math.min(100,Math.round(value)));
-    if(bar) bar.style.width=safe+'%';
-    if(percent) percent.textContent=safe+'%';
-    if(label && status) label.textContent=status;
+  function setPage(page){
+    const chosen=meta[page]?page:'overview';
+    sections.forEach(s=>s.classList.toggle('active',s.dataset.section===chosen));
+    nav.forEach(b=>b.classList.toggle('active',b.dataset.page===chosen));
+    document.getElementById('pageTitle').textContent=meta[chosen][0];
+    document.getElementById('pageSub').textContent=meta[chosen][1];
+    history.replaceState(null,'','#'+chosen);
+    window.scrollTo(0,0);
+  }
+  nav.forEach(b=>b.addEventListener('click',()=>setPage(b.dataset.page)));
+  document.querySelectorAll('[data-jump]').forEach(b=>b.addEventListener('click',()=>setPage(b.dataset.jump)));
+
+  function setApiState(text,connected){
+    const el=document.getElementById('apiState');
+    if(el)el.innerHTML='<i></i> '+text;
+    if(el)el.classList.toggle('connected',!!connected);
   }
 
-  setAdminBootProgress(10,'Preparing control center…');
-  setTimeout(()=>setAdminBootProgress(34,'Loading dashboard…'),140);
-  setTimeout(()=>setAdminBootProgress(58,'Loading local preview data…'),280);
-  setTimeout(()=>setAdminBootProgress(78,'Preparing controls…'),420);
+  async function api(path,options={}){
+    const headers=new Headers(options.headers||{});
+    headers.set('Content-Type','application/json');
+    const key=sessionStorage.getItem(KEY)||'';
+    if(key)headers.set('Authorization','Bearer '+key);
+    const res=await fetch(API_BASE+path,{...options,headers});
+    let body={}; try{body=await res.json();}catch{}
+    if(res.status===401){
+      sessionStorage.removeItem(KEY);
+      showLogin();
+      throw new Error('Admin authentication required');
+    }
+    if(!res.ok||body.success===false)throw new Error(body.error||body.message||('HTTP '+res.status));
+    return body;
+  }
 
-  if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(()=>{}); }
-  window.addEventListener('DOMContentLoaded',()=>setAdminBootProgress(62,'Dashboard ready…'));
-  window.addEventListener('load',()=>{
-    setAdminBootProgress(100,'Control center is ready.');
-    setTimeout(()=>boot.classList.add('hide'),430);
-    loadConfig();renderReports();renderCrashes();if(location.hash) setPage(location.hash.slice(1));
+  function showLogin(){
+    if(document.getElementById('whoAdminLogin'))return;
+    const wrap=document.createElement('div');
+    wrap.id='whoAdminLogin';
+    wrap.style.cssText='position:fixed;inset:0;z-index:20000;display:grid;place-items:center;background:rgba(3,5,9,.88);backdrop-filter:blur(18px);padding:20px';
+    wrap.innerHTML='<div style="width:min(430px,100%);background:#0d1220;border:1px solid rgba(255,255,255,.1);border-radius:24px;padding:26px;box-shadow:0 30px 100px rgba(0,0,0,.55)"><div style="font-size:11px;font-weight:900;color:#6fbdf2;letter-spacing:.14em">WHO CONTROL</div><h2 style="margin:8px 0">Admin authentication</h2><p style="color:#71819d;font-size:13px">Enter your private Admin API key. It stays in this browser session.</p><input id="whoAdminKey" type="password" autocomplete="off" placeholder="Admin API key" style="width:100%;box-sizing:border-box;background:#080b13;border:1px solid #26334a;color:#fff;border-radius:12px;padding:12px"><button id="whoAdminConnect" class="primary-btn" style="margin-top:14px;width:100%">Connect</button><div id="whoAdminError" style="display:none;color:#ff8f9f;font-size:12px;margin-top:12px"></div></div>';
+    document.body.appendChild(wrap);
+    const input=wrap.querySelector('#whoAdminKey');
+    const btn=wrap.querySelector('#whoAdminConnect');
+    const connect=async()=>{
+      const value=input.value.trim();
+      if(!value)return;
+      btn.disabled=true;btn.textContent='Connecting…';
+      try{
+        const r=await fetch(API_BASE+'/admin/verify',{headers:{Authorization:'Bearer '+value}});
+        if(!r.ok)throw new Error('Authentication failed');
+        sessionStorage.setItem(KEY,value);
+        wrap.remove();
+        await loadLive();
+      }catch(e){
+        wrap.querySelector('#whoAdminError').textContent=e.message||'Could not connect.';
+        wrap.querySelector('#whoAdminError').style.display='block';
+        btn.disabled=false;btn.textContent='Connect';
+      }
+    };
+    btn.addEventListener('click',connect);
+    input.addEventListener('keydown',e=>{if(e.key==='Enter')connect();});
+  }
+
+  async function loadLive(){
+    setApiState('Connecting…',false);
+    try{
+      state=await api('/admin/bootstrap');
+      setApiState('API connected',true);
+      renderAll();
+    }catch(e){
+      setApiState(e.message==='Admin authentication required'?'Login required':'API unavailable',false);
+      if(e.message!=='Admin authentication required')toast(e.message);
+      throw e;
+    }
+  }
+  window.connectAdminApi=()=>{sessionStorage.removeItem(KEY);showLogin();};
+
+  function val(id,fallback=''){
+    return document.getElementById(id)?.value ?? state.config?.[fallback] ?? '';
+  }
+  function checked(id,fallback=false){
+    const el=document.getElementById(id);
+    if(!el)return !!state.config?.[fallback];
+    return el.type==='checkbox'?el.checked:el.classList.contains('on');
+  }
+  function assign(id,value){
+    const el=document.getElementById(id);if(!el||value===undefined||value===null)return;
+    if(el.type==='checkbox')el.checked=!!value;else el.value=String(value);
+  }
+  function toggle(id,on){
+    const el=document.getElementById(id);if(!el)return;
+    el.classList.toggle('on',!!on);el.setAttribute('aria-pressed',String(!!on));
+  }
+
+  function configFromUi(){
+    const c=state.config||{};
+    return {
+      ...c,
+      appVersion:val('appVersion','appVersion')||'1.0.0',
+      latestVersion:val('latestVersion','latestVersion')||'1.0.0',
+      minimumVersion:val('minimumVersion','minimumVersion')||'1.0.0',
+      forceUpdate:checked('forceToggle','forceUpdate') || checked('forceUpdate','forceUpdate'),
+      updateUrl:val('updateUrl','updateUrl'),
+      forceUpdateTitle:val('forceTitle','forceUpdateTitle'),
+      forceUpdateMessage:val('forceMessage','forceUpdateMessage'),
+      forceUpdateButton:val('forceButton','forceUpdateButton')||'Update WHO',
+      welcomeEnabled:checked('welcomeToggle','welcomeEnabled') || checked('welcomeEnabled','welcomeEnabled'),
+      welcomeRevision:Number(val('welcomeRevision','welcomeRevision')||1),
+      welcomeTitle:val('welcomeTitle','welcomeTitle'),
+      welcomeMessage:val('welcomeMessage','welcomeMessage'),
+      welcomeEmail:val('welcomeEmail','welcomeEmail'),
+      welcomeButtonText:val('welcomeButton','welcomeButtonText')||'Continue',
+      maintenanceEnabled:checked('maintenanceToggle','maintenanceEnabled') || checked('maintenanceEnabled','maintenanceEnabled'),
+      maintenanceTitle:val('maintenanceTitle','maintenanceTitle'),
+      maintenanceMessage:val('maintenanceMessage','maintenanceMessage'),
+      announcementEnabled:checked('announcementToggle','announcementEnabled') || checked('announcementEnabled','announcementEnabled'),
+      announcementRevision:Number(val('annRevision','announcementRevision')||0),
+      announcementTitle:val('announcementTitle','announcementTitle')||val('annTitle','announcementTitle'),
+      announcementMessage:val('announcementMessage','announcementMessage')||val('annMessage','announcementMessage'),
+      announcementButtonText:val('annButton','announcementButtonText')||'Continue'
+    };
+  }
+
+  function loadForm(){
+    const c=state.config||{};
+    ['appVersion','latestVersion','minimumVersion','updateUrl','forceTitle','forceMessage','forceButton','welcomeRevision','welcomeTitle','welcomeEmail','welcomeMessage','welcomeButton','maintenanceTitle','maintenanceMessage','announcementTitle','announcementMessage','annRevision','annTitle','annMessage','annButton'].forEach(id=>{
+      const map={
+        forceTitle:'forceUpdateTitle',forceMessage:'forceUpdateMessage',forceButton:'forceUpdateButton',
+        welcomeButton:'welcomeButtonText',announcementTitle:'announcementTitle',announcementMessage:'announcementMessage',
+        annTitle:'announcementTitle',annMessage:'announcementMessage',annButton:'announcementButtonText'
+      };
+      assign(id,c[map[id]||id]);
+    });
+    ['forceUpdate','welcomeEnabled','maintenanceEnabled','announcementEnabled'].forEach(id=>assign(id,c[id]));
+    toggle('forceToggle',!!c.forceUpdate);
+    toggle('welcomeToggle',!!c.welcomeEnabled);
+    toggle('maintenanceToggle',!!c.maintenanceEnabled);
+    toggle('announcementToggle',!!c.announcementEnabled);
+  }
+
+  async function saveConfig(){
+    try{
+      const r=await api('/admin/config',{method:'PUT',body:JSON.stringify({config:configFromUi()})});
+      state.config=r.config;
+      loadForm();
+      renderAll();
+      toast('Saved to WHO backend.');
+    }catch(e){toast(e.message);}
+  }
+  window.saveConfig=saveConfig;
+  window.saveRelease=saveConfig;
+  window.loadConfig=loadForm;
+
+  function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+  function put(id,value){const e=document.getElementById(id);if(e)e.textContent=String(value);}
+  
+  function renderUsers(){
+    const body=document.querySelector('[data-section="users"] tbody');if(!body)return;
+    body.innerHTML=state.users.length?state.users.map(u=>'<tr><td>'+esc(u.phone_masked||u.id)+'</td><td>'+esc(u.platform)+'</td><td>'+esc(u.app_version)+'</td><td>'+new Date(Number(u.last_seen||0)).toLocaleString()+'</td><td><span class="tag '+(u.status==='active'?'green':'amber')+'">'+esc(u.status)+'</span></td></tr>').join(''):'<tr><td colspan="5">No users have reached the backend yet.</td></tr>';
+  }
+
+  function renderReports(){
+    const body=document.getElementById('reportBody');if(!body)return;
+    const q=(document.getElementById('reportSearch')?.value||'').toLowerCase();
+    const rows=(state.reports||[]).filter(r=>(reportFilter==='all'||r.status===reportFilter)&&(!q||JSON.stringify(r).toLowerCase().includes(q)));
+    body.innerHTML=rows.length?rows.map(r=>'<tr><td>'+esc(r.phone_masked)+'</td><td>'+esc(r.reason)+'</td><td>'+esc(r.report_count)+'</td><td><span class="tag '+(r.status==='resolved'?'green':'amber')+'">'+esc(r.status)+'</span></td><td><button class="ghost-btn" data-report="'+esc(r.id)+'">'+(r.status==='resolved'?'Resolved':'Resolve')+'</button></td></tr>').join(''):'<tr><td colspan="5">No API reports match.</td></tr>';
+    body.querySelectorAll('[data-report]').forEach(btn=>btn.addEventListener('click',async()=>{
+      if(btn.textContent==='Resolved')return;
+      try{await api('/admin/reports/'+encodeURIComponent(btn.dataset.report)+'/resolve',{method:'POST'});await loadLive();toast('Report resolved.');}catch(e){toast(e.message);}
+    }));
+  }
+
+  function renderCrashes(){
+    const body=document.getElementById('crashBody');if(!body)return;
+    const rows=(state.crashes||[]).filter(r=>crashFilter==='all'||r.status===crashFilter);
+    body.innerHTML=rows.length?rows.map(r=>'<tr><td>'+new Date(Number(r.received_at||0)).toLocaleString()+'</td><td><span class="tag '+(r.fatal?'red':'amber')+'">'+(r.fatal?'Fatal':'Non-fatal')+'</span></td><td>'+esc(r.app_version)+'</td><td>'+esc(r.platform)+'</td><td>'+esc(r.error)+'</td><td><span class="tag '+(r.status==='fixed'?'green':'amber')+'">'+esc(r.status)+'</span></td><td><button class="ghost-btn" data-fix="'+esc(r.id)+'">'+(r.status==='fixed'?'Reopen':'Fix')+'</button></td></tr>').join(''):'<tr><td colspan="7">No API crash reports match.</td></tr>';
+    put('pendingCrash',(state.crashes||[]).filter(r=>r.status==='pending').length);
+    put('fixedCrash',(state.crashes||[]).filter(r=>r.status==='fixed').length);
+    put('fatalCrash',(state.crashes||[]).filter(r=>!!r.fatal).length);
+    put('todayCrash',(state.crashes||[]).filter(r=>new Date(Number(r.received_at||0)).toDateString()===new Date().toDateString()).length);
+    body.querySelectorAll('[data-fix]').forEach(btn=>btn.addEventListener('click',async()=>{
+      try{await api('/admin/crashes/'+encodeURIComponent(btn.dataset.fix)+'/status',{method:'POST',body:JSON.stringify({status:btn.textContent.trim()==='Fix'?'fixed':'pending'})});await loadLive();toast('Crash status updated.');}catch(e){toast(e.message);}
+    }));
+  }
+
+  function renderFeedback(){
+    const grid=document.querySelector('[data-section="feedback"] .feedback-grid');if(!grid)return;
+    grid.innerHTML=(state.feedback||[]).length?(state.feedback||[]).map(f=>'<article><span class="tag blue">'+esc(f.category||'FEEDBACK')+'</span><h3>'+esc(f.title||'Untitled')+'</h3><p>'+esc(f.message||'')+'</p><small>v'+esc(f.version||'unknown')+' · '+new Date(Number(f.created_at||0)).toLocaleString()+'</small></article>').join(''):'<article><h3>No feedback yet</h3><p>Feedback submitted through the backend will appear here.</p></article>';
+  }
+
+  function renderAudit(){
+    const body=document.querySelector('[data-section="audit"] tbody');if(!body)return;
+    body.innerHTML=(state.audit||[]).length?(state.audit||[]).map(a=>'<tr><td>'+new Date(Number(a.created_at||0)).toLocaleString()+'</td><td>'+esc(a.actor)+'</td><td>'+esc(a.action)+'</td><td><span class="tag blue">'+esc(a.result)+'</span></td></tr>').join(''):'<tr><td colspan="4">No audit records yet.</td></tr>';
+  }
+
+  function renderOverview(){
+    put('forceStat',state.config?.forceUpdate?'ON':'OFF');
+    put('announceStat',state.config?.announcementEnabled?'ON':'OFF');
+    put('crashStat',state.summary?.pendingCrashes||0);
+  }
+
+  function renderAll(){loadForm();renderOverview();renderUsers();renderReports();renderCrashes();renderFeedback();renderAudit();}
+
+  window.lookupNumber=async()=>{
+    const phone=document.getElementById('numberSearch')?.value.trim()||'';
+    if(!phone){toast('Enter a number first.');return;}
+    try{
+      const r=await api('/admin/intelligence/lookup',{method:'POST',body:JSON.stringify({phone})});
+      const box=document.getElementById('lookupResult');
+      box.innerHTML=(r.candidates||[]).length?(r.candidates||[]).map(c=>'<b>'+esc(c.candidate_name)+'</b><span>'+Number(c.confidence||0).toFixed(1)+'% confidence · '+esc(c.contribution_count)+' contributions</span><hr>').join(''):'<span>No intelligence candidates found.</span>';
+    }catch(e){toast(e.message);}
+  };
+
+  window.publishAnnouncement=async()=>{
+    const c={...state.config,announcementEnabled:true,announcementRevision:Number(document.getElementById('annRevision')?.value||1),announcementTitle:document.getElementById('annTitle')?.value||'',announcementMessage:document.getElementById('annMessage')?.value||'',announcementButtonText:document.getElementById('annButton')?.value||'Continue'};
+    try{const r=await api('/admin/config',{method:'PUT',body:JSON.stringify({config:c})});state.config=r.config;renderAll();toast('Announcement published.');}catch(e){toast(e.message);}
+  };
+
+  window.addPreviewCrash=()=>toast('Live API mode: preview crash creation is disabled.');
+  window.copyConfig=async()=>{
+    const payload=JSON.stringify(state.config||{},null,2);
+    try{await navigator.clipboard.writeText(payload);toast('Config JSON copied.');}catch{window.prompt('WHO config JSON',payload);}
+  };
+
+  document.querySelectorAll('.toggle').forEach(el=>el.addEventListener('click',()=>{el.classList.toggle('on');el.setAttribute('aria-pressed',String(el.classList.contains('on')));}));
+  document.getElementById('reportSearch')?.addEventListener('input',renderReports);
+  document.querySelectorAll('[data-report-filter]').forEach(b=>b.addEventListener('click',()=>{reportFilter=b.dataset.reportFilter;document.querySelectorAll('[data-report-filter]').forEach(x=>x.classList.toggle('active',x===b));renderReports();}));
+  document.querySelectorAll('[data-crash-filter]').forEach(b=>b.addEventListener('click',()=>{crashFilter=b.dataset.crashFilter;document.querySelectorAll('[data-crash-filter]').forEach(x=>x.classList.toggle('active',x===b));renderCrashes();}));
+  document.getElementById('refreshButton')?.addEventListener('click',()=>loadLive().catch(()=>{}));
+  document.getElementById('adminInstall')?.addEventListener('click',()=>alert('Use your browser menu to install WHO Control.'));
+
+  setPage(location.hash.slice(1)||'overview');
+  window.addEventListener('load',async()=>{
+    try{
+      if(sessionStorage.getItem(KEY))await loadLive();
+      else{setApiState('Login required',false);showLogin();}
+    }catch{}
+    document.getElementById('adminBoot')?.classList.add('hide');
   });
 })();
