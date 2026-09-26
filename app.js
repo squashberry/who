@@ -16,6 +16,7 @@
     }
     window.scrollTo({ top: 0, behavior: 'auto' });
     document.title = target === 'home' ? 'WHO — Your phone, understood.' : 'WHO — ' + target.charAt(0).toUpperCase() + target.slice(1);
+    window.WHOAnalytics?.pageView(location.pathname + '#' + target);
   }
 
   function readView() {
