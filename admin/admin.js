@@ -805,17 +805,21 @@
     const force = Boolean(serverConfig.forceUpdate);
     const announcement = Boolean(serverConfig.announcementEnabled);
 
-    document.getElementById('appVersionStat')?.textContent = appVersion;
-    document.getElementById('appVersionSub')?.textContent =
+    const appVersionStat = document.getElementById('appVersionStat');
+    const appVersionSub = document.getElementById('appVersionSub');
+    const forceStat = document.getElementById('forceStat');
+    const announceStat = document.getElementById('announceStat');
+    const crashStat = document.getElementById('crashStat');
+    const crashStatSub = document.getElementById('crashStatSub');
+
+    if (appVersionStat) appVersionStat.textContent = appVersion;
+    if (appVersionSub) appVersionSub.textContent =
       'Latest ' + (serverConfig.latestVersion || '—');
-
-    document.getElementById('forceStat')?.textContent = force ? 'ON' : 'OFF';
-    document.getElementById('announceStat')?.textContent = announcement ? 'ON' : 'OFF';
-
-    document.getElementById('crashStat')?.textContent =
+    if (forceStat) forceStat.textContent = force ? 'ON' : 'OFF';
+    if (announceStat) announceStat.textContent = announcement ? 'ON' : 'OFF';
+    if (crashStat) crashStat.textContent =
       liveStats ? formatMetric(liveStats.summary?.crashesTotal) : String(allCrashes.length);
-
-    document.getElementById('crashStatSub')?.textContent =
+    if (crashStatSub) crashStatSub.textContent =
       liveStats
         ? formatMetric(liveStats.summary?.crashesToday) + ' today'
         : (allCrashes.length ? 'Latest records loaded' : 'No crash records returned');
