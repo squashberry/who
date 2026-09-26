@@ -26,7 +26,7 @@
   <div class="admin-app">
     <aside class="sidebar">
       <div class="side-brand"><span class="brand-mark">W</span><div><b>WHO Control</b><small>Squashberry</small></div></div>
-      <div class="preview-badge" id="connectionBadge">AUTHENTICATION REQUIRED</div>
+      <div class="preview-badge" id="connectionBadge">LIVE BACKEND</div>
       <nav class="side-nav" id="sideNav">
         <button class="active" data-page="overview"><span>⌂</span>Overview</button>
         <button data-page="users"><span>◉</span>Users</button>
@@ -39,7 +39,7 @@
         <button data-page="feedback"><span>☷</span>Feedback</button>
         <button data-page="audit"><span>◌</span>Audit</button>
       </nav>
-      <div class="sidebar-bottom"><a href="../">↩ Public WHO</a><button id="adminInstall">↥ Install Control</button><button id="adminSignOut">↪ Sign out</button></div>
+      <div class="sidebar-bottom"><a href="../">↩ Public WHO</a><button id="adminInstall">↥ Install Control</button></div>
     </aside>
 
     <div class="main-shell">
@@ -166,29 +166,7 @@
     <button data-page="audit"><span>◌</span><small>Audit</small></button>
   </nav>
 
-  <div id="adminAuthRoot" class="auth-root" aria-hidden="true">
-  <div class="auth-backdrop"></div>
-  <section class="auth-card" role="dialog" aria-modal="true" aria-labelledby="authTitle">
-    <div class="auth-logo">W</div>
-    <span class="eyebrow">WHO CONTROL</span>
-    <h2 id="authTitle">Administrator sign in</h2>
-    <p id="authIntro">Use the existing WHO account verification system. Only accounts with an <b>admin</b> or <b>moderator</b> role can enter this control panel.</p>
-    <div id="authStepRequest" class="auth-step">
-      <label>Name<input id="authName" autocomplete="name" placeholder="Your WHO account name"></label>
-      <label>Email<input id="authEmail" type="email" autocomplete="email" placeholder="name@example.com"></label>
-      <label>Phone number<input id="authPhone" autocomplete="tel" placeholder="+220 …"></label>
-      <button class="primary-btn" id="authSendCode">Send verification code</button>
-    </div>
-    <div id="authStepVerify" class="auth-step" hidden>
-      <div class="auth-sent">A verification code was sent to <b id="authEmailEcho">your email</b>.</div>
-      <label>6-digit code<input id="authCode" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="000000"></label>
-      <button class="primary-btn" id="authVerifyCode">Verify & enter</button>
-      <button class="ghost-btn auth-back-btn" id="authBack">Use another account</button>
-    </div>
-    <p id="authError" class="auth-error" role="alert"></p>
-    <div class="auth-foot">WHO API · existing session authentication · no admin API key</div>
-  </section>
-</div>
+
 <div class="toast" id="toast"></div>
   <script src="admin.js" defer></script>
 </body>
