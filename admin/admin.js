@@ -53,8 +53,8 @@
     crashReportUrl:''
   };
 
-  let token = '';
-  let currentUser = {displayName:'WHO Control', role:'admin'};
+  let token = sessionStorage.getItem('who_admin_token') || '';
+  let currentUser = null;
   let serverConfig = {...defaultConfig};
   let allCrashes = [];
   let crashFilter = 'pending';
@@ -120,6 +120,10 @@
       headers['Content-Type'] = 'application/json';
     }
 
+    if (auth && token) {
+      headers['Authorization'] = 'Bearer ' + token;
+    }
+
     let response;
 
     try {
@@ -147,12 +151,122 @@
     }
 
     if (!response.ok) {
+      if (response.status === 401 && auth && path !== '/admin/login') {
+        token = '';
+        sessionStorage.removeItem('who_admin_token');
+        showAuthScreen(data.error || 'Authentication required.');
+      }
+
       const error = new Error(data.error || ('WHO API error (' + response.status + ')'));
       error.status = response.status;
       throw error;
     }
 
     return data;
+  }
+
+  function showAuthScreen(message = '') {
+    const root = document.getElementById('adminAuthRoot');
+    const input = document.getElementById('adminPassword');
+    const error = document.getElementById('adminAuthError');
+
+    if (root) {
+      root.classList.add('show');
+      root.setAttribute('aria-hidden', 'false');
+    }
+
+    if (error) {
+      error.textContent = message || '';
+    }
+
+    window.setTimeout(() => input?.focus(), 40);
+  }
+
+  function hideAuthScreen() {
+    const root = document.getElementById('adminAuthRoot');
+    const error = document.getElementById('adminAuthError');
+    const input = document.getElementById('adminPassword');
+
+    if (root) {
+      root.classList.remove('show');
+      root.setAttribute('aria-hidden', 'true');
+    }
+
+    if (error) {
+      error.textContent = '';
+    }
+
+    if (input) {
+      input.value = '';
+    }
+  }
+
+  async function loginAdmin(password) {
+    const button = document.getElementById('adminLoginButton');
+    const error = document.getElementById('adminAuthError');
+
+    if (button) {
+      button.disabled = true;
+      button.textContent = 'Unlocking…';
+    }
+
+    if (error) {
+      error.textContent = '';
+    }
+
+    try {
+      const result = await apiFetch('/admin/login', {
+        method: 'POST',
+        auth: false,
+        body: {password}
+      });
+
+      token = String(result.accessToken || '');
+      if (!token) {
+        throw new Error('The WHO API did not return an admin session.');
+      }
+
+      sessionStorage.setItem('who_admin_token', token);
+      currentUser = result.user || {
+        displayName: 'Squashberry',
+        role: 'admin'
+      };
+
+      hideAuthScreen();
+      setAdminBootProgress(58, 'Admin session verified. Loading live data…');
+      await refreshData();
+      setAdminBootProgress(100, 'WHO Control is ready.');
+      setApiState(true, 'Live WHO control center');
+    } catch (error) {
+      if (error.status === 401) {
+        showAuthScreen('Incorrect password.');
+      } else {
+        showAuthScreen(error.message || 'Unable to sign in.');
+      }
+    } finally {
+      if (button) {
+        button.disabled = false;
+        button.textContent = 'Unlock WHO Control';
+      }
+    }
+  }
+
+  async function logoutAdmin() {
+    try {
+      if (token) {
+        await apiFetch('/admin/logout', {
+          method: 'POST'
+        });
+      }
+    } catch (_) {
+      // Local logout still proceeds when the network is unavailable.
+    }
+
+    token = '';
+    currentUser = null;
+    sessionStorage.removeItem('who_admin_token');
+    setApiState(false, 'Admin authentication required.');
+    showAuthScreen('Admin session locked.');
   }
 
   function setApiState(connected, detail = '') {
@@ -180,9 +294,30 @@
   }
 
   async function validateAdminSession() {
-    currentUser = {displayName:'WHO Control', role:'admin'};
-    setApiState(true, 'Live WHO control center');
-    await refreshData();
+    if (!token) {
+      setApiState(false, 'Admin authentication required.');
+      showAuthScreen();
+      return false;
+    }
+
+    try {
+      const result = await apiFetch('/admin/session', {method:'GET'});
+      currentUser = result.user || {
+        displayName: 'Squashberry',
+        role: 'admin'
+      };
+      hideAuthScreen();
+      setApiState(true, 'Live WHO control center');
+      await refreshData();
+      return true;
+    } catch (_) {
+      token = '';
+      currentUser = null;
+      sessionStorage.removeItem('who_admin_token');
+      setApiState(false, 'Admin authentication required.');
+      showAuthScreen();
+      return false;
+    }
   }
 
   function setPage(page) {
@@ -843,7 +978,8 @@
       loadConfig(),
       loadCrashes(),
       loadStats(),
-      loadDownloadStats(downloadRange)
+      loadDownloadStats(downloadRange),
+      loadWebsiteStats(websiteRange)
     ]);
 
     setAdminBootProgress(90, 'Live backend data loaded.');
@@ -852,6 +988,21 @@
       'Live WHO Control · backend connected'
     );
   }
+
+  document.getElementById('adminLoginForm')?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const input = document.getElementById('adminPassword');
+    const password = input?.value || '';
+    if (!password) {
+      showAuthScreen('Enter the admin password.');
+      return;
+    }
+    await loginAdmin(password);
+  });
+
+  document.getElementById('adminLogout')?.addEventListener('click', async () => {
+    await logoutAdmin();
+  });
 
   document.getElementById('refreshButton')?.addEventListener('click', async () => {
     await refreshData();
@@ -918,22 +1069,20 @@
   });
 
   window.addEventListener('load', async () => {
-    setAdminBootProgress(55, 'Loading WHO Control…');
+    setAdminBootProgress(55, 'Checking WHO Control session…');
 
-    try {
-      await refreshData();
+    const authenticated = await validateAdminSession();
 
-      if (location.hash) {
-        setPage(location.hash.slice(1));
-      }
-
-      setAdminBootProgress(100, 'WHO Control is ready.');
-      setApiState(true, 'Live WHO control center');
-    } catch (error) {
-      setApiState(false, 'Unable to load live WHO backend data.');
-      toast(error.message);
-      setAdminBootProgress(100, 'WHO Control loaded with backend error.');
+    if (authenticated && location.hash) {
+      setPage(location.hash.slice(1));
     }
+
+    setAdminBootProgress(
+      authenticated ? 100 : 100,
+      authenticated
+        ? 'WHO Control is ready.'
+        : 'Admin sign-in required.'
+    );
 
     setTimeout(() => boot?.classList.add('hide'), 350);
   });
@@ -951,7 +1100,7 @@
   window.toast = toast;
   window.updateCrash = updateCrash;
 
-  setApiState(true, 'Live WHO control center');
+  setApiState(false, 'Admin authentication required.');
   renderStats();
   renderCrashStats();
   renderCrashes();
