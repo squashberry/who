@@ -11,7 +11,8 @@ h1{font-size:38px;letter-spacing:-.055em;line-height:1.02;margin:0 0 12px}.accen
 .actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:18px}
 a{display:inline-flex;padding:12px 17px;border-radius:13px;background:#1687ff;color:#fff;text-decoration:none;font-weight:800;font-size:12px}.secondary{background:#101722;border:1px solid rgba(255,255,255,.09)}
 .small{margin-top:18px;color:#63728a;font-size:10px}
-</style></head><body>
+</style>  <script src="analytics.js" defer></script>
+</head><body>
 <main class="wrap">
   <div class="mark">W</div>
   <h1>Thank you for choosing <span class="accent">WHO.</span></h1>
@@ -25,26 +26,6 @@ a{display:inline-flex;padding:12px 17px;border-radius:13px;background:#1687ff;co
 </main>
 <script>
 const apk = "https://raw.githubusercontent.com/squashberry/who-app/main/WHO-v1.0.0.apk";
-const API_BASE = "https://who-api.who-fe3.workers.dev";
-
-async function recordDownloadStart() {
-  const payload = JSON.stringify({
-    source: "website",
-    page: location.pathname,
-    version: "1.0.0",
-    userAgent: navigator.userAgent.slice(0, 500)
-  });
-
-  try {
-    await fetch(API_BASE + "/download/record", {
-      method: "POST",
-      mode: "cors",
-      headers: {"Content-Type": "text/plain;charset=UTF-8"},
-      body: payload,
-      keepalive: true
-    });
-  } catch (_) {}
-}
 
 const status = document.getElementById("status");
 
@@ -62,6 +43,6 @@ function startDownload() {
   }, 2200);
 }
 
-recordDownloadStart();
+window.WHOAnalytics?.downloadStart('1.0.0');
 startDownload();
 </script></body></html>
