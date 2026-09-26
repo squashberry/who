@@ -2,7 +2,6 @@
   'use strict';
 
   const API_BASE = 'https://who-api.who-fe3.workers.dev';
-  const SESSION_KEY = 'who-control.session-token';
 
   const boot = document.getElementById('adminBoot');
   const title = document.getElementById('pageTitle');
@@ -53,13 +52,12 @@
     crashReportUrl:''
   };
 
-  let token = sessionStorage.getItem(SESSION_KEY) || '';
-  let currentUser = null;
+  let token = '';
+  let currentUser = {displayName:'WHO Control', role:'admin'};
   let serverConfig = {...defaultConfig};
   let allCrashes = [];
   let crashFilter = 'pending';
   let deferredPrompt = null;
-  let authBusy = false;
   let liveStats = null;
 
   function setAdminBootProgress(value, status) {
@@ -115,10 +113,6 @@
 
     if (body !== undefined) {
       headers['Content-Type'] = 'application/json';
-    }
-
-    if (auth && token) {
-      headers.Authorization = 'Bearer ' + token;
     }
 
     let response;
@@ -180,215 +174,10 @@
     }
   }
 
-  function showAuth(step = 'request', message = '') {
-    const root = document.getElementById('adminAuthRoot');
-    const requestStep = document.getElementById('authStepRequest');
-    const verifyStep = document.getElementById('authStepVerify');
-    const error = document.getElementById('authError');
-
-    if (!root) return;
-
-    root.classList.add('show');
-    root.setAttribute('aria-hidden', 'false');
-
-    if (requestStep) requestStep.hidden = step !== 'request';
-    if (verifyStep) verifyStep.hidden = step !== 'verify';
-    if (error) error.textContent = message || '';
-
-    const target = step === 'verify'
-      ? document.getElementById('authCode')
-      : document.getElementById('authEmail');
-
-    setTimeout(() => target?.focus(), 50);
-  }
-
-  function hideAuth() {
-    const root = document.getElementById('adminAuthRoot');
-    if (!root) return;
-    root.classList.remove('show');
-    root.setAttribute('aria-hidden', 'true');
-  }
-
-  function setAuthError(message) {
-    const error = document.getElementById('authError');
-    if (error) error.textContent = message || '';
-  }
-
-  function setAuthBusy(value) {
-    authBusy = value;
-
-    const send = document.getElementById('authSendCode');
-    const verify = document.getElementById('authVerifyCode');
-
-    if (send) {
-      send.disabled = value;
-      send.textContent = value ? 'Sending…' : 'Send verification code';
-    }
-
-    if (verify) {
-      verify.disabled = value;
-      verify.textContent = value ? 'Verifying…' : 'Verify & enter';
-    }
-  }
-
-  function readAuthForm() {
-    return {
-      name: document.getElementById('authName')?.value.trim() || '',
-      email: document.getElementById('authEmail')?.value.trim().toLowerCase() || '',
-      phoneNumber: document.getElementById('authPhone')?.value.trim() || ''
-    };
-  }
-
-  function validateAuthForm(values) {
-    if (values.name.length < 2) return 'Enter your WHO account name.';
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email)) return 'Enter a valid email address.';
-    if (values.phoneNumber.replace(/\D/g, '').length < 7) return 'Enter a valid phone number.';
-    return '';
-  }
-
-  async function requestAuthCode() {
-    if (authBusy) return;
-
-    const values = readAuthForm();
-    const validation = validateAuthForm(values);
-
-    if (validation) {
-      setAuthError(validation);
-      return;
-    }
-
-    setAuthBusy(true);
-    setAuthError('');
-
-    try {
-      await apiFetch('/auth/request-code', {
-        method: 'POST',
-        auth: false,
-        body: values
-      });
-
-      const echo = document.getElementById('authEmailEcho');
-      if (echo) echo.textContent = values.email;
-
-      toast('Verification code sent.');
-      showAuth('verify');
-    } catch (error) {
-      setAuthError(error.message);
-    } finally {
-      setAuthBusy(false);
-    }
-  }
-
-  async function verifyAuthCode() {
-    if (authBusy) return;
-
-    const values = readAuthForm();
-    const code = document.getElementById('authCode')?.value.trim() || '';
-
-    const validation = validateAuthForm(values);
-
-    if (validation) {
-      setAuthError(validation);
-      showAuth('request', validation);
-      return;
-    }
-
-    if (!/^\d{6}$/.test(code)) {
-      setAuthError('Enter the 6-digit verification code.');
-      return;
-    }
-
-    setAuthBusy(true);
-    setAuthError('');
-
-    try {
-      const result = await apiFetch('/auth/verify-code', {
-        method: 'POST',
-        auth: false,
-        body: {
-          ...values,
-          code
-        }
-      });
-
-      const accessToken =
-        String(result.accessToken || result.sessionToken || result.token || '');
-
-      if (!accessToken) {
-        throw new Error('WHO account was verified, but no session token was returned.');
-      }
-
-      token = accessToken;
-      sessionStorage.setItem(SESSION_KEY, token);
-
-      await validateAdminSession();
-
-      toast('WHO Control authenticated.');
-    } catch (error) {
-      sessionStorage.removeItem(SESSION_KEY);
-      token = '';
-      setAuthError(error.message);
-    } finally {
-      setAuthBusy(false);
-    }
-  }
-
   async function validateAdminSession() {
-    if (!token) {
-      throw new Error('Authentication required.');
-    }
-
-    const result = await apiFetch('/me', {method:'GET'});
-
-    const user = result.user || {};
-    const role = String(user.role || '').toLowerCase();
-
-    if (role !== 'admin' && role !== 'moderator') {
-      const error = new Error('This WHO account does not have administrator access.');
-      error.status = 403;
-      throw error;
-    }
-
-    currentUser = user;
-
-    hideAuth();
-    setApiState(
-      true,
-      'Authenticated as ' +
-        (user.displayName || user.name || user.email || 'WHO administrator') +
-        ' · ' + role
-    );
-
-    const authIntro = document.getElementById('authIntro');
-    if (authIntro) {
-      authIntro.textContent = 'Authenticated.';
-    }
-
-    const pageSub = document.getElementById('pageSub');
-    if (pageSub && location.hash === '') {
-      pageSub.textContent =
-        'Authenticated as ' +
-        (user.displayName || user.name || user.email) +
-        ' · ' + role;
-    }
-
+    currentUser = {displayName:'WHO Control', role:'admin'};
+    setApiState(true, 'Live WHO control center');
     await refreshData();
-  }
-
-  async function signOut(showLogin = true) {
-    token = '';
-    currentUser = null;
-    serverConfig = {...defaultConfig};
-    allCrashes = [];
-
-    sessionStorage.removeItem(SESSION_KEY);
-
-    setApiState(false);
-    renderStats();
-
-    if (showLogin) {
-      showAuth('request', 'Signed out of WHO Control.');
-    }
   }
 
   function setPage(page) {
@@ -512,11 +301,6 @@
   }
 
   async function loadConfig() {
-    if (!token) {
-      showAuth();
-      return;
-    }
-
     try {
       const result = await apiFetch('/admin/config', {method:'GET'});
       serverConfig = extractConfig(result);
@@ -526,18 +310,6 @@
         String(result.revision ?? '—')
       );
     } catch (error) {
-      if (error.status === 401) {
-        await signOut(false);
-        showAuth('request', 'Your WHO session expired. Please sign in again.');
-        return;
-      }
-
-      if (error.status === 403) {
-        await signOut(false);
-        showAuth('request', 'This WHO account is not authorized for the control panel.');
-        return;
-      }
-
       toast(error.message);
     }
   }
@@ -554,13 +326,6 @@
       toast(successMessage || 'WHO backend configuration saved.');
       return true;
     } catch (error) {
-      if (error.status === 401) {
-        await signOut(false);
-        showAuth('request', 'Your WHO session expired. Please sign in again.');
-      } else {
-        toast(error.message);
-      }
-
       return false;
     }
   }
@@ -828,25 +593,11 @@
   }
 
   async function loadStats() {
-    if (!token) return;
-
     try {
       const result = await apiFetch('/admin/stats', {method:'GET'});
       liveStats = result;
       renderStats();
     } catch (error) {
-      if (error.status === 401) {
-        await signOut(false);
-        showAuth('request', 'Your WHO session expired. Please sign in again.');
-        return;
-      }
-
-      if (error.status === 403) {
-        await signOut(false);
-        showAuth('request', 'This WHO account is not authorized for live statistics.');
-        return;
-      }
-
       liveStats = null;
       renderStats();
       toast(error.message);
@@ -921,25 +672,11 @@
   }
 
   async function loadCrashes() {
-    if (!token) return;
-
     try {
       const result = await apiFetch('/admin/crashes?limit=200', {method:'GET'});
       allCrashes = Array.isArray(result.reports) ? result.reports : [];
       renderCrashes();
     } catch (error) {
-      if (error.status === 401) {
-        await signOut(false);
-        showAuth('request', 'Your WHO session expired. Please sign in again.');
-        return;
-      }
-
-      if (error.status === 403) {
-        await signOut(false);
-        showAuth('request', 'This WHO account is not authorized for crash management.');
-        return;
-      }
-
       toast(error.message);
       allCrashes = [];
       renderCrashes();
@@ -974,12 +711,6 @@
 
       await loadCrashes();
     } catch (error) {
-      if (error.status === 401) {
-        await signOut(false);
-        showAuth('request', 'Your WHO session expired. Please sign in again.');
-        return;
-      }
-
       toast(error.message);
     }
   }
@@ -991,8 +722,6 @@
   }
 
   async function refreshData() {
-    if (!token) return;
-
     setApiState(
       true,
       'Authenticated as ' +
@@ -1017,28 +746,7 @@
     );
   }
 
-  document.getElementById('authSendCode')?.addEventListener('click', requestAuthCode);
-  document.getElementById('authVerifyCode')?.addEventListener('click', verifyAuthCode);
-
-  document.getElementById('authBack')?.addEventListener('click', () => {
-    setAuthError('');
-    showAuth('request');
-  });
-
-  document.getElementById('authCode')?.addEventListener('keydown', (event) => {
-    if (event.key === 'Enter') verifyAuthCode();
-  });
-
-  document.getElementById('authEmail')?.addEventListener('keydown', (event) => {
-    if (event.key === 'Enter') requestAuthCode();
-  });
-
   document.getElementById('refreshButton')?.addEventListener('click', async () => {
-    if (!token) {
-      showAuth();
-      return;
-    }
-
     await refreshData();
     toast('Live backend data refreshed.');
   });
@@ -1046,10 +754,6 @@
   document.getElementById('refreshCrashes')?.addEventListener('click', async () => {
     await loadCrashes();
     toast('Crash reports refreshed.');
-  });
-
-  document.getElementById('adminSignOut')?.addEventListener('click', async () => {
-    await signOut(true);
   });
 
   document.querySelectorAll('[data-crash-filter]').forEach((button) => {
@@ -1088,38 +792,26 @@
   });
 
   window.addEventListener('load', async () => {
-    setAdminBootProgress(55, 'Authenticating control center…');
+    setAdminBootProgress(55, 'Loading WHO Control…');
 
     try {
-      if (token) {
-        await validateAdminSession();
-      } else {
-        showAuth('request');
-      }
+      await refreshData();
 
       if (location.hash) {
         setPage(location.hash.slice(1));
       }
 
-      setAdminBootProgress(100, token ? 'WHO Control is ready.' : 'Sign in to continue.');
+      setAdminBootProgress(100, 'WHO Control is ready.');
+      setApiState(true, 'Live WHO control center');
     } catch (error) {
-      token = '';
-      currentUser = null;
-      sessionStorage.removeItem(SESSION_KEY);
-
-      setApiState(false);
-      showAuth(
-        'request',
-        error.status === 403
-          ? 'This WHO account does not have administrator access.'
-          : error.message
-      );
-
-      setAdminBootProgress(100, 'Administrator sign-in required.');
+      setApiState(false, 'Unable to load live WHO backend data.');
+      toast(error.message);
+      setAdminBootProgress(100, 'WHO Control loaded with backend error.');
     }
 
     setTimeout(() => boot?.classList.add('hide'), 350);
   });
+
 
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').catch(() => {});
@@ -1133,7 +825,7 @@
   window.toast = toast;
   window.updateCrash = updateCrash;
 
-  setApiState(Boolean(token));
+  setApiState(true, 'Live WHO control center');
   renderStats();
   renderCrashStats();
   renderCrashes();
