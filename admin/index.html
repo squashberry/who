@@ -23,6 +23,24 @@
 <body>
   <div id="adminBoot"><div><div class="admin-boot-mark">W</div><div class="admin-boot-sub">WHO Control</div><div class="admin-boot-progress"><i id="adminBootProgress"></i></div><div class="admin-boot-status"><span id="adminBootStatus">Preparing control center…</span><strong id="adminBootPercent">0%</strong></div></div></div>
 
+  <div id="adminAuthRoot" aria-hidden="true">
+    <div class="auth-backdrop"></div>
+    <div class="auth-card" role="dialog" aria-modal="true" aria-labelledby="adminAuthTitle">
+      <div class="auth-logo">W</div>
+      <span class="eyebrow">WHO CONTROL</span>
+      <h2 id="adminAuthTitle">Admin access</h2>
+      <p>Enter the WHO Control password to continue.</p>
+      <form id="adminLoginForm" class="auth-step">
+        <label for="adminPassword">Password
+          <input id="adminPassword" type="password" autocomplete="current-password" autocapitalize="none" spellcheck="false" required>
+        </label>
+        <button class="primary-btn" id="adminLoginButton" type="submit">Unlock WHO Control</button>
+      </form>
+      <p class="auth-error" id="adminAuthError" aria-live="polite"></p>
+      <div class="auth-foot">Private admin area · Squashberry</div>
+    </div>
+  </div>
+
   <div class="admin-app">
     <aside class="sidebar">
       <div class="side-brand"><span class="brand-mark">W</span><div><b>WHO Control</b><small>Squashberry</small></div></div>
@@ -40,7 +58,7 @@
         <button data-page="feedback"><span>☷</span>Feedback</button>
         <button data-page="audit"><span>◌</span>Audit</button>
       </nav>
-      <div class="sidebar-bottom"><a href="../">↩ Public WHO</a><button id="adminInstall">↥ Install Control</button></div>
+      <div class="sidebar-bottom"><a href="../">↩ Public WHO</a><button id="adminInstall">↥ Install Control</button><button id="adminLogout">↪ Lock Admin</button></div>
     </aside>
 
     <div class="main-shell">
