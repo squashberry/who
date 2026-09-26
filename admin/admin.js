@@ -13,6 +13,7 @@
     overview:['Overview','Live WHO backend control and system status.'],
     users:['Users','Live account and device metrics from WHO D1.'],
     caller:['Caller intelligence','Live anonymized caller-intelligence metrics from Supabase.'],
+    analytics:['Website analytics','Anonymous website traffic, page views and download conversion.'],
     reports:['Reports','The current Worker accepts reports but does not expose an admin queue.'],
     releases:['Releases','Versions and update gates stored in the live runtime config.'],
     remote:['Remote config','Live app behavior and copy from the WHO runtime_config row.'],
@@ -61,6 +62,8 @@
   let liveStats = null;
   let downloadStats = null;
   let downloadRange = 1;
+  let websiteStats = null;
+  let websiteRange = 1;
 
   function setAdminBootProgress(value, status) {
     const bar = document.getElementById('adminBootProgress');
@@ -557,6 +560,7 @@
     );
 
     renderDownloadChart();
+    renderWebsiteAnalytics();
 
     renderMultiLineChart(
       'callerPageChart',
@@ -613,6 +617,61 @@
       downloadStats = null;
       renderDownloadChart();
       toast('Download metrics: ' + error.message);
+    }
+  }
+
+  function renderWebsiteAnalytics() {
+    const summary = websiteStats?.summary || {};
+    const series = Array.isArray(websiteStats?.series) ? websiteStats.series : [];
+    const values = {
+      websiteVisitorsTotalStat: summary.visitorsTotal,
+      websiteVisitorsTodayStat: summary.visitorsToday,
+      websiteActiveVisitorsStat: summary.activeVisitors,
+      websitePageViewsTodayStat: summary.pageViewsToday,
+      analyticsVisitorsTotal: summary.visitorsTotal,
+      analyticsVisitorsToday: summary.visitorsToday,
+      analyticsPageViewsTotal: summary.pageViewsTotal,
+      analyticsActiveVisitors: summary.activeVisitors,
+      analyticsDownloadsTotal: summary.downloadsTotal,
+      analyticsDownloadsToday: summary.downloadsToday
+    };
+    Object.entries(values).forEach(([id,value]) => {
+      const el=document.getElementById(id);
+      if(el) el.textContent=formatMetric(value);
+    });
+    const totalConversion=Number(summary.visitorsTotal)>0 ? (Number(summary.downloadsTotal||0)/Number(summary.visitorsTotal)*100) : 0;
+    const todayConversion=Number(summary.visitorsToday)>0 ? (Number(summary.downloadsToday||0)/Number(summary.visitorsToday)*100) : 0;
+    const ct=document.getElementById('analyticsConversionTotal');
+    const cd=document.getElementById('analyticsConversionToday');
+    if(ct) ct.textContent=totalConversion.toFixed(1)+'%';
+    if(cd) cd.textContent=todayConversion.toFixed(1)+'%';
+    const subtitle=document.getElementById('websiteChartSubtitle');
+    if(subtitle) subtitle.textContent='Daily activity · '+formatRangeLabel(websiteRange);
+    renderMultiLineChart('websiteAnalyticsChart',series,[
+      {key:'visitors',label:'Visitors',pathClass:'chart-line chart-line-blue',dotClass:'chart-dot chart-dot-blue'},
+      {key:'pageViews',label:'Page views',pathClass:'chart-line chart-line-cyan',dotClass:'chart-dot chart-dot-cyan'},
+      {key:'downloads',label:'Downloads',pathClass:'chart-line chart-line-green',dotClass:'chart-dot chart-dot-green'}
+    ],'websiteAnalyticsChartFooter');
+    const footer=document.getElementById('websiteAnalyticsChartFooter');
+    if(footer) footer.innerHTML='<div class="chart-legend"><span><i class="chart-dot-blue"></i>'+formatMetric(summary.rangeVisitors||0)+' visitors</span><span><i class="chart-dot-cyan"></i>'+formatMetric(summary.rangePageViews||0)+' page views</span><span><i class="chart-dot-green"></i>'+formatMetric(summary.rangeDownloads||0)+' downloads</span></div>';
+    const pages=document.getElementById('websiteTopPages');
+    const pageRows=Array.isArray(websiteStats?.topPages)?websiteStats.topPages:[];
+    if(pages) pages.innerHTML=pageRows.length?pageRows.map(row=>'<div class="analytics-row"><span>'+escapeHtml(row.path||'/')+'</span><b>'+formatMetric(row.views||0)+'</b></div>').join(''):'<div class="analytics-row"><span>No page-view data yet.</span><b>0</b></div>';
+    const sources=document.getElementById('websiteTrafficSources');
+    const sourceRows=Array.isArray(websiteStats?.sources)?websiteStats.sources:[];
+    if(sources) sources.innerHTML=sourceRows.length?sourceRows.map(row=>'<div class="analytics-row"><span>'+escapeHtml(row.source||'Direct')+'</span><b>'+formatMetric(row.visitors||0)+'</b></div>').join(''):'<div class="analytics-row"><span>Direct / unknown</span><b>0</b></div>';
+  }
+
+  async function loadWebsiteStats(days=websiteRange) {
+    websiteRange=Number(days)||1;
+    try {
+      const result=await apiFetch('/admin/website-stats?range='+encodeURIComponent(websiteRange),{method:'GET'});
+      websiteStats=result;
+      renderWebsiteAnalytics();
+    } catch (error) {
+      websiteStats=null;
+      renderWebsiteAnalytics();
+      toast('Website analytics: '+error.message);
     }
   }
 
@@ -804,6 +863,14 @@
     toast('Crash reports refreshed.');
   });
 
+
+  document.querySelectorAll('[data-website-range]').forEach((button) => {
+    button.addEventListener('click', async () => {
+      websiteRange=Number(button.dataset.websiteRange)||1;
+      document.querySelectorAll('[data-website-range]').forEach((b)=>b.classList.toggle('active',b===button));
+      await loadWebsiteStats(websiteRange);
+    });
+  });
 
   document.querySelectorAll('[data-download-range]').forEach((button) => {
     button.addEventListener('click', async () => {
