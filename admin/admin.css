@@ -53,3 +53,14 @@ label{display:grid;gap:6px;color:#7d8ba0;font-size:8px;margin-top:12px}input,tex
   .page.active *,.hero-orbit,.mobile-admin-nav button.active::before{animation:none!important}
   .side-nav button,.mobile-admin-nav button,.top-icon,.ghost-btn,.primary-btn{transition:none!important}
 }
+
+/* ============================================================
+   WHO CONTROL LIVE METRICS
+   ============================================================ */
+.metrics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}.metrics-grid .stat-card{min-width:0}
+.metric-primary{background:linear-gradient(150deg,rgba(22,135,255,.08),rgba(255,255,255,.02));border-color:rgba(91,192,255,.14)}
+.chart-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px}.chart-panel{overflow:hidden}.chart-grid .chart-panel:last-child{grid-column:1 / -1}
+.metric-chart{width:100%;height:auto;min-height:230px;display:block;margin-top:10px;overflow:visible}.chart-grid-line{stroke:rgba(255,255,255,.06);stroke-width:1}.chart-axis{stroke:rgba(255,255,255,.12);stroke-width:1}
+.chart-line{fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 3px 6px rgba(0,0,0,.25))}.chart-dot{stroke:#070c14;stroke-width:2}.chart-line-blue,.chart-dot-blue{stroke:#58b9ff;fill:#58b9ff}.chart-line-cyan,.chart-dot-cyan{stroke:#72e3ff;fill:#72e3ff}.chart-line-green,.chart-dot-green{stroke:#55d9a3;fill:#55d9a3}.chart-line-amber,.chart-dot-amber{stroke:#ffc66b;fill:#ffc66b}.chart-line-red,.chart-dot-red{stroke:#ff7189;fill:#ff7189}.chart-label{fill:#59677d;font-size:14px}.chart-footer{min-height:24px;margin-top:4px;color:#68778e;font-size:8px}.chart-legend{display:flex;gap:14px;flex-wrap:wrap}.chart-legend span{display:inline-flex;align-items:center;gap:5px}.chart-legend i{width:7px;height:7px;border-radius:50%;display:inline-block}.chart-legend .chart-dot-blue{background:#58b9ff}.chart-legend .chart-dot-cyan{background:#72e3ff}.chart-legend .chart-dot-green{background:#55d9a3}.chart-legend .chart-dot-amber{background:#ffc66b}.chart-legend .chart-dot-red{background:#ff7189}
+@media(max-width:1100px){.metrics-grid{grid-template-columns:repeat(3,1fr)}.chart-grid{grid-template-columns:1fr}.chart-grid .chart-panel:last-child{grid-column:auto}}
+@media(max-width:680px){.metrics-grid{grid-template-columns:1fr 1fr}.chart-grid{grid-template-columns:1fr}.metric-chart{min-height:190px}.chart-label{font-size:11px}}
