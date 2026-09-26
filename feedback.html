@@ -56,25 +56,76 @@ function renderFeedback(list){
   grid.innerHTML=approved.map(x=>'<article class="glass"><div style="display:flex;justify-content:space-between;gap:12px"><strong>'+esc(x.name||'WHO Beta Tester')+'</strong><span style="color:#69c9ff;letter-spacing:2px">'+('★'.repeat(Math.max(1,Math.min(5,Number(x.rating)||5))))+'</span></div><h3 style="margin:12px 0 7px">'+esc(x.title||'Beta feedback')+'</h3><p>'+esc(x.message||'')+'</p><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:15px"><span class="badge">'+esc(x.platform||'WHO')+'</span><span class="badge">Beta '+esc(x.version||'1.0.0')+'</span></div></article>').join('');
 }
 fetch('data/approved-feedback.json',{cache:'no-store'}).then(r=>r.json()).then(renderFeedback).catch(()=>renderFeedback([]));
-document.getElementById('feedbackForm').addEventListener('submit',e=>{
+document.getElementById('feedbackForm').addEventListener('submit',async e=>{
   e.preventDefault();
-  const subject=encodeURIComponent('[WHO Beta Feedback] '+document.getElementById('type').value);
-  const body=encodeURIComponent(
-    'Type: '+document.getElementById('type').value+'\\n'+
-    'Rating: '+document.getElementById('rating').value+'/5\\n'+
-    'Platform: '+document.getElementById('platform').value+'\\n'+
-    'WHO version: '+document.getElementById('version').value+'\\n'+
-    'Name: '+document.getElementById('name').value+'\\n'+
-    'Email: '+document.getElementById('email').value+'\\n'+
-    'Public display requested: '+(document.getElementById('publish').checked?'Yes':'No')+'\\n\\n'+
-    'Feedback:\\n'+document.getElementById('message').value+'\\n\\n'+
-    'Reproduction steps:\\n'+document.getElementById('steps').value
-  );
-  const to='squashberrypro@gmail.com';
-  window.location.href='mailto:'+to+'?subject='+subject+'&body='+body;
+
   const status=document.getElementById('sendStatus');
-  status.style.display='block';
-  status.innerHTML='<b>Your feedback draft is ready.</b><br>We opened your email app so it can be sent to the WHO team. Public feedback is never published automatically; an admin must approve it first.';
+  const button=e.currentTarget.querySelector('button[type="submit"]');
+
+  const type=document.getElementById('type').value;
+  const rating=document.getElementById('rating').value;
+  const platform=document.getElementById('platform').value;
+  const version=document.getElementById('version').value.trim();
+  const name=document.getElementById('name').value.trim();
+  const email=document.getElementById('email').value.trim();
+  const message=document.getElementById('message').value.trim();
+  const steps=document.getElementById('steps').value.trim();
+  const publish=document.getElementById('publish').checked;
+
+  if(!message){
+    status.style.display='block';
+    status.innerHTML='<b>Please describe what happened.</b><br>Tell us what you experienced before sending the form.';
+    return;
+  }
+
+  const storedMessage=[
+    message,
+    steps ? '\n\nReproduction steps:\n'+steps : '',
+    '\n\nRating: '+rating+'/5',
+    'Public display requested: '+(publish?'Yes':'No')
+  ].join('');
+
+  const payload={
+    name,
+    email,
+    category:type,
+    message:storedMessage,
+    appVersion:version,
+    platform
+  };
+
+  try{
+    if(button) button.disabled=true;
+    status.style.display='block';
+    status.innerHTML='Sending your feedback…';
+
+    const response=await fetch('https://who-api.who-fe3.workers.dev/feedback',{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json'
+      },
+      body:JSON.stringify(payload)
+    });
+
+    let result=null;
+    try{
+      result=await response.json();
+    }catch(_){}
+
+    if(!response.ok || !result?.ok){
+      throw new Error(result?.error || ('request_failed_'+response.status));
+    }
+
+    status.innerHTML='<b>Feedback received.</b><br>Thank you for helping improve WHO Beta. Your message has been added to the WHO review queue. Public feedback is never published automatically; an admin must approve it first.';
+    e.currentTarget.reset();
+    document.getElementById('version').value='1.0.0';
+  }catch(error){
+    console.error('feedback submission failed',error);
+    status.innerHTML='<b>We could not send your feedback.</b><br>Please check your connection and try again.';
+  }finally{
+    if(button) button.disabled=false;
+  }
+});
 });
 </script></div></section></main>
 <footer><div class="wrap"><div class="foot"><a class="brand" href="./"><span class="mark">W</span><span>WHO</span></a><div class="footlinks"><a href="features.html">Features</a><a href="how-to-use-who.html">How to use WHO</a><a href="safety-center.html">Safety Center</a><a href="faq.html">FAQ</a><a href="feedback.html">Feedback</a><a href="support.html">Support</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="cookies.html">Cookies</a><a href="data-choices.html">Your data</a><a href="community-guidelines.html">Community Guidelines</a><a href="responsible-disclosure.html">Security</a><a href="about.html">About</a><a href="contact.html">Contact</a></div></div><div class="copy">© 2026 Squashberry · WHO Beta 1.0</div></div></footer></body></html>
