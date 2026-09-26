@@ -12,7 +12,7 @@
   <link rel="icon" href="../favicon.svg" type="image/svg+xml">
   <link rel="manifest" href="site.webmanifest">
   <style>
-    html,body{margin:0;background:#05070c;color:#f7f9ff}
+    html,body{margin:0;background:#05070c;color:#f7f9ff}.table-wrap{overflow:auto}.table-wrap table{min-width:860px}.queue-action{white-space:nowrap}
     #adminBoot{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;background:#05070c;transition:.35s}
     #adminBoot.hide{opacity:0;visibility:hidden}
     .admin-boot-mark{width:68px;height:68px;border-radius:23px;display:grid;place-items:center;background:linear-gradient(145deg,#8cdaff,#1687ff 62%,#0751c5);box-shadow:0 20px 70px rgba(22,135,255,.32);font-weight:950;font-size:21px}
@@ -184,8 +184,19 @@
         </section>
 
         <section class="page" data-section="reports">
-          <div class="section-title"><span class="eyebrow">REPORTS</span><h2>Keep reputation explainable.</h2><p>Moderate spam/scam reports without turning reports into permanent identity claims.</p></div>
-          <div class="panel empty-panel"><span class="eyebrow">BACKEND CONTRACT</span><h3>Moderation queue not exposed</h3><p>The current Worker accepts number reports from the app but does not expose an admin report-list endpoint. No fake report rows are shown.</p></div>
+          <div class="section-title"><span class="eyebrow">REPORTS</span><h2>Keep reputation explainable.</h2><p>Live number-report moderation from WHO D1. Review, dismiss and reopen reports without turning them into permanent identity claims.</p></div>
+          <div class="panel table-panel">
+            <div class="toolbar">
+              <div><span class="eyebrow">LIVE QUEUE</span><h3>Number reports</h3></div>
+              <button class="ghost-btn" id="refreshReports">Refresh</button>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Time</th><th>Phone hash</th><th>Category</th><th>Details</th><th>Status</th><th></th></tr></thead>
+                <tbody id="reportBody"></tbody>
+              </table>
+            </div>
+          </div>
         </section>
 
         <section class="page" data-section="releases">
@@ -213,13 +224,35 @@
         </section>
 
         <section class="page" data-section="feedback">
-          <div class="section-title"><span class="eyebrow">FEEDBACK</span><h2>Close the beta loop.</h2><p>Keep user feedback close to releases, announcements and crash patterns.</p></div>
-          <div class="panel empty-panel"><span class="eyebrow">BACKEND CONTRACT</span><h3>Feedback endpoint not exposed</h3><p>The current Worker does not provide an admin feedback queue. No preview feedback is presented as real user feedback.</p></div>
+          <div class="section-title"><span class="eyebrow">FEEDBACK</span><h2>Close the beta loop.</h2><p>Live feedback received through the WHO backend. Approvals are explicit and remain under admin control.</p></div>
+          <div class="panel table-panel">
+            <div class="toolbar">
+              <div><span class="eyebrow">LIVE QUEUE</span><h3>Beta feedback</h3></div>
+              <button class="ghost-btn" id="refreshFeedback">Refresh</button>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Time</th><th>Name</th><th>Type</th><th>Message</th><th>Platform</th><th>Status</th><th></th></tr></thead>
+                <tbody id="feedbackBody"></tbody>
+              </table>
+            </div>
+          </div>
         </section>
 
         <section class="page" data-section="audit">
-          <div class="section-title"><span class="eyebrow">AUDIT</span><h2>Every admin mutation should leave a trace.</h2><p>The production dashboard should record actor, timestamp, target, old value, new value and result.</p></div>
-          <div class="panel empty-panel"><span class="eyebrow">BACKEND CONTRACT</span><h3>Audit endpoint not exposed</h3><p>The D1 audit_logs table exists, but the current Worker does not expose an admin audit-list route. No production audit entries are displayed because the Worker does not expose an audit-list endpoint.</p></div>
+          <div class="section-title"><span class="eyebrow">AUDIT</span><h2>Every admin mutation should leave a trace.</h2><p>Live admin mutation history from WHO D1, including actor, action, target and metadata.</p></div>
+          <div class="panel table-panel">
+            <div class="toolbar">
+              <div><span class="eyebrow">LIVE HISTORY</span><h3>Audit log</h3></div>
+              <button class="ghost-btn" id="refreshAudit">Refresh</button>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Time</th><th>Actor</th><th>Action</th><th>Target</th><th>Metadata</th></tr></thead>
+                <tbody id="auditBody"></tbody>
+              </table>
+            </div>
+          </div>
         </section>
       </main>
     </div>
