@@ -12,8 +12,8 @@
 
   const meta = {
     overview:['Overview','Live WHO backend control and system status.'],
-    users:['Users','The current Worker does not expose an admin user directory.'],
-    caller:['Caller intelligence','The current Worker does not expose caller-admin moderation routes.'],
+    users:['Users','Live account and device metrics from WHO D1.'],
+    caller:['Caller intelligence','Live anonymized caller-intelligence metrics from Supabase.'],
     reports:['Reports','The current Worker accepts reports but does not expose an admin queue.'],
     releases:['Releases','Versions and update gates stored in the live runtime config.'],
     remote:['Remote config','Live app behavior and copy from the WHO runtime_config row.'],
@@ -60,6 +60,7 @@
   let crashFilter = 'pending';
   let deferredPrompt = null;
   let authBusy = false;
+  let liveStats = null;
 
   function setAdminBootProgress(value, status) {
     const bar = document.getElementById('adminBootProgress');
@@ -617,23 +618,235 @@
       .catch(() => window.prompt('Copy WHO runtime config JSON', text));
   }
 
+  function formatMetric(value) {
+    const number = Number(value || 0);
+    return new Intl.NumberFormat().format(number);
+  }
+
+  function renderMultiLineChart(svgId, series, lines, footerId) {
+    const svg = document.getElementById(svgId);
+    if (!svg) return;
+
+    const width = 760;
+    const height = 280;
+    const pad = {top: 18, right: 20, bottom: 34, left: 38};
+    const chartW = width - pad.left - pad.right;
+    const chartH = height - pad.top - pad.bottom;
+
+    const pointsCount = series.length || 1;
+    const allValues = [];
+
+    lines.forEach((line) => {
+      series.forEach((row) => {
+        allValues.push(Number(row[line.key] || 0));
+      });
+    });
+
+    const maxValue = Math.max(1, ...allValues);
+    const stepX = pointsCount > 1 ? chartW / (pointsCount - 1) : chartW;
+
+    const grid = [0, .25, .5, .75, 1].map((ratio) => {
+      const y = pad.top + chartH * ratio;
+      return '<line x1="' + pad.left + '" y1="' + y +
+        '" x2="' + (width - pad.right) + '" y2="' + y +
+        '" class="chart-grid-line"></line>';
+    }).join('');
+
+    const paths = lines.map((line) => {
+      const d = series.map((row, index) => {
+        const value = Number(row[line.key] || 0);
+        const x = pad.left + stepX * index;
+        const y = pad.top + chartH - (value / maxValue) * chartH;
+        return (index === 0 ? 'M' : 'L') + x.toFixed(2) + ' ' + y.toFixed(2);
+      }).join(' ');
+
+      const dots = series.map((row, index) => {
+        const value = Number(row[line.key] || 0);
+        const x = pad.left + stepX * index;
+        const y = pad.top + chartH - (value / maxValue) * chartH;
+        return '<circle cx="' + x.toFixed(2) + '" cy="' + y.toFixed(2) +
+          '" r="2.5" class="' + line.dotClass + '"></circle>';
+      }).join('');
+
+      return '<path d="' + d + '" class="' + line.pathClass + '"></path>' + dots;
+    }).join('');
+
+    const labels = series.map((row, index) => {
+      if (index !== 0 && index !== series.length - 1 && index !== Math.floor(series.length / 2)) {
+        return '';
+      }
+      const x = pad.left + stepX * index;
+      const date = String(row.date || '').slice(5);
+      return '<text x="' + x.toFixed(2) + '" y="' + (height - 10) +
+        '" text-anchor="middle" class="chart-label">' + escapeHtml(date) + '</text>';
+    }).join('');
+
+    const legend = lines.map((line) =>
+      '<span><i class="' + line.dotClass + '"></i>' + escapeHtml(line.label) + '</span>'
+    ).join('');
+
+    svg.innerHTML =
+      grid +
+      '<line x1="' + pad.left + '" y1="' + (height - pad.bottom) +
+        '" x2="' + (width - pad.right) + '" y2="' + (height - pad.bottom) +
+        '" class="chart-axis"></line>' +
+      paths +
+      labels;
+
+    const footer = document.getElementById(footerId);
+    if (footer) footer.innerHTML = '<div class="chart-legend">' + legend + '</div>';
+  }
+
+  function renderLiveStats() {
+    const summary = liveStats?.summary || {};
+    const series = Array.isArray(liveStats?.series) ? liveStats.series : [];
+
+    const ids = {
+      usersTotalStat: summary.usersTotal,
+      usersTodayStat: summary.usersToday,
+      devicesTotalStat: summary.devicesTotal,
+      devicesTodayStat: summary.activeDevicesToday,
+      callerNumbersTotalStat: summary.callerNumbersTotal,
+      callerNumbersTodayStat: summary.callerNumbersToday,
+      verifiedContactsStat: summary.verifiedContactsTotal,
+      callerObservationsStat: summary.callerObservationsTotal,
+      callerObservationsTodayStat: summary.callerObservationsToday,
+      reportTotalStat: summary.reportsTotal,
+      reportTodayStat: summary.reportsToday,
+      crashStat: summary.crashesTotal
+    };
+
+    Object.keys(ids).forEach((id) => {
+      const element = document.getElementById(id);
+      if (element) element.textContent = formatMetric(ids[id]);
+    });
+
+    const sub = {
+      usersTodayStatSub: formatMetric(summary.usersToday) + ' new accounts today',
+      callerObservationsTodayStatSub: formatMetric(summary.callerObservationsToday) + ' today',
+      reportTodayStatSub: formatMetric(summary.reportsToday) + ' today',
+      crashStatSub: formatMetric(summary.crashesToday) + ' today'
+    };
+
+    Object.entries(sub).forEach(([id, value]) => {
+      const element = document.getElementById(id);
+      if (element) element.textContent = value;
+    });
+
+    const pageIds = {
+      usersPageTotal: summary.usersTotal,
+      usersPageToday: summary.usersToday,
+      devicesPageTotal: summary.devicesTotal,
+      devicesPageToday: summary.activeDevicesToday,
+      callerPageNumbers: summary.callerNumbersTotal,
+      callerPageToday: summary.callerNumbersToday,
+      callerPageVerified: summary.verifiedContactsTotal,
+      callerPageEvidence: summary.deviceEvidenceRows
+    };
+
+    Object.entries(pageIds).forEach(([id, value]) => {
+      const element = document.getElementById(id);
+      if (element) element.textContent = formatMetric(value);
+    });
+
+    renderMultiLineChart(
+      'usersChart',
+      series,
+      [
+        {key:'users', label:'Users', pathClass:'chart-line chart-line-blue', dotClass:'chart-dot chart-dot-blue'},
+        {key:'devices', label:'Devices', pathClass:'chart-line chart-line-cyan', dotClass:'chart-dot chart-dot-cyan'}
+      ],
+      'usersChartFooter'
+    );
+
+    renderMultiLineChart(
+      'callerChart',
+      series,
+      [
+        {key:'callerNumbers', label:'Numbers', pathClass:'chart-line chart-line-green', dotClass:'chart-dot chart-dot-green'},
+        {key:'callerObservations', label:'Observations', pathClass:'chart-line chart-line-blue', dotClass:'chart-dot chart-dot-blue'}
+      ],
+      'callerChartFooter'
+    );
+
+    renderMultiLineChart(
+      'moderationChart',
+      series,
+      [
+        {key:'reports', label:'Reports', pathClass:'chart-line chart-line-amber', dotClass:'chart-dot chart-dot-amber'},
+        {key:'crashes', label:'Crashes', pathClass:'chart-line chart-line-red', dotClass:'chart-dot chart-dot-red'}
+      ],
+      'moderationChartFooter'
+    );
+
+    renderMultiLineChart(
+      'usersPageChart',
+      series,
+      [
+        {key:'users', label:'Users', pathClass:'chart-line chart-line-blue', dotClass:'chart-dot chart-dot-blue'},
+        {key:'devices', label:'Devices', pathClass:'chart-line chart-line-cyan', dotClass:'chart-dot chart-dot-cyan'}
+      ],
+      null
+    );
+
+    renderMultiLineChart(
+      'callerPageChart',
+      series,
+      [
+        {key:'callerNumbers', label:'Numbers', pathClass:'chart-line chart-line-green', dotClass:'chart-dot chart-dot-green'},
+        {key:'callerObservations', label:'Observations', pathClass:'chart-line chart-line-blue', dotClass:'chart-dot chart-dot-blue'}
+      ],
+      null
+    );
+  }
+
   function renderStats() {
     const appVersion = serverConfig.appVersion || serverConfig.latestVersion || '—';
     const force = Boolean(serverConfig.forceUpdate);
     const announcement = Boolean(serverConfig.announcementEnabled);
 
-    document.getElementById('appVersionStat').textContent = appVersion;
-    document.getElementById('appVersionSub').textContent =
+    document.getElementById('appVersionStat')?.textContent = appVersion;
+    document.getElementById('appVersionSub')?.textContent =
       'Latest ' + (serverConfig.latestVersion || '—');
 
-    document.getElementById('forceStat').textContent = force ? 'ON' : 'OFF';
-    document.getElementById('announceStat').textContent = announcement ? 'ON' : 'OFF';
+    document.getElementById('forceStat')?.textContent = force ? 'ON' : 'OFF';
+    document.getElementById('announceStat')?.textContent = announcement ? 'ON' : 'OFF';
 
-    document.getElementById('crashStat').textContent = String(allCrashes.length);
-    document.getElementById('crashStatSub').textContent =
-      allCrashes.length
-        ? 'Latest records loaded'
-        : 'No crash records returned';
+    document.getElementById('crashStat')?.textContent =
+      liveStats ? formatMetric(liveStats.summary?.crashesTotal) : String(allCrashes.length);
+
+    document.getElementById('crashStatSub')?.textContent =
+      liveStats
+        ? formatMetric(liveStats.summary?.crashesToday) + ' today'
+        : (allCrashes.length ? 'Latest records loaded' : 'No crash records returned');
+
+    renderLiveStats();
+  }
+
+  async function loadStats() {
+    if (!token) return;
+
+    try {
+      const result = await apiFetch('/admin/stats', {method:'GET'});
+      liveStats = result;
+      renderStats();
+    } catch (error) {
+      if (error.status === 401) {
+        await signOut(false);
+        showAuth('request', 'Your WHO session expired. Please sign in again.');
+        return;
+      }
+
+      if (error.status === 403) {
+        await signOut(false);
+        showAuth('request', 'This WHO account is not authorized for live statistics.');
+        return;
+      }
+
+      liveStats = null;
+      renderStats();
+      toast(error.message);
+    }
   }
 
   function renderCrashStats() {
@@ -787,7 +1000,8 @@
 
     await Promise.all([
       loadConfig(),
-      loadCrashes()
+      loadCrashes(),
+      loadStats()
     ]);
 
     setAdminBootProgress(90, 'Live backend data loaded.');
