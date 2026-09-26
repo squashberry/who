@@ -775,9 +775,7 @@
   async function refreshData() {
     setApiState(
       true,
-      'Authenticated as ' +
-      (currentUser?.displayName || currentUser?.email || 'WHO administrator') +
-      ' · loading live data'
+      'Live WHO Control · loading live data'
     );
 
     setAdminBootProgress(72, 'Loading live WHO configuration…');
@@ -792,9 +790,7 @@
     setAdminBootProgress(90, 'Live backend data loaded.');
     setApiState(
       true,
-      'Authenticated as ' +
-      (currentUser?.displayName || currentUser?.email || 'WHO administrator') +
-      ' · ' + (currentUser?.role || 'authorized')
+      'Live WHO Control · backend connected'
     );
   }
 
