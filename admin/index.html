@@ -51,15 +51,43 @@
       <main class="content">
         <section class="page active" data-section="overview">
           <div class="hero-panel">
-            <div><span class="eyebrow">PRODUCT COMMAND CENTER</span><h2>Control the live WHO backend.</h2><p id="overviewMessage">Authenticate with the existing WHO account system to manage remote configuration and real crash reports.</p></div>
+            <div><span class="eyebrow">PRODUCT COMMAND CENTER</span><h2>See what WHO is doing in real time.</h2><p id="overviewMessage">Live account, device, caller-intelligence, report and crash metrics from the WHO backend.</p></div>
             <div class="hero-orbit"><span>W</span><i></i><i></i><i></i><b>WHO</b></div>
           </div>
-          <div class="stats-grid">
-            <div class="stat-card"><small>App version</small><strong id="appVersionStat">—</strong><span id="appVersionSub">Not loaded</span></div>
-            <div class="stat-card"><small>Force update</small><strong id="forceStat">—</strong><span>Remote controlled</span></div>
-            <div class="stat-card"><small>Announcements</small><strong id="announceStat">—</strong><span>Remote controlled</span></div>
-            <div class="stat-card"><small>Crash reports</small><strong id="crashStat">—</strong><span id="crashStatSub">Not loaded</span></div>
+
+          <div class="metrics-grid">
+            <div class="stat-card metric-primary"><small>Total users</small><strong id="usersTotalStat">—</strong><span id="usersTodayStatSub">Loading today…</span></div>
+            <div class="stat-card"><small>Users today</small><strong id="usersTodayStat">—</strong><span>New accounts</span></div>
+            <div class="stat-card"><small>Total devices</small><strong id="devicesTotalStat">—</strong><span>Registered installations</span></div>
+            <div class="stat-card"><small>Active devices today</small><strong id="devicesTodayStat">—</strong><span>Seen today</span></div>
+            <div class="stat-card metric-primary"><small>Numbers observed</small><strong id="callerNumbersTotalStat">—</strong><span>Distinct caller numbers</span></div>
+            <div class="stat-card"><small>Numbers today</small><strong id="callerNumbersTodayStat">—</strong><span>Distinct new observations</span></div>
+            <div class="stat-card"><small>Verified contacts</small><strong id="verifiedContactsStat">—</strong><span>4+ distinct devices</span></div>
+            <div class="stat-card"><small>Caller observations</small><strong id="callerObservationsStat">—</strong><span id="callerObservationsTodayStatSub">Loading today…</span></div>
+            <div class="stat-card"><small>Observations today</small><strong id="callerObservationsTodayStat">—</strong><span>Contact-name evidence</span></div>
+            <div class="stat-card"><small>Total reports</small><strong id="reportTotalStat">—</strong><span id="reportTodayStatSub">Loading today…</span></div>
+            <div class="stat-card"><small>Reports today</small><strong id="reportTodayStat">—</strong><span>Number reports</span></div>
+            <div class="stat-card"><small>Crash reports</small><strong id="crashStat">—</strong><span id="crashStatSub">Loading…</span></div>
           </div>
+
+          <div class="chart-grid">
+            <div class="panel chart-panel">
+              <div class="panel-head"><div><span class="eyebrow">GROWTH</span><h3>Users & devices</h3><small>Last 14 days</small></div><span class="tag blue">LIVE</span></div>
+              <svg class="metric-chart" id="usersChart" viewBox="0 0 760 280" role="img" aria-label="Users and devices over the last 14 days"></svg>
+              <div class="chart-footer" id="usersChartFooter">Waiting for live metrics…</div>
+            </div>
+            <div class="panel chart-panel">
+              <div class="panel-head"><div><span class="eyebrow">CALLER INTELLIGENCE</span><h3>Numbers & observations</h3><small>Daily caller data intake</small></div><span class="tag green">ANONYMIZED</span></div>
+              <svg class="metric-chart" id="callerChart" viewBox="0 0 760 280" role="img" aria-label="Caller numbers and observations over the last 14 days"></svg>
+              <div class="chart-footer" id="callerChartFooter">Waiting for live metrics…</div>
+            </div>
+            <div class="panel chart-panel">
+              <div class="panel-head"><div><span class="eyebrow">MODERATION</span><h3>Reports & crashes</h3><small>Daily operational volume</small></div><span class="tag amber">OPERATIONS</span></div>
+              <svg class="metric-chart" id="moderationChart" viewBox="0 0 760 280" role="img" aria-label="Reports and crashes over the last 14 days"></svg>
+              <div class="chart-footer" id="moderationChartFooter">Waiting for live metrics…</div>
+            </div>
+          </div>
+
           <div class="two-col">
             <div class="panel"><div class="panel-head"><div><span class="eyebrow">SYSTEM MAP</span><h3>WHO product surfaces</h3></div></div><div class="surface-list"><div><span>Caller ID</span><b>App surface</b></div><div><span>Dialer / contacts</span><b>App surface</b></div><div><span>SMS</span><b>App surface</b></div><div><span>WHO Relay</span><b>App surface</b></div><div><span>VPN / network</span><b>App surface</b></div><div><span>Admin API</span><b id="adminSurfaceStatus">Not authenticated</b></div></div></div>
             <div class="panel"><div class="panel-head"><div><span class="eyebrow">QUICK ACTIONS</span><h3>Do the useful thing first.</h3></div></div><div class="action-grid"><button data-jump="remote">Edit remote config</button><button data-jump="announcements">Publish announcement</button><button data-jump="releases">Manage release</button><button data-jump="crashes">Review crashes</button></div></div>
@@ -67,14 +95,25 @@
         </section>
 
         <section class="page" data-section="users">
-          <div class="section-title"><span class="eyebrow">USERS</span><h2>Device & account surface.</h2><p>This Worker currently does not expose an admin user-directory endpoint. No fabricated user records are shown.</p></div>
-          <div class="panel empty-panel"><span class="eyebrow">BACKEND CONTRACT</span><h3>User directory not exposed</h3><p>The current WHO Worker exposes admin configuration and crash management, but no admin users/devices route. The dashboard will not invent or scrape user records.</p></div>
+          <div class="section-title"><span class="eyebrow">USERS</span><h2>Account & device pulse.</h2><p>Live counts from the WHO D1 users and devices tables, refreshed with the overview dashboard.</p></div>
+          <div class="metrics-grid">
+            <div class="stat-card"><small>Total users</small><strong id="usersPageTotal">—</strong><span>WHO accounts</span></div>
+            <div class="stat-card"><small>Users today</small><strong id="usersPageToday">—</strong><span>New accounts</span></div>
+            <div class="stat-card"><small>Total devices</small><strong id="devicesPageTotal">—</strong><span>Registered installations</span></div>
+            <div class="stat-card"><small>Active today</small><strong id="devicesPageToday">—</strong><span>Seen in the last day</span></div>
+          </div>
+          <div class="panel chart-panel"><div class="panel-head"><div><span class="eyebrow">GROWTH</span><h3>Registration trend</h3><small>Last 14 days</small></div></div><svg class="metric-chart" id="usersPageChart" viewBox="0 0 760 280" role="img" aria-label="User and device registration trend"></svg></div>
         </section>
 
         <section class="page" data-section="caller">
-          <div class="section-title"><span class="eyebrow">CALLER INTELLIGENCE</span><h2>Signals, not guesses.</h2><p>Use this space for confidence scoring, corrections and community observations once the backend is connected.</p></div>
-          <div class="stats-grid"><div class="stat-card"><small>Observed signals</small><strong>—</strong><span>Admin endpoint not exposed</span></div><div class="stat-card"><small>Corrections</small><strong>—</strong><span>Admin endpoint not exposed</span></div><div class="stat-card"><small>Reports</small><strong>—</strong><span>Admin endpoint not exposed</span></div><div class="stat-card"><small>Raw numbers stored</small><strong>—</strong><span>Not displayed here</span></div></div>
-          <div class="panel callout-panel"><div class="signal-ring"><span>WHO</span></div><div><span class="eyebrow">ARCHITECTURE</span><h3>Consent → observation → confidence → correction</h3><p>WHO can compare names from contacts with anonymized caller observations while keeping raw numbers out of the caller database design.</p></div></div>
+          <div class="section-title"><span class="eyebrow">CALLER INTELLIGENCE</span><h2>Signals, not guesses.</h2><p>Privacy-preserving live metrics. Raw phone numbers are never shown here; caller data is represented by anonymized hashes and aggregate counts.</p></div>
+          <div class="metrics-grid">
+            <div class="stat-card"><small>Numbers observed</small><strong id="callerPageNumbers">—</strong><span>Distinct phone hashes</span></div>
+            <div class="stat-card"><small>Observed today</small><strong id="callerPageToday">—</strong><span>Distinct phone hashes</span></div>
+            <div class="stat-card"><small>Verified contacts</small><strong id="callerPageVerified">—</strong><span>4+ distinct devices</span></div>
+            <div class="stat-card"><small>Evidence rows</small><strong id="callerPageEvidence">—</strong><span>Phone / name / device</span></div>
+          </div>
+          <div class="panel chart-panel"><div class="panel-head"><div><span class="eyebrow">INTAKE</span><h3>Caller data flow</h3><small>Last 14 days</small></div></div><svg class="metric-chart" id="callerPageChart" viewBox="0 0 760 280" role="img" aria-label="Caller data intake over the last 14 days"></svg></div>
         </section>
 
         <section class="page" data-section="reports">
