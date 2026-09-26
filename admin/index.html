@@ -31,6 +31,7 @@
         <button class="active" data-page="overview"><span>⌂</span>Overview</button>
         <button data-page="users"><span>◉</span>Users</button>
         <button data-page="caller"><span>⌕</span>Caller intelligence</button>
+        <button data-page="analytics"><span>◌</span>Website analytics</button>
         <button data-page="reports"><span>⚑</span>Reports</button>
         <button data-page="releases"><span>↥</span>Releases</button>
         <button data-page="remote"><span>⚙</span>Remote config</button>
@@ -57,6 +58,10 @@
 
           <div class="metrics-grid">
             <div class="stat-card metric-primary"><small>Total users</small><strong id="usersTotalStat">—</strong><span id="usersTodayStatSub">Loading today…</span></div>
+            <div class="stat-card metric-primary"><small>Total website visitors</small><strong id="websiteVisitorsTotalStat">—</strong><span>Unique visitors</span></div>
+            <div class="stat-card"><small>Visitors today</small><strong id="websiteVisitorsTodayStat">—</strong><span>Unique today</span></div>
+            <div class="stat-card"><small>Active visitors</small><strong id="websiteActiveVisitorsStat">—</strong><span>Last 15 min</span></div>
+            <div class="stat-card"><small>Page views today</small><strong id="websitePageViewsTodayStat">—</strong><span>Public pages</span></div>
             <div class="stat-card"><small>Users today</small><strong id="usersTodayStat">—</strong><span>New accounts</span></div>
             <div class="stat-card"><small>Total devices</small><strong id="devicesTotalStat">—</strong><span>Registered installations</span></div>
             <div class="stat-card"><small>Active devices today</small><strong id="devicesTodayStat">—</strong><span>Seen today</span></div>
@@ -131,6 +136,33 @@
             <div class="stat-card"><small>Evidence rows</small><strong id="callerPageEvidence">—</strong><span>Phone / name / device</span></div>
           </div>
           <div class="panel chart-panel"><div class="panel-head"><div><span class="eyebrow">INTAKE</span><h3>Caller data flow</h3><small>Last 14 days</small></div></div><svg class="metric-chart" id="callerPageChart" viewBox="0 0 760 280" role="img" aria-label="Caller data intake over the last 14 days"></svg></div>
+        </section>
+
+        <section class="page" data-section="analytics">
+          <div class="section-title"><span class="eyebrow">WEBSITE ANALYTICS</span><h2>See how people move through WHO.</h2><p>Anonymous first-party metrics: unique visitors, page views, active visitors, download starts, popular pages and traffic sources.</p></div>
+          <div class="metrics-grid">
+            <div class="stat-card metric-primary"><small>Total visitors</small><strong id="analyticsVisitorsTotal">—</strong><span>Unique visitors</span></div>
+            <div class="stat-card"><small>Visitors today</small><strong id="analyticsVisitorsToday">—</strong><span>Unique today</span></div>
+            <div class="stat-card"><small>Total page views</small><strong id="analyticsPageViewsTotal">—</strong><span>Public pages</span></div>
+            <div class="stat-card"><small>Active now</small><strong id="analyticsActiveVisitors">—</strong><span>Last 15 minutes</span></div>
+            <div class="stat-card"><small>Total downloads</small><strong id="analyticsDownloadsTotal">—</strong><span>Download starts</span></div>
+            <div class="stat-card"><small>Downloads today</small><strong id="analyticsDownloadsToday">—</strong><span>Today</span></div>
+            <div class="stat-card"><small>Overall conversion</small><strong id="analyticsConversionTotal">—</strong><span>Downloads / visitors</span></div>
+            <div class="stat-card"><small>Today's conversion</small><strong id="analyticsConversionToday">—</strong><span>Downloads / visitors today</span></div>
+          </div>
+          <div class="panel chart-panel website-analytics-panel">
+            <div class="panel-head"><div><span class="eyebrow">TRAFFIC</span><h3>Visitors, page views & downloads</h3><small id="websiteChartSubtitle">Daily activity</small></div>
+              <div class="chart-range" role="group" aria-label="Website analytics range">
+                <button class="active" data-website-range="1">1D</button><button data-website-range="3">3D</button><button data-website-range="7">7D</button><button data-website-range="30">1M</button><button data-website-range="180">6M</button><button data-website-range="365">1Y</button>
+              </div>
+            </div>
+            <svg class="metric-chart" id="websiteAnalyticsChart" viewBox="0 0 760 280" role="img" aria-label="Website visitors, page views and downloads"></svg>
+            <div class="chart-footer" id="websiteAnalyticsChartFooter">Waiting for website analytics…</div>
+          </div>
+          <div class="two-col website-analytics-tables">
+            <div class="panel"><div class="panel-head"><div><span class="eyebrow">POPULAR</span><h3>Top pages</h3></div></div><div id="websiteTopPages" class="analytics-list"><div>Loading…</div></div></div>
+            <div class="panel"><div class="panel-head"><div><span class="eyebrow">TRAFFIC SOURCES</span><h3>Traffic sources</h3></div></div><div id="websiteTrafficSources" class="analytics-list"><div>Loading…</div></div></div>
+          </div>
         </section>
 
         <section class="page" data-section="reports">
