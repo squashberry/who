@@ -68,6 +68,8 @@
             <div class="stat-card"><small>Total reports</small><strong id="reportTotalStat">—</strong><span id="reportTodayStatSub">Loading today…</span></div>
             <div class="stat-card"><small>Reports today</small><strong id="reportTodayStat">—</strong><span>Number reports</span></div>
             <div class="stat-card"><small>Crash reports</small><strong id="crashStat">—</strong><span id="crashStatSub">Loading…</span></div>
+            <div class="stat-card metric-primary download-stat-card"><small>Total downloads</small><strong id="downloadTotalStat">—</strong><span>Download starts</span></div>
+            <div class="stat-card download-stat-card"><small>Downloads today</small><strong id="downloadTodayStat">—</strong><span>Since midnight UTC</span></div>
           </div>
 
           <div class="chart-grid">
@@ -85,6 +87,21 @@
               <div class="panel-head"><div><span class="eyebrow">MODERATION</span><h3>Reports & crashes</h3><small>Daily operational volume</small></div><span class="tag amber">OPERATIONS</span></div>
               <svg class="metric-chart" id="moderationChart" viewBox="0 0 760 280" role="img" aria-label="Reports and crashes over the last 14 days"></svg>
               <div class="chart-footer" id="moderationChartFooter">Waiting for live metrics…</div>
+            </div>
+            <div class="panel chart-panel download-chart-panel">
+              <div class="panel-head">
+                <div><span class="eyebrow">DOWNLOADS</span><h3>WHO download activity</h3><small id="downloadChartSubtitle">Daily download starts</small></div>
+                <div class="chart-range" id="downloadChartRange" role="group" aria-label="Download chart range">
+                  <button class="active" data-download-range="1">1D</button>
+                  <button data-download-range="3">3D</button>
+                  <button data-download-range="7">7D</button>
+                  <button data-download-range="30">1M</button>
+                  <button data-download-range="180">6M</button>
+                  <button data-download-range="365">1Y</button>
+                </div>
+              </div>
+              <svg class="metric-chart" id="downloadChart" viewBox="0 0 760 280" role="img" aria-label="WHO downloads over the selected period"></svg>
+              <div class="chart-footer" id="downloadChartFooter">Waiting for download metrics…</div>
             </div>
           </div>
 
