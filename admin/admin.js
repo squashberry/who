@@ -59,6 +59,8 @@
   let crashFilter = 'pending';
   let deferredPrompt = null;
   let liveStats = null;
+  let downloadStats = null;
+  let downloadRange = 1;
 
   function setAdminBootProgress(value, status) {
     const bar = document.getElementById('adminBootProgress');
@@ -554,6 +556,8 @@
       null
     );
 
+    renderDownloadChart();
+
     renderMultiLineChart(
       'callerPageChart',
       series,
@@ -563,6 +567,53 @@
       ],
       null
     );
+  }
+
+
+  function formatRangeLabel(days) {
+    const labels = {1:'1 day',3:'3 days',7:'7 days',30:'1 month',180:'6 months',365:'1 year'};
+    return labels[days] || (days + ' days');
+  }
+
+  function renderDownloadChart() {
+    const summary = downloadStats?.summary || {};
+    const series = Array.isArray(downloadStats?.series) ? downloadStats.series : [];
+    const totalEl = document.getElementById('downloadTotalStat');
+    const todayEl = document.getElementById('downloadTodayStat');
+    if (totalEl) totalEl.textContent = formatMetric(summary.totalDownloads);
+    if (todayEl) todayEl.textContent = formatMetric(summary.downloadsToday);
+
+    const subtitle = document.getElementById('downloadChartSubtitle');
+    if (subtitle) subtitle.textContent = 'Daily download starts · ' + formatRangeLabel(downloadRange);
+
+    renderMultiLineChart(
+      'downloadChart',
+      series,
+      [{key:'downloads', label:'Downloads', pathClass:'chart-line chart-line-blue', dotClass:'chart-dot chart-dot-blue'}],
+      'downloadChartFooter'
+    );
+
+    const footer = document.getElementById('downloadChartFooter');
+    if (footer) {
+      footer.innerHTML =
+        '<div class="chart-legend"><span><i class="chart-dot-blue"></i>' +
+        formatMetric(summary.rangeTotal || 0) + ' starts in ' +
+        escapeHtml(formatRangeLabel(downloadRange)) +
+        '</span></div>';
+    }
+  }
+
+  async function loadDownloadStats(days = downloadRange) {
+    downloadRange = Number(days) || 1;
+    try {
+      const result = await apiFetch('/admin/download-stats?range=' + encodeURIComponent(downloadRange), {method:'GET'});
+      downloadStats = result;
+      renderDownloadChart();
+    } catch (error) {
+      downloadStats = null;
+      renderDownloadChart();
+      toast('Download metrics: ' + error.message);
+    }
   }
 
   function renderStats() {
@@ -734,7 +785,8 @@
     await Promise.all([
       loadConfig(),
       loadCrashes(),
-      loadStats()
+      loadStats(),
+      loadDownloadStats(downloadRange)
     ]);
 
     setAdminBootProgress(90, 'Live backend data loaded.');
@@ -754,6 +806,17 @@
   document.getElementById('refreshCrashes')?.addEventListener('click', async () => {
     await loadCrashes();
     toast('Crash reports refreshed.');
+  });
+
+
+  document.querySelectorAll('[data-download-range]').forEach((button) => {
+    button.addEventListener('click', async () => {
+      downloadRange = Number(button.dataset.downloadRange) || 1;
+      document.querySelectorAll('[data-download-range]').forEach((b) => {
+        b.classList.toggle('active', b === button);
+      });
+      await loadDownloadStats(downloadRange);
+    });
   });
 
   document.querySelectorAll('[data-crash-filter]').forEach((button) => {
