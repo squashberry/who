@@ -14,13 +14,13 @@
     users:['Users','Live account and device metrics from WHO D1.'],
     caller:['Caller intelligence','Live anonymized caller-intelligence metrics from Supabase.'],
     analytics:['Website analytics','Anonymous website traffic, page views and download conversion.'],
-    reports:['Reports','The current Worker accepts reports but does not expose an admin queue.'],
+    reports:['Reports','Live number-report moderation queue from WHO D1.'],
     releases:['Releases','Versions and update gates stored in the live runtime config.'],
     remote:['Remote config','Live app behavior and copy from the WHO runtime_config row.'],
     announcements:['Announcements','Live announcement fields in the WHO runtime config.'],
     crashes:['Crashes','Live crash reports from the WHO D1 crash_reports table.'],
-    feedback:['Feedback','The current Worker does not expose an admin feedback queue.'],
-    audit:['Audit','The current Worker does not expose an admin audit-list route.']
+    feedback:['Feedback','Live beta feedback awaiting review and approval.'],
+    audit:['Audit','Live admin mutation history from WHO D1.']
   };
 
   const defaultConfig = {
@@ -50,6 +50,9 @@
     announcementEnabled:false,
     announcementTitle:'',
     announcementMessage:'',
+    announcementButton:'Continue',
+    announcementButtonText:'Continue',
+    announcementRevision:1,
     crashReportUrl:''
   };
 
@@ -64,6 +67,9 @@
   let downloadRange = 1;
   let websiteStats = null;
   let websiteRange = 1;
+  let allReports = [];
+  let allFeedback = [];
+  let allAudit = [];
 
   function setAdminBootProgress(value, status) {
     const bar = document.getElementById('adminBootProgress');
@@ -397,7 +403,7 @@
 
     document.getElementById('annTitle').value = config.announcementTitle || '';
     document.getElementById('annMessage').value = config.announcementMessage || '';
-    document.getElementById('annButton').value = config.announcementButton || 'Continue';
+    document.getElementById('annButton').value = config.announcementButtonText || config.announcementButton || 'Continue';
     document.getElementById('annRevision').value = config.announcementRevision || 1;
 
     setToggle('forceToggle', config.forceUpdate);
@@ -436,6 +442,7 @@
       announcementTitle: document.getElementById('announcementTitle').value,
       announcementMessage: document.getElementById('announcementMessage').value,
       announcementButton: document.getElementById('annButton').value,
+      announcementButtonText: document.getElementById('annButton').value,
       announcementRevision: Number(document.getElementById('annRevision').value) || 1
     };
   }
@@ -506,7 +513,8 @@
       announcementTitle: document.getElementById('annTitle').value.trim(),
       announcementMessage: document.getElementById('annMessage').value,
       announcementRevision: Number(document.getElementById('annRevision').value) || 1,
-      announcementButton: document.getElementById('annButton').value.trim() || 'Continue'
+      announcementButton: document.getElementById('annButton').value.trim() || 'Continue',
+      announcementButtonText: document.getElementById('annButton').value.trim() || 'Continue'
     };
 
     await saveServerConfig(
@@ -966,6 +974,176 @@
     });
   }
 
+  // WHO LIVE MODERATION QUEUES
+  function formatQueueDate(value) {
+    if (!value) return '—';
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return String(value);
+    return date.toLocaleString();
+  }
+
+  function renderReports() {
+    const body = document.getElementById('reportBody');
+    if (!body) return;
+    if (!allReports.length) {
+      body.innerHTML = '<tr><td colspan="6">No number reports found.</td></tr>';
+      return;
+    }
+
+    body.innerHTML = allReports.map((row) => {
+      const hash = String(row.phone_hash || '');
+      const shortHash = hash.length > 18 ? hash.slice(0, 18) + '…' : (hash || '—');
+      const status = String(row.status || 'pending');
+
+      const action = status === 'pending'
+        ? '<button class="ghost-btn queue-action" data-report-id="' + escapeHtml(row.id) + '" data-report-status="reviewed">Review</button>' +
+          '<button class="ghost-btn queue-action" data-report-id="' + escapeHtml(row.id) + '" data-report-status="dismissed">Dismiss</button>'
+        : '<button class="ghost-btn queue-action" data-report-id="' + escapeHtml(row.id) + '" data-report-status="pending">Reopen</button>';
+
+      return '<tr>' +
+        '<td>' + escapeHtml(formatQueueDate(row.created_at)) + '</td>' +
+        '<td><code>' + escapeHtml(shortHash) + '</code></td>' +
+        '<td>' + escapeHtml(row.category || '—') + '</td>' +
+        '<td>' + escapeHtml(row.details || '—') + '</td>' +
+        '<td><span class="tag blue">' + escapeHtml(status) + '</span></td>' +
+        '<td><div style="display:flex;gap:7px;flex-wrap:wrap">' + action + '</div></td>' +
+        '</tr>';
+    }).join('');
+
+    body.querySelectorAll('[data-report-id]').forEach((button) => {
+      button.addEventListener('click', () => {
+        updateReport(button.dataset.reportId, button.dataset.reportStatus);
+      });
+    });
+  }
+
+  async function loadReports() {
+    try {
+      const result = await apiFetch('/admin/reports', {method:'GET'});
+      allReports = Array.isArray(result.reports) ? result.reports : [];
+      renderReports();
+    } catch (error) {
+      allReports = [];
+      renderReports();
+      toast('Reports: ' + error.message);
+    }
+  }
+
+  async function updateReport(reportId, status) {
+    if (!reportId || !status) return;
+    try {
+      await apiFetch('/admin/reports/' + encodeURIComponent(reportId), {
+        method:'PATCH',
+        body:{status}
+      });
+      toast('Report marked ' + status + '.');
+      await loadReports();
+    } catch (error) {
+      toast('Report update: ' + error.message);
+    }
+  }
+
+  function renderFeedbackQueue() {
+    const body = document.getElementById('feedbackBody');
+    if (!body) return;
+
+    if (!allFeedback.length) {
+      body.innerHTML = '<tr><td colspan="7">No feedback received.</td></tr>';
+      return;
+    }
+
+    body.innerHTML = allFeedback.map((row) => {
+      const status = String(row.status || 'pending');
+
+      const actions = status === 'pending'
+        ? '<button class="ghost-btn queue-action" data-feedback-id="' + escapeHtml(row.id) + '" data-feedback-status="approved">Approve</button>' +
+          '<button class="ghost-btn queue-action" data-feedback-id="' + escapeHtml(row.id) + '" data-feedback-status="rejected">Reject</button>'
+        : '<button class="ghost-btn queue-action" data-feedback-id="' + escapeHtml(row.id) + '" data-feedback-status="pending">Reopen</button>';
+
+      const message = String(row.message || '');
+      const preview = message.length > 180 ? message.slice(0, 180) + '…' : message;
+
+      return '<tr>' +
+        '<td>' + escapeHtml(formatQueueDate(row.created_at)) + '</td>' +
+        '<td>' + escapeHtml(row.name || 'Anonymous') + '</td>' +
+        '<td>' + escapeHtml(row.category || 'general') + '</td>' +
+        '<td>' + escapeHtml(preview) + '</td>' +
+        '<td>' + escapeHtml(row.platform || '—') + '</td>' +
+        '<td><span class="tag blue">' + escapeHtml(status) + '</span></td>' +
+        '<td><div style="display:flex;gap:7px;flex-wrap:wrap">' + actions + '</div></td>' +
+        '</tr>';
+    }).join('');
+
+    body.querySelectorAll('[data-feedback-id]').forEach((button) => {
+      button.addEventListener('click', () => {
+        updateFeedbackItem(button.dataset.feedbackId, button.dataset.feedbackStatus);
+      });
+    });
+  }
+
+  async function loadFeedbackQueue() {
+    try {
+      const result = await apiFetch('/admin/feedback', {method:'GET'});
+      allFeedback = Array.isArray(result.feedback) ? result.feedback : [];
+      renderFeedbackQueue();
+    } catch (error) {
+      allFeedback = [];
+      renderFeedbackQueue();
+      toast('Feedback: ' + error.message);
+    }
+  }
+
+  async function updateFeedbackItem(feedbackId, status) {
+    if (!feedbackId || !status) return;
+    try {
+      await apiFetch('/admin/feedback/' + encodeURIComponent(feedbackId), {
+        method:'PATCH',
+        body:{status}
+      });
+      toast('Feedback marked ' + status + '.');
+      await loadFeedbackQueue();
+    } catch (error) {
+      toast('Feedback update: ' + error.message);
+    }
+  }
+
+  function renderAuditQueue() {
+    const body = document.getElementById('auditBody');
+    if (!body) return;
+
+    if (!allAudit.length) {
+      body.innerHTML = '<tr><td colspan="5">No audit entries found.</td></tr>';
+      return;
+    }
+
+    body.innerHTML = allAudit.map((row) => {
+      const metadata = String(row.metadata_json || '');
+      return '<tr>' +
+        '<td>' + escapeHtml(formatQueueDate(row.created_at)) + '</td>' +
+        '<td>' + escapeHtml(row.actor_user_id || '—') + '</td>' +
+        '<td>' + escapeHtml(row.action || '—') + '</td>' +
+        '<td>' + escapeHtml(row.target_type || '—') +
+          (row.target_id ? ' #' + escapeHtml(row.target_id) : '') +
+        '</td>' +
+        '<td style="max-width:430px;word-break:break-word">' +
+          escapeHtml(metadata || '{}') +
+        '</td>' +
+        '</tr>';
+    }).join('');
+  }
+
+  async function loadAuditQueue() {
+    try {
+      const result = await apiFetch('/admin/audit', {method:'GET'});
+      allAudit = Array.isArray(result.audit) ? result.audit : [];
+      renderAuditQueue();
+    } catch (error) {
+      allAudit = [];
+      renderAuditQueue();
+      toast('Audit: ' + error.message);
+    }
+  }
+
   async function refreshData() {
     setApiState(
       true,
@@ -979,7 +1157,10 @@
       loadCrashes(),
       loadStats(),
       loadDownloadStats(downloadRange),
-      loadWebsiteStats(websiteRange)
+      loadWebsiteStats(websiteRange),
+      loadReports(),
+      loadFeedbackQueue(),
+      loadAuditQueue()
     ]);
 
     setAdminBootProgress(90, 'Live backend data loaded.');
@@ -1012,6 +1193,21 @@
   document.getElementById('refreshCrashes')?.addEventListener('click', async () => {
     await loadCrashes();
     toast('Crash reports refreshed.');
+  });
+
+  document.getElementById('refreshReports')?.addEventListener('click', async () => {
+    await loadReports();
+    toast('Reports refreshed.');
+  });
+
+  document.getElementById('refreshFeedback')?.addEventListener('click', async () => {
+    await loadFeedbackQueue();
+    toast('Feedback refreshed.');
+  });
+
+  document.getElementById('refreshAudit')?.addEventListener('click', async () => {
+    await loadAuditQueue();
+    toast('Audit refreshed.');
   });
 
 
@@ -1099,9 +1295,14 @@
   window.publishAnnouncement = publishAnnouncement;
   window.toast = toast;
   window.updateCrash = updateCrash;
+  window.updateReport = updateReport;
+  window.updateFeedbackItem = updateFeedbackItem;
 
   setApiState(false, 'Admin authentication required.');
   renderStats();
   renderCrashStats();
   renderCrashes();
+  renderReports();
+  renderFeedbackQueue();
+  renderAuditQueue();
 })();
