@@ -596,3 +596,9 @@ html:not([data-theme="dark"]) .theme-control:hover{background:rgba(15,34,58,.07)
 .install-status{color:#6fb7e8!important;border-color:rgba(99,193,255,.12)!important;background:rgba(22,135,255,.055)!important}
 html:not([data-theme="dark"]) .install-card-pc{background:linear-gradient(155deg,#f2f8ff,#ffffff)}
 html:not([data-theme="dark"]) .install-status{color:#206da5!important;background:rgba(22,135,255,.055)!important}
+
+.top-actions{display:flex;align-items:center;gap:8px}
+.top-link{display:inline-flex;align-items:center;padding:10px 12px;border:1px solid rgba(255,255,255,.09);border-radius:12px;color:#aebed2;text-decoration:none;font-size:10px;font-weight:850;background:rgba(255,255,255,.025)}
+.top-link:hover{transform:translateY(-1px);border-color:rgba(112,204,255,.28);color:#dcecff}
+html:not([data-theme="dark"]) .top-link{border-color:rgba(0,0,0,.1);color:#42536a;background:rgba(255,255,255,.65)}
+@media(max-width:640px){.top-actions .top-link{display:none}}
