@@ -6,7 +6,9 @@
   <meta name="theme-color" content="#060812">
   <meta name="robots" content="noindex,nofollow,noarchive">
   <meta name="googlebot" content="noindex,nofollow,noarchive">
-  <title>WHO — Login to your device</title>
+  <meta http-equiv="Cache-Control" content="no-store,no-cache,must-revalidate,max-age=0">
+  <meta http-equiv="Pragma" content="no-cache">
+  <title>WHO — Authorize Desktop</title>
   <style>
     :root{color-scheme:dark;--bg:#060812;--panel:rgba(13,19,32,.88);--line:rgba(132,171,222,.18);--muted:#8b9ab0;--blue:#1687ff;--blue2:#69c8ff;--good:#6ee7b7;--bad:#ff8e9a}
     *{box-sizing:border-box}
@@ -28,7 +30,7 @@
     .device-name{margin-top:3px;font-size:17px;font-weight:850;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .device-dot{width:12px;height:12px;border-radius:50%;background:#64748b;box-shadow:0 0 0 6px rgba(100,116,139,.12);flex:none}
     .device-dot.ok{background:var(--good);box-shadow:0 0 0 6px rgba(110,231,183,.1)}
-    .step{display:grid;gap:14px;margin-top:22px;animation:fade .35s ease both}.step[hidden]{display:none}
+    .step{display:grid;gap:14px;margin-top:22px;animation:fade .35s ease both}.step[hidden],#accountMiss[hidden],#signupFields[hidden],#signinFields[hidden]{display:none!important}
     .flow-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
     .flow-head strong{font-size:14px}.switch-link{border:0;background:transparent;color:#69c8ff;padding:0;font:inherit;font-size:11px;font-weight:850;cursor:pointer}
     .helper{margin:-4px 0 2px;color:#74869f;font-size:11px;line-height:1.55}
@@ -59,7 +61,7 @@
       <div class="inner">
         <div class="logo" aria-hidden="true">W</div>
         <div class="eyebrow">WHO DESKTOP</div>
-        <h1>Sign in to your device</h1>
+        <h1>Authorize this desktop</h1>
         <p class="lead" id="intro">Verifying the desktop login request…</p>
 
         <div class="device">
@@ -72,7 +74,7 @@
 
         <div class="step" id="noCodeStep">
           <div class="success">
-            <strong>Sign in to WHO Desktop.</strong><br>
+            <strong>Authorize WHO Desktop.</strong><br>
             Open WHO Desktop on your computer and scan the QR code shown there to continue securely.
           </div>
           <button class="secondary" id="backHome" type="button">Back to WHO</button>
@@ -109,8 +111,8 @@
           </div>
 
           <div id="accountMiss" class="account-miss" hidden>
-            <strong>We couldn’t find a WHO account for that email.</strong>
-            <span>Create your WHO account below, then continue to authorize this desktop.</span>
+            <strong>WHO account not found</strong>
+            <span>No WHO account is linked to this email. You can create the same WHO account you use on mobile.</span>
             <button class="secondary" id="createFromMiss" type="button">Create WHO account</button>
           </div>
 
@@ -205,7 +207,7 @@
     flowTitle.textContent = create ? 'Create your WHO account' : 'Sign in to WHO';
     flowHelper.textContent = create
       ? 'Use the same signup details as the WHO mobile app.'
-      : 'Enter your WHO email. We’ll send a confirmation code if the account exists.';
+      : 'Enter the email linked to your WHO account. We’ll send a confirmation code.';
     showCreate.textContent = create ? 'Back to sign in' : 'Create account';
 
     if (create) {
@@ -216,6 +218,19 @@
       if (rememberedEmail) email.value = rememberedEmail;
     }
 
+    setMessage('');
+  }
+
+  function showAccountMissing() {
+    accountMiss.hidden = false;
+    flowTitle.textContent = 'WHO account not found';
+    flowHelper.textContent = 'No WHO account is linked to that email. Create your WHO account to continue.';
+    signinFields.hidden = true;
+    signupFields.hidden = false;
+    showCreate.textContent = 'Back to sign in';
+    mode = 'signup';
+    if (lastEmail) signupEmail.value = lastEmail;
+    name.focus();
     setMessage('');
   }
 
@@ -289,7 +304,7 @@
     deviceDot.classList.add('ok');
 
     intro.textContent =
-      'Sign in with your WHO email, or create the same WHO account you use on mobile.';
+      'Confirm your WHO account to securely authorize this desktop.';
     accountStep.hidden = false;
     setMode('signin');
     email.focus();
@@ -460,10 +475,12 @@
   }
 
   showCreate.addEventListener('click', () => {
+    accountMiss.hidden = true;
     setMode(mode === 'signin' ? 'signup' : 'signin');
   });
 
   createFromMiss.addEventListener('click', () => {
+    accountMiss.hidden = true;
     setMode('signup');
     signupEmail.focus();
   });
@@ -485,7 +502,8 @@
     otp.value = '';
     otpStep.hidden = true;
     accountStep.hidden = false;
-    intro.textContent = 'Sign in with your WHO email, or create the same WHO account you use on mobile.';
+    intro.textContent = 'Confirm your WHO account to securely authorize this desktop.';
+    accountMiss.hidden = true;
     setMode(mode);
     if (mode === 'signup') signupEmail.focus();
     else email.focus();
