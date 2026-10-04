@@ -2,93 +2,12 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#060812">
-<meta name="color-scheme" content="dark">
-<title>WHO account · WHO by Squashberry</title>
-<link rel="icon" href="favicon.svg" type="image/svg+xml">
-<style>
-:root{--bg:#060812;--card:#0b1220;--line:rgba(132,171,222,.16);--text:#f7f9ff;--muted:#8e9caf;--blue:#1687ff;--blue2:#71ccff;--bad:#ff929d;--good:#6ee7b7}
-*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-body{min-height:100vh;display:grid;place-items:center;padding:18px}
-body:before,body:after{content:"";position:fixed;z-index:-1;pointer-events:none;filter:blur(60px);opacity:.36}
-body:before{width:360px;height:360px;left:-140px;top:-140px;background:radial-gradient(circle,#1687ff,transparent 70%)}
-body:after{width:390px;height:390px;right:-160px;bottom:-160px;background:radial-gradient(circle,#244cff,transparent 70%)}
-.wrap{width:min(540px,100%)}.top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:14px}
-.brand{display:flex;align-items:center;gap:10px;color:inherit;text-decoration:none}.mark{width:48px;height:48px;border-radius:16px;display:grid;place-items:center;background:linear-gradient(145deg,#8adfff,#1687ff 58%,#0751c5);font-weight:950;box-shadow:0 18px 55px rgba(22,135,255,.22)}
-.brand strong{display:block;font-size:14px}.brand small{display:block;color:#66758b;font-size:9px;margin-top:2px}.back{padding:10px 12px;border:1px solid var(--line);border-radius:12px;color:#bac8da;text-decoration:none;font-size:10px;font-weight:850;background:rgba(255,255,255,.025)}
-.card{border:1px solid var(--line);border-radius:30px;background:linear-gradient(180deg,rgba(15,23,37,.94),rgba(7,12,20,.98));box-shadow:0 40px 120px rgba(0,0,0,.48),inset 0 1px rgba(255,255,255,.045);overflow:hidden}
-.inner{padding:30px}.eyebrow{color:var(--blue2);font-size:9px;font-weight:900;letter-spacing:.17em;text-transform:uppercase}h1{font-size:38px;line-height:.98;letter-spacing:-.055em;margin:10px 0}.lead{margin:0;color:var(--muted);font-size:13px;line-height:1.65}
-.panel{margin-top:20px;padding:18px;border:1px solid rgba(126,164,214,.12);border-radius:21px;background:rgba(255,255,255,.025)}
-.switch{display:flex;gap:6px;padding:4px;border:1px solid var(--line);border-radius:13px;background:rgba(0,0,0,.16);margin-bottom:16px}.switch button{flex:1;border:0;background:transparent;color:#77879c;padding:10px;border-radius:9px;font:inherit;font-size:10px;font-weight:900;cursor:pointer}.switch button.active{background:#152337;color:#fff}
-.step{display:grid;gap:12px}.step[hidden],#accountStep[hidden],#otpStep[hidden],#signupStep[hidden],#loginStep[hidden],#missing[hidden]{display:none!important}label{display:grid;gap:7px;color:#b6c3d5;font-size:11px;font-weight:800}input{width:100%;border:1px solid rgba(126,164,214,.16);border-radius:14px;background:#070d17;color:#f7f9ff;padding:13px 14px;font:inherit;outline:none}input:focus{border-color:rgba(52,160,255,.82);box-shadow:0 0 0 4px rgba(22,135,255,.1)}
-.helper{margin:0;color:#6f8098;font-size:10px;line-height:1.55}.phone{display:grid;grid-template-columns:76px 1fr;gap:8px}.prefix{display:grid;place-items:center;border:1px solid rgba(126,164,214,.13);border-radius:14px;background:#0a111d;color:#98abc2;font-size:11px;font-weight:850}
-button.primary,button.secondary{border-radius:14px;padding:13px 15px;font:inherit;font-size:10px;font-weight:900;cursor:pointer}button.primary{border:0;background:linear-gradient(135deg,#35a8ff,#1687ff 62%,#0b5dcc);color:#fff;box-shadow:0 16px 30px rgba(22,135,255,.2)}button.secondary{border:1px solid rgba(126,164,214,.14);background:#101a29;color:#d7e3f2}button:disabled{opacity:.65;cursor:wait}
-.link{border:0;background:transparent;color:#69c8ff;font:inherit;font-size:10px;font-weight:850;text-align:left;padding:0;cursor:pointer}.msg{min-height:19px;margin-top:13px;color:var(--bad);font-size:11px;line-height:1.5}.msg.good{color:var(--good)}
-.missing{display:grid;gap:9px;padding:13px;border:1px solid rgba(255,145,155,.14);border-radius:16px;background:rgba(87,16,30,.2)}.missing strong{font-size:11px}.missing span{color:#9daabd;font-size:10px;line-height:1.5}
-.identity{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:15px;border-radius:16px;border:1px solid rgba(110,231,183,.18);background:rgba(9,44,35,.3)}.identity-copy{min-width:0}.identity-label{color:#7dd1af;font-size:8px;font-weight:900;letter-spacing:.12em;text-transform:uppercase}.identity-name{font-size:17px;font-weight:900;margin-top:4px}.identity-email{color:#91a4b8;font-size:10px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.dot{width:11px;height:11px;flex:none;border-radius:50%;background:var(--good);box-shadow:0 0 0 6px rgba(110,231,183,.09)}.account-meta{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:9px}.meta{padding:12px;border:1px solid rgba(255,255,255,.06);border-radius:14px;background:rgba(255,255,255,.025)}.meta small{display:block;color:#64758c;font-size:8px;text-transform:uppercase;letter-spacing:.11em}.meta strong{display:block;margin-top:4px;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.foot{margin-top:17px;color:#52627a;font-size:9px;line-height:1.7}.spinner{width:13px;height:13px;border:2px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;display:inline-block;vertical-align:-3px;margin-right:7px;animation:spin .7s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}@media(max-width:560px){body{padding:12px}.inner{padding:23px}.card{border-radius:26px}h1{font-size:34px}}
-</style>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="refresh" content="0;url=./device-login/">
+<title>WHO Desktop sign-in</title>
 </head>
 <body>
-<main class="wrap">
-<div class="top"><a class="brand" href="./"><span class="mark">W</span><span><strong>WHO</strong><small>by Squashberry</small></span></a><a class="back" href="./">Back to WHO</a></div>
-<section class="card"><div class="inner">
-<h1 id="title">Sign in to WHO.</h1>
-<p class="lead" id="lead">Enter the email and phone number linked to your WHO account.</p>
-<div class="panel">
-<div class="switch"><button id="loginTab" class="active" type="button">Sign in</button><button id="signupTab" type="button">Create account</button></div>
-
-<div id="loginStep" class="step">
-<label>Email address<input id="loginEmail" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com"></label>
-<label>Phone number<div class="phone"><span class="prefix">+220</span><input id="loginPhone" type="tel" inputmode="numeric" autocomplete="tel" maxlength="14" placeholder="Your WHO phone number"></div></label>
-<button class="primary" id="loginContinue" type="button">Continue with WHO</button>
-<div id="missing" class="missing" hidden><strong>We couldn’t find a WHO account for that email.</strong><span>Create your WHO account with your name, email and phone number.</span><button class="secondary" id="createFromMissing" type="button">Create WHO account</button></div>
-</div>
-
-<div id="signupStep" class="step" hidden>
-<label>Name<input id="signupName" type="text" autocomplete="name" placeholder="Your name"></label>
-<label>Email address<input id="signupEmail" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com"></label>
-<label>Gambia phone number<div class="phone"><span class="prefix">+220</span><input id="signupPhone" type="tel" inputmode="numeric" autocomplete="tel" maxlength="14" placeholder="123456789"></div></label>
-<p class="helper">Enter your 9-digit Gambian mobile number.</p>
-<button class="primary" id="signupContinue" type="button">Continue with WHO</button>
-</div>
-
-<div id="otpStep" class="step" hidden>
-<label>Confirmation code<input id="otp" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="6-digit code"></label>
-<p class="helper" id="otpHelper">Enter the 6-digit code sent to your email.</p>
-<button class="primary" id="verifyContinue" type="button">Verify and continue</button>
-<button class="link" id="changeAccount" type="button">Use a different account</button>
-</div>
-
-<div id="accountStep" hidden>
-<div class="identity"><div class="identity-copy"><div class="identity-label">Signed in</div><div class="identity-name" id="accountName">WHO User</div><div class="identity-email" id="accountEmail">—</div></div><span class="dot"></span></div>
-<div class="account-meta"><div class="meta"><small>Phone</small><strong id="accountPhone">—</strong></div><div class="meta"><small>Session</small><strong>Active</strong></div></div>
-<button class="secondary" id="signOut" type="button" style="width:100%;margin-top:9px">Sign out</button>
-</div>
-
-<div id="msg" class="msg" aria-live="polite"></div>
-</div>
-</div></section>
-</main>
-<script>
-(()=>{'use strict';
-const API='https://who-api.who-fe3.workers.dev',TOKEN='who.web.session.token',USER='who.web.session.user';
-const $=id=>document.getElementById(id);
-let mode='login',pending={email:'',name:'',phoneNumber:''};
-const setMsg=(s,g=false)=>{$('msg').textContent=s||'';$('msg').classList.toggle('good',g)};
-const setBusy=(b,on,label)=>{b.disabled=on;if(on){b.dataset.old=b.textContent;b.innerHTML='<span class="spinner"></span>'+label}else b.textContent=b.dataset.old||label};
-const normalizePhone=v=>{const d=String(v||'').replace(/\D/g,'');if(d.length===9)return '+220'+d;if(d.length===12&&d.startsWith('220'))return '+'+d;if(d.length===14&&d.startsWith('00220'))return '+220'+d.slice(5);return ''};
-const tokenOf=d=>String(d.accessToken||d.sessionToken||d.token||d.session?.token||'');
-async function api(path,opt={}){const h={Accept:'application/json'};const t=opt.token||localStorage.getItem(TOKEN)||'';if(opt.body!==undefined)h['Content-Type']='application/json';if(t)h.Authorization='Bearer '+t;const r=await fetch(API+path,{method:opt.method||'GET',headers:h,body:opt.body===undefined?undefined:JSON.stringify(opt.body),cache:'no-store',credentials:'omit'});const raw=await r.text();let d={};try{d=raw?JSON.parse(raw):{}}catch{}if(!r.ok){const e=new Error(d.error||'WHO could not complete this request.');e.status=r.status;e.code=d.code||d.errorCode||'';throw e}return d}
-const missing=e=>e?.status===404||/not.?found|unknown|unregistered|does.?not.?exist|no .*account/i.test(String(e?.message||''));
-function switchMode(next){mode=next;const s=next==='signup';$('loginTab').classList.toggle('active',!s);$('signupTab').classList.toggle('active',s);$('loginStep').hidden=s;$('signupStep').hidden=!s;$('otpStep').hidden=true;$('accountStep').hidden=true;$('missing').hidden=true;$('title').textContent=s?'Create your WHO account.':'Sign in to WHO.';$('lead').textContent=s?'Create the same WHO account you use on the mobile app.':'Use your WHO email. We’ll send a confirmation code to secure your account.';setMsg('')}
-function showOtp(){ $('loginStep').hidden=true;$('signupStep').hidden=true;$('otpStep').hidden=false;$('accountStep').hidden=true;$('otp').value='';$('title').textContent='Check your email.';$('lead').textContent='Enter the confirmation code we sent to '+pending.email+'.';$('otpHelper').textContent=mode==='signup'?'Enter the 6-digit code sent to your email to finish creating your WHO account.':'Enter the 6-digit code sent to your email.';$('otp').focus()}
-async function requestCode(kind){const b=$(kind==='signup'?'signupContinue':'loginContinue');setMsg('');let body;if(kind==='signup'){const name=$('signupName').value.trim(),email=$('signupEmail').value.trim().toLowerCase(),phone=normalizePhone($('signupPhone').value);if(name.length<2)return setMsg('Enter your name.');if(!email||!email.includes('@'))return setMsg('Enter a valid email address.');if(!phone)return setMsg('Enter a valid Gambia mobile number.');pending={name,email,phoneNumber:phone};body={name,displayName:name,email,phoneNumber:phone}}else{const email=$('loginEmail').value.trim().toLowerCase(),phone=normalizePhone($('loginPhone').value);if(!email||!email.includes('@'))return setMsg('Enter a valid email address.');if(!phone)return setMsg('Enter the phone number linked to your WHO account.');pending={name:'WHO User',email,phoneNumber:phone};body={name:'WHO User',displayName:'WHO User',email,phoneNumber:phone}}setBusy(b,true,'Sending code…');try{await api('/auth/request-code',{method:'POST',body});showOtp()}catch(e){if(kind==='login'&&missing(e)){$('missing').hidden=false;setMsg('No WHO account was found for that email.')}else if(kind==='signup'&&/already|exists|registered/i.test(e.message||'')){setMsg('A WHO account already exists. Sign in instead.')}else setMsg(e.message)}finally{setBusy(b,false,'Continue with WHO')}}
-function renderUser(u){$('loginStep').hidden=true;$('signupStep').hidden=true;$('otpStep').hidden=true;$('missing').hidden=true;$('accountStep').hidden=false;$('loginTab').parentElement.hidden=true;$('title').textContent='Your WHO account.';$('lead').textContent='You are signed in with the WHO account system used by the mobile app.';$('accountName').textContent=u.name||u.displayName||'WHO User';$('accountEmail').textContent=u.email||pending.email||'—';$('accountPhone').textContent=u.phoneNumber||u.phone||'—'}
-async function verify(){const b=$('verifyContinue'),code=$('otp').value.trim();if(!/^\d{6}$/.test(code))return setMsg('Enter the 6-digit confirmation code.');setMsg('');setBusy(b,true,'Verifying…');const body=mode==='signup'?{name:pending.name,displayName:pending.name,email:pending.email,phoneNumber:pending.phoneNumber,code}:{name:pending.name||'WHO User',displayName:pending.name||'WHO User',email:pending.email,phoneNumber:pending.phoneNumber,code};try{const d=await api('/auth/verify-code',{method:'POST',body}),t=tokenOf(d);if(!t)throw new Error('WHO verified the code but returned no session.');let u=d.user||{};try{const me=await api('/me',{token:t});u=me.user||me||u}catch{}localStorage.setItem(TOKEN,t);localStorage.setItem(USER,JSON.stringify(u));renderUser(u);setMsg('WHO account verified successfully.',true)}catch(e){setMsg(e.message)}finally{setBusy(b,false,'Verify and continue')}}
-async function restore(){const t=localStorage.getItem(TOKEN);if(!t)return;try{const d=await api('/me',{token:t}),u=d.user||d;localStorage.setItem(USER,JSON.stringify(u));renderUser(u)}catch{localStorage.removeItem(TOKEN);localStorage.removeItem(USER)}}
-$('loginTab').onclick=()=>switchMode('login');$('signupTab').onclick=()=>switchMode('signup');$('loginContinue').onclick=()=>requestCode('login');$('signupContinue').onclick=()=>requestCode('signup');$('verifyContinue').onclick=verify;$('createFromMissing').onclick=()=>{$('signupEmail').value=$('loginEmail').value.trim();switchMode('signup');$('signupEmail').focus()};$('changeAccount').onclick=()=>switchMode(mode);$('signOut').onclick=()=>{localStorage.removeItem(TOKEN);localStorage.removeItem(USER);$('loginTab').parentElement.hidden=false;switchMode('login');setMsg('Signed out of WHO.',true)};restore();
-})();
-</script>
-</body></html>
+<script>window.location.replace('./device-login/');</script>
+<p>Opening WHO Desktop sign-in…</p>
+</body>
+</html>
