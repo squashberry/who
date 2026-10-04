@@ -21,7 +21,7 @@ body:after{width:390px;height:390px;right:-160px;bottom:-160px;background:radial
 .inner{padding:30px}.eyebrow{color:var(--blue2);font-size:9px;font-weight:900;letter-spacing:.17em;text-transform:uppercase}h1{font-size:38px;line-height:.98;letter-spacing:-.055em;margin:10px 0}.lead{margin:0;color:var(--muted);font-size:13px;line-height:1.65}
 .panel{margin-top:20px;padding:18px;border:1px solid rgba(126,164,214,.12);border-radius:21px;background:rgba(255,255,255,.025)}
 .switch{display:flex;gap:6px;padding:4px;border:1px solid var(--line);border-radius:13px;background:rgba(0,0,0,.16);margin-bottom:16px}.switch button{flex:1;border:0;background:transparent;color:#77879c;padding:10px;border-radius:9px;font:inherit;font-size:10px;font-weight:900;cursor:pointer}.switch button.active{background:#152337;color:#fff}
-.step{display:grid;gap:12px}.step[hidden],#accountStep[hidden],#otpStep[hidden],#signupStep[hidden],#loginStep[hidden]{display:none}label{display:grid;gap:7px;color:#b6c3d5;font-size:11px;font-weight:800}input{width:100%;border:1px solid rgba(126,164,214,.16);border-radius:14px;background:#070d17;color:#f7f9ff;padding:13px 14px;font:inherit;outline:none}input:focus{border-color:rgba(52,160,255,.82);box-shadow:0 0 0 4px rgba(22,135,255,.1)}
+.step{display:grid;gap:12px}.step[hidden],#accountStep[hidden],#otpStep[hidden],#signupStep[hidden],#loginStep[hidden],#missing[hidden]{display:none!important}label{display:grid;gap:7px;color:#b6c3d5;font-size:11px;font-weight:800}input{width:100%;border:1px solid rgba(126,164,214,.16);border-radius:14px;background:#070d17;color:#f7f9ff;padding:13px 14px;font:inherit;outline:none}input:focus{border-color:rgba(52,160,255,.82);box-shadow:0 0 0 4px rgba(22,135,255,.1)}
 .helper{margin:0;color:#6f8098;font-size:10px;line-height:1.55}.phone{display:grid;grid-template-columns:76px 1fr;gap:8px}.prefix{display:grid;place-items:center;border:1px solid rgba(126,164,214,.13);border-radius:14px;background:#0a111d;color:#98abc2;font-size:11px;font-weight:850}
 button.primary,button.secondary{border-radius:14px;padding:13px 15px;font:inherit;font-size:10px;font-weight:900;cursor:pointer}button.primary{border:0;background:linear-gradient(135deg,#35a8ff,#1687ff 62%,#0b5dcc);color:#fff;box-shadow:0 16px 30px rgba(22,135,255,.2)}button.secondary{border:1px solid rgba(126,164,214,.14);background:#101a29;color:#d7e3f2}button:disabled{opacity:.65;cursor:wait}
 .link{border:0;background:transparent;color:#69c8ff;font:inherit;font-size:10px;font-weight:850;text-align:left;padding:0;cursor:pointer}.msg{min-height:19px;margin-top:13px;color:var(--bad);font-size:11px;line-height:1.5}.msg.good{color:var(--good)}
@@ -42,14 +42,14 @@ button.primary,button.secondary{border-radius:14px;padding:13px 15px;font:inheri
 <div id="loginStep" class="step">
 <label>Email address<input id="loginEmail" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com"></label>
 <button class="primary" id="loginContinue" type="button">Continue with WHO</button>
-<div id="missing" class="missing" hidden><strong>We couldn’t find a WHO account for that email.</strong><span>Create your WHO account below with the same mobile-style identity details.</span><button class="secondary" id="createFromMissing" type="button">Create WHO account</button></div>
+<div id="missing" class="missing" hidden><strong>We couldn’t find a WHO account for that email.</strong><span>Create your WHO account with your name, email and phone number.</span><button class="secondary" id="createFromMissing" type="button">Create WHO account</button></div>
 </div>
 
 <div id="signupStep" class="step" hidden>
 <label>Name<input id="signupName" type="text" autocomplete="name" placeholder="Your name"></label>
 <label>Email address<input id="signupEmail" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com"></label>
 <label>Gambia phone number<div class="phone"><span class="prefix">+220</span><input id="signupPhone" type="tel" inputmode="numeric" autocomplete="tel" maxlength="14" placeholder="123456789"></div></label>
-<p class="helper">Same WHO mobile rules: 9 local digits, 220 + 9 digits, +220 + 9 digits, or 00220 + 9 digits.</p>
+<p class="helper">Enter your 9-digit Gambian mobile number.</p>
 <button class="primary" id="signupContinue" type="button">Continue with WHO</button>
 </div>
 
