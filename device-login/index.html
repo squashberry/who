@@ -92,6 +92,10 @@
               WHO email
               <input id="email" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com">
             </label>
+            <label>
+              Mobile number
+              <input id="signinPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="Your mobile number">
+            </label>
           </div>
 
           <div id="signupFields" hidden>
@@ -182,6 +186,7 @@
   const signupEmail = document.getElementById('signupEmail');
   const name = document.getElementById('name');
   const phone = document.getElementById('phone');
+  const signinPhone = document.getElementById('signinPhone');
   const otp = document.getElementById('otp');
   const otpHelper = document.getElementById('otpHelper');
 
@@ -206,8 +211,8 @@
 
     flowTitle.textContent = create ? 'Create your WHO account' : 'Sign in to WHO';
     flowHelper.textContent = create
-      ? 'Use the same signup details as the WHO mobile app.'
-      : 'Enter the email linked to your WHO account. We’ll send a confirmation code.';
+      ? 'Use the same details as your WHO mobile account.'
+      : 'Enter the email and mobile number linked to your WHO account. We’ll send a confirmation code.';
     showCreate.textContent = create ? 'Back to sign in' : 'Create account';
 
     if (create) {
@@ -331,7 +336,7 @@
         return;
       }
       if (!/^[0-9]{9}$/.test(phoneNumber)) {
-        setMessage('Enter the same 9-digit phone number used by your WHO mobile account.');
+        setMessage('Enter the mobile number linked to your WHO account.');
         return;
       }
 
@@ -342,13 +347,28 @@
       };
     } else {
       address = email.value.trim().toLowerCase();
+      const phoneNumber = normalizePhone(signinPhone.value);
 
       if (!address || !address.includes('@')) {
         setMessage('Enter a valid WHO email address.');
         return;
       }
 
-      body = {email: address};
+      if (!phoneNumber) {
+        setMessage('Enter your mobile number.');
+        return;
+      }
+
+      // The current WHO auth endpoint requires identity fields even when
+      // the email already belongs to an account. The user does not need
+      // to type a name again; the backend-required name is supplied here
+      // only to satisfy that existing endpoint contract.
+      body = {
+        name: 'WHO User',
+        displayName: 'WHO User',
+        email: address,
+        phoneNumber
+      };
     }
 
     lastEmail = address;
@@ -396,12 +416,16 @@
     const body = mode === 'signup'
       ? {
           name: name.value.trim(),
+          displayName: name.value.trim(),
           email: address,
           phoneNumber: normalizePhone(phone.value),
           code
         }
       : {
+          name: 'WHO User',
+          displayName: 'WHO User',
           email: address,
+          phoneNumber: normalizePhone(signinPhone.value),
           code
         };
 
