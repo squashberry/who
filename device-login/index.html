@@ -87,7 +87,7 @@
             </label>
           </div>
 
-          <button class="primary" id="sendCode">Continue</button>
+          <button class="primary" id="sendCode">Continue with WHO</button>
         </div>
 
         <div class="step" id="otpStep" hidden>
@@ -190,7 +190,7 @@
     deviceDot.classList.add('ok');
 
     intro.textContent =
-      'Sign in to your WHO account to authorize this desktop.';
+      'Sign in or create your WHO account to authorize this desktop. If you are new to WHO, your account is created when you verify your email.';
     accountStep.hidden = false;
   }
 
@@ -236,7 +236,7 @@
     } catch (error) {
       setMessage(error.message);
     } finally {
-      setBusy(button, false, 'Continue');
+      setBusy(button, false, 'Continue with WHO');
     }
   }
 
@@ -308,7 +308,7 @@
     otp.value = '';
     otpStep.hidden = true;
     accountStep.hidden = false;
-    intro.textContent = 'Sign in to your WHO account to authorize this desktop.';
+    intro.textContent = 'Sign in or create your WHO account to authorize this desktop.';
     email.focus();
   });
 
