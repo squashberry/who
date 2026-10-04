@@ -258,7 +258,7 @@
   }
 
   function normalizePhone(value) {
-    return String(value || '').replace(/D/g, '');
+    return String(value || '').replace(/[^0-9]/g, '');
   }
 
   async function loadPairing() {
@@ -302,7 +302,7 @@
         setMessage('Enter a valid WHO email address.');
         return;
       }
-      if (!/^d{9}$/.test(phoneNumber)) {
+      if (!/^[0-9]{9}$/.test(phoneNumber)) {
         setMessage('Enter the same 9-digit phone number used by your WHO mobile account.');
         return;
       }
@@ -356,7 +356,7 @@
     setMessage('');
 
     const code = otp.value.trim();
-    if (!/^d{6}$/.test(code)) {
+    if (!/^[0-9]{6}$/.test(code)) {
       setMessage('Enter the 6-digit confirmation code.');
       return;
     }
