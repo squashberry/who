@@ -588,3 +588,11 @@ html:not([data-theme="dark"]) .theme-control:hover{background:rgba(15,34,58,.07)
   .theme-control{min-width:40px;padding:9px 10px}
   .theme-control .theme-label{display:none}
 }
+
+/* WHO platform download cards */
+.install-grid{display:grid;gap:12px}
+.install-card-pc{background:radial-gradient(260px 170px at 70% 20%,rgba(75,225,255,.11),transparent 68%),linear-gradient(155deg,#0e1827,#090e18)}
+.install-icon-pc{font-size:17px;letter-spacing:-.04em;padding:0 12px;width:96px}
+.install-status{color:#6fb7e8!important;border-color:rgba(99,193,255,.12)!important;background:rgba(22,135,255,.055)!important}
+html:not([data-theme="dark"]) .install-card-pc{background:linear-gradient(155deg,#f2f8ff,#ffffff)}
+html:not([data-theme="dark"]) .install-status{color:#206da5!important;background:rgba(22,135,255,.055)!important}
