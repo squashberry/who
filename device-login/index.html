@@ -30,6 +30,10 @@
     .device-dot{width:12px;height:12px;border-radius:50%;background:#64748b;box-shadow:0 0 0 6px rgba(100,116,139,.12);flex:none}
     .device-dot.ok{background:var(--good);box-shadow:0 0 0 6px rgba(110,231,183,.1)}
     .step{display:grid;gap:14px;margin-top:22px;animation:fade .35s ease both}
+    .mode-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:4px;border:1px solid rgba(126,164,214,.14);border-radius:16px;background:rgba(0,0,0,.14)}
+    .mode{background:transparent;color:#8ea0b8;padding:11px 12px;border-radius:12px}
+    .mode.active{background:rgba(22,135,255,.14);color:#dff3ff;border:1px solid rgba(58,145,255,.24)}
+    .mode-copy{font-size:11px;color:#697a92;margin-top:-5px}
     .step[hidden]{display:none}
     label{display:grid;gap:8px;color:#b5c2d6;font-size:12px;font-weight:700}
     input{width:100%;border:1px solid rgba(126,164,214,.18);border-radius:15px;background:#070d17;color:#f7f9ff;padding:14px 15px;outline:none;font:inherit}
@@ -71,21 +75,24 @@
         </div>
 
         <div class="step" id="accountStep" hidden>
+          <div class="mode-row" role="group" aria-label="WHO account action">
+            <button class="mode active" data-mode="signin" type="button">Sign in</button>
+            <button class="mode" data-mode="signup" type="button">Create account</button>
+          </div>
+          <p class="mode-copy" id="modeCopy">Use your existing WHO account to continue.</p>
+          <label id="nameLabel">
+            Name on your WHO account
+            <input id="name" type="text" autocomplete="name" placeholder="Your name">
+          </label>
           <label>
             WHO email
             <input id="email" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com">
           </label>
 
-          <div class="row">
-            <label>
-              Your name
-              <input id="name" type="text" autocomplete="name" placeholder="Your name">
-            </label>
-            <label>
-              Phone number
-              <input id="phone" type="tel" autocomplete="tel" placeholder="+220…">
-            </label>
-          </div>
+          <label>
+            Phone number
+            <input id="phone" type="tel" autocomplete="tel" placeholder="+220…">
+          </label>
 
           <button class="primary" id="sendCode">Continue with WHO</button>
         </div>
@@ -95,8 +102,17 @@
             Verification code
             <input id="otp" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="6-digit code">
           </label>
-          <button class="primary" id="verify">Verify and authorize</button>
+          <button class="primary" id="verify">Verify WHO account</button>
           <button class="secondary" id="back">Use a different account</button>
+        </div>
+
+        <div class="step" id="authorizeStep" hidden>
+          <div class="success">
+            <strong id="signedInLabel">WHO account verified.</strong><br>
+            You are signed in. This is a separate authorization step for the desktop shown above.
+          </div>
+          <button class="primary" id="authorizeDesktop">Authorize this desktop</button>
+          <button class="secondary" id="cancelAuthorize">Cancel</button>
         </div>
 
         <div class="step" id="doneStep" hidden>
@@ -126,18 +142,39 @@
 
   const accountStep = document.getElementById('accountStep');
   const otpStep = document.getElementById('otpStep');
+  const authorizeStep = document.getElementById('authorizeStep');
   const doneStep = document.getElementById('doneStep');
 
   const email = document.getElementById('email');
   const name = document.getElementById('name');
   const phone = document.getElementById('phone');
   const otp = document.getElementById('otp');
+  const modeCopy = document.getElementById('modeCopy');
+  const nameLabel = document.getElementById('nameLabel');
+  const modeButtons = [...document.querySelectorAll('.mode')];
 
+  let mode = 'signin';
+  let accountToken = '';
+  let verifiedUser = null;
   let device = null;
 
   function setMessage(text, good = false) {
     message.textContent = text || '';
     message.classList.toggle('good', good);
+  }
+
+  function setMode(next) {
+    mode = next;
+    modeButtons.forEach((button) => {
+      button.classList.toggle('active', button.dataset.mode === mode);
+    });
+    if (mode === 'signup') {
+      modeCopy.textContent = 'Create a new WHO account, then authorize this desktop.';
+      nameLabel.firstChild.textContent = 'Your name';
+    } else {
+      modeCopy.textContent = 'Use your existing WHO account to continue.';
+      nameLabel.firstChild.textContent = 'Name on your WHO account';
+    }
   }
 
   function setBusy(button, busy, label) {
@@ -207,12 +244,14 @@
     }
 
     if (!displayName) {
-      setMessage('Enter your name.');
+      setMessage(mode === 'signup'
+        ? 'Enter your name to create your WHO account.'
+        : 'Enter the name on your WHO account.');
       return;
     }
 
     if (!phoneNumber) {
-      setMessage('Enter your WHO phone number.');
+      setMessage('Enter the phone number attached to your WHO account.');
       return;
     }
 
@@ -239,7 +278,7 @@
     }
   }
 
-  async function verifyAndAuthorize() {
+  async function verifyAccount() {
     const button = document.getElementById('verify');
     setMessage('');
 
@@ -266,7 +305,7 @@
         }
       });
 
-      const accessToken = String(
+      accountToken = String(
         result.accessToken ||
         result.sessionToken ||
         result.token ||
@@ -274,9 +313,36 @@
         ''
       );
 
-      if (!accessToken) {
+      if (!accountToken) {
         throw new Error('WHO verified the account but returned no session token.');
       }
+
+      verifiedUser = result.user || {};
+      const identity =
+        verifiedUser.displayName ||
+        verifiedUser.email ||
+        address;
+
+      document.getElementById('signedInLabel').textContent =
+        'Signed in as ' + identity + '.';
+
+      otpStep.hidden = true;
+      authorizeStep.hidden = false;
+      intro.textContent =
+        'Your WHO account is verified. Review the desktop identity, then explicitly authorize it.';
+    } catch (error) {
+      setMessage(error.message);
+    } finally {
+      setBusy(button, false, 'Verify WHO account');
+    }
+  }
+
+  async function authorizeDesktop() {
+    const button = document.getElementById('authorizeDesktop');
+    setMessage('');
+
+    try {
+      setBusy(button, true, 'Authorizing…');
 
       await api(
         '/desktop/pair/request/' +
@@ -284,23 +350,37 @@
           '/authorize',
         {
           method: 'POST',
-          token: accessToken
+          token: accountToken
         }
       );
 
-      otpStep.hidden = true;
+      authorizeStep.hidden = true;
       doneStep.hidden = false;
-      intro.textContent = 'The desktop is finishing the sign-in.';
+      intro.textContent =
+        'The desktop is finishing the secure sign-in.';
       setMessage('', true);
     } catch (error) {
       setMessage(error.message);
     } finally {
-      setBusy(button, false, 'Verify and authorize');
+      setBusy(button, false, 'Authorize this desktop');
     }
   }
 
+  modeButtons.forEach((button) => {
+    button.addEventListener('click', () => setMode(button.dataset.mode));
+  });
+
   document.getElementById('sendCode').addEventListener('click', requestOtp);
-  document.getElementById('verify').addEventListener('click', verifyAndAuthorize);
+  document.getElementById('verify').addEventListener('click', verifyAccount);
+  document.getElementById('authorizeDesktop').addEventListener('click', authorizeDesktop);
+
+  document.getElementById('cancelAuthorize').addEventListener('click', () => {
+    accountToken = '';
+    verifiedUser = null;
+    authorizeStep.hidden = true;
+    otpStep.hidden = false;
+    setMessage('Authorization cancelled. The desktop has not been authorized.');
+  });
 
   document.getElementById('back').addEventListener('click', () => {
     setMessage('');
@@ -310,6 +390,8 @@
     intro.textContent = 'Sign in or create your WHO account to authorize this desktop.';
     email.focus();
   });
+
+  setMode('signin');
 
   loadPairing().catch(error => {
     intro.textContent = 'This desktop login request could not be verified.';
