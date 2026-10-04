@@ -355,7 +355,7 @@
       }
 
       if (!phoneNumber) {
-        setMessage('Enter your mobile number.');
+        setMessage('Enter the mobile number linked to your WHO account.');
         return;
       }
 
@@ -364,8 +364,6 @@
       // to type a name again; the backend-required name is supplied here
       // only to satisfy that existing endpoint contract.
       body = {
-        name: 'WHO User',
-        displayName: 'WHO User',
         email: address,
         phoneNumber
       };
@@ -422,8 +420,6 @@
           code
         }
       : {
-          name: 'WHO User',
-          displayName: 'WHO User',
           email: address,
           phoneNumber: normalizePhone(signinPhone.value),
           code
