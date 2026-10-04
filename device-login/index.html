@@ -24,36 +24,32 @@
     h1{margin:8px 0 10px;font-size:36px;line-height:1.02;letter-spacing:-.045em}
     .lead{margin:0;color:var(--muted);line-height:1.65}
     .device{margin-top:20px;padding:16px 17px;border-radius:18px;border:1px solid rgba(102,151,213,.16);background:rgba(7,12,20,.72);display:flex;align-items:center;justify-content:space-between;gap:16px}
-    .device-copy{min-width:0}
-    .device-label{font-size:12px;color:#6e86a6;text-transform:uppercase;letter-spacing:.12em;font-weight:800}
+    .device-copy{min-width:0}.device-label{font-size:12px;color:#6e86a6;text-transform:uppercase;letter-spacing:.12em;font-weight:800}
     .device-name{margin-top:3px;font-size:17px;font-weight:850;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .device-dot{width:12px;height:12px;border-radius:50%;background:#64748b;box-shadow:0 0 0 6px rgba(100,116,139,.12);flex:none}
     .device-dot.ok{background:var(--good);box-shadow:0 0 0 6px rgba(110,231,183,.1)}
-    .step{display:grid;gap:14px;margin-top:22px;animation:fade .35s ease both}
-    .mode-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:4px;border:1px solid rgba(126,164,214,.14);border-radius:16px;background:rgba(0,0,0,.14)}
-    .mode{background:transparent;color:#8ea0b8;padding:11px 12px;border-radius:12px}
-    .mode.active{background:rgba(22,135,255,.14);color:#dff3ff;border:1px solid rgba(58,145,255,.24)}
-    .mode-copy{font-size:11px;color:#697a92;margin-top:-5px}
-    .step[hidden]{display:none}
+    .step{display:grid;gap:14px;margin-top:22px;animation:fade .35s ease both}.step[hidden]{display:none}
+    .flow-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .flow-head strong{font-size:14px}.switch-link{border:0;background:transparent;color:#69c8ff;padding:0;font:inherit;font-size:11px;font-weight:850;cursor:pointer}
+    .helper{margin:-4px 0 2px;color:#74869f;font-size:11px;line-height:1.55}
     label{display:grid;gap:8px;color:#b5c2d6;font-size:12px;font-weight:700}
     input{width:100%;border:1px solid rgba(126,164,214,.18);border-radius:15px;background:#070d17;color:#f7f9ff;padding:14px 15px;outline:none;font:inherit}
     input:focus{border-color:rgba(58,145,255,.85);box-shadow:0 0 0 4px rgba(58,145,255,.1)}
-    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
     button{border:0;border-radius:15px;padding:14px 16px;font:inherit;font-weight:850;cursor:pointer;transition:transform .16s ease,filter .16s ease,background .16s ease}
-    button:hover{transform:translateY(-1px);filter:brightness(1.06)}
-    button:active{transform:translateY(0) scale(.985)}
+    button:hover{transform:translateY(-1px);filter:brightness(1.06)}button:active{transform:translateY(0) scale(.985)}
+    button:disabled{cursor:wait;opacity:.72;transform:none!important}
     .primary{background:linear-gradient(135deg,#36a7ff,#1687ff 62%,#0b5dcc);color:#fff;box-shadow:0 16px 30px rgba(22,135,255,.22)}
     .secondary{background:#131f31;color:#d9e4f4;border:1px solid rgba(126,164,214,.14)}
-    .message{min-height:20px;margin:16px 0 0;color:var(--bad);font-size:13px}
-    .message.good{color:var(--good)}
+    .message{min-height:20px;margin:16px 0 0;color:var(--bad);font-size:13px;line-height:1.5}.message.good{color:var(--good)}
+    .account-miss{display:grid;gap:9px;padding:14px;border-radius:17px;border:1px solid rgba(255,142,154,.15);background:rgba(83,15,27,.22)}
+    .account-miss strong{font-size:12px}.account-miss span{color:#9caabe;font-size:11px;line-height:1.55}.account-miss button{padding:11px 13px;font-size:11px}
     .success{padding:18px;border-radius:18px;border:1px solid rgba(110,231,183,.22);background:rgba(7,34,27,.65);color:#c8f7e4;line-height:1.55}
-    .foot{margin-top:20px;color:#54657e;font-size:11px;line-height:1.55}
-    .hidden{display:none!important}
+    .foot{margin-top:20px;color:#54657e;font-size:10px;line-height:1.55}
     .spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.22);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:inline-block;vertical-align:-3px;margin-right:7px}
     @keyframes enter{from{opacity:0;transform:translateY(16px) scale(.98)}to{opacity:1;transform:none}}
     @keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
     @keyframes spin{to{transform:rotate(360deg)}}
-    @media(max-width:560px){body{padding:14px}.inner{padding:24px}.card{border-radius:26px}h1{font-size:31px}.row{grid-template-columns:1fr}}
+    @media(max-width:560px){body{padding:14px}.inner{padding:24px}.card{border-radius:26px}h1{font-size:31px}}
     @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
   </style>
 </head>
@@ -75,33 +71,50 @@
         </div>
 
         <div class="step" id="accountStep" hidden>
-          <div class="mode-row" role="group" aria-label="WHO account action">
-            <button class="mode active" data-mode="signin" type="button">Sign in</button>
-            <button class="mode" data-mode="signup" type="button">Create account</button>
+          <div class="flow-head">
+            <strong id="flowTitle">Sign in to WHO</strong>
+            <button class="switch-link" id="showCreate" type="button">Create account</button>
           </div>
-          <p class="mode-copy" id="modeCopy">Use your existing WHO account to continue.</p>
-          <label id="nameLabel">
-            Name on your WHO account
-            <input id="name" type="text" autocomplete="name" placeholder="Your name">
-          </label>
-          <label>
-            WHO email
-            <input id="email" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com">
-          </label>
+          <p class="helper" id="flowHelper">Enter your WHO email. We’ll send a confirmation code if the account exists.</p>
 
-          <label>
-            Phone number
-            <input id="phone" type="tel" autocomplete="tel" placeholder="+220…">
-          </label>
+          <div id="signinFields">
+            <label>
+              WHO email
+              <input id="email" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com">
+            </label>
+          </div>
+
+          <div id="signupFields" hidden>
+            <label>
+              Your name
+              <input id="name" type="text" autocomplete="name" placeholder="Your name">
+            </label>
+            <label>
+              WHO email
+              <input id="signupEmail" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com">
+            </label>
+            <label>
+              Phone number
+              <input id="phone" type="tel" inputmode="numeric" autocomplete="tel" maxlength="9" pattern="[0-9]{9}" placeholder="9-digit phone number">
+            </label>
+            <p class="helper">Use the same 9-digit phone number you use with your WHO mobile account.</p>
+          </div>
+
+          <div id="accountMiss" class="account-miss" hidden>
+            <strong>We couldn’t find a WHO account for that email.</strong>
+            <span>Create your WHO account below, then continue to authorize this desktop.</span>
+            <button class="secondary" id="createFromMiss" type="button">Create WHO account</button>
+          </div>
 
           <button class="primary" id="sendCode">Continue with WHO</button>
         </div>
 
         <div class="step" id="otpStep" hidden>
           <label>
-            Verification code
+            Confirmation code
             <input id="otp" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="6-digit code">
           </label>
+          <p class="helper" id="otpHelper">Enter the code sent to your WHO email.</p>
           <button class="primary" id="verify">Verify WHO account</button>
           <button class="secondary" id="back">Use a different account</button>
         </div>
@@ -123,7 +136,8 @@
         </div>
 
         <div class="message" id="message" aria-live="polite"></div>
-        </div>
+        <div class="foot">WHO desktop login uses the same confirmation-code account flow as the mobile account system. Creating an account asks for the same identity details and 9-digit phone format used by the WHO mobile signup flow.</div>
+      </div>
     </section>
   </main>
 
@@ -145,18 +159,26 @@
   const authorizeStep = document.getElementById('authorizeStep');
   const doneStep = document.getElementById('doneStep');
 
+  const signinFields = document.getElementById('signinFields');
+  const signupFields = document.getElementById('signupFields');
+  const flowTitle = document.getElementById('flowTitle');
+  const flowHelper = document.getElementById('flowHelper');
+  const showCreate = document.getElementById('showCreate');
+  const createFromMiss = document.getElementById('createFromMiss');
+  const accountMiss = document.getElementById('accountMiss');
+
   const email = document.getElementById('email');
+  const signupEmail = document.getElementById('signupEmail');
   const name = document.getElementById('name');
   const phone = document.getElementById('phone');
   const otp = document.getElementById('otp');
-  const modeCopy = document.getElementById('modeCopy');
-  const nameLabel = document.getElementById('nameLabel');
-  const modeButtons = [...document.querySelectorAll('.mode')];
+  const otpHelper = document.getElementById('otpHelper');
 
   let mode = 'signin';
   let accountToken = '';
   let verifiedUser = null;
   let device = null;
+  let lastEmail = '';
 
   function setMessage(text, good = false) {
     message.textContent = text || '';
@@ -164,17 +186,28 @@
   }
 
   function setMode(next) {
-    mode = next;
-    modeButtons.forEach((button) => {
-      button.classList.toggle('active', button.dataset.mode === mode);
-    });
-    if (mode === 'signup') {
-      modeCopy.textContent = 'Create a new WHO account, then authorize this desktop.';
-      nameLabel.firstChild.textContent = 'Your name';
+    mode = next === 'signup' ? 'signup' : 'signin';
+    const create = mode === 'signup';
+
+    signinFields.hidden = create;
+    signupFields.hidden = !create;
+    accountMiss.hidden = true;
+
+    flowTitle.textContent = create ? 'Create your WHO account' : 'Sign in to WHO';
+    flowHelper.textContent = create
+      ? 'Use the same signup details as the WHO mobile app.'
+      : 'Enter your WHO email. We’ll send a confirmation code if the account exists.';
+    showCreate.textContent = create ? 'Back to sign in' : 'Create account';
+
+    if (create) {
+      const rememberedEmail = lastEmail || email.value.trim();
+      if (rememberedEmail) signupEmail.value = rememberedEmail;
     } else {
-      modeCopy.textContent = 'Use your existing WHO account to continue.';
-      nameLabel.firstChild.textContent = 'Name on your WHO account';
+      const rememberedEmail = lastEmail || signupEmail.value.trim();
+      if (rememberedEmail) email.value = rememberedEmail;
     }
+
+    setMessage('');
   }
 
   function setBusy(button, busy, label) {
@@ -205,10 +238,27 @@
     try { data = text ? JSON.parse(text) : {}; } catch (_) {}
 
     if (!response.ok) {
-      throw new Error(data.error || 'WHO could not complete this request.');
+      const error = new Error(data.error || 'WHO could not complete this request.');
+      error.status = response.status;
+      error.code = data.code || data.errorCode || '';
+      throw error;
     }
 
     return data;
+  }
+
+  function isAccountMissing(error) {
+    const messageText = String(error?.message || '').toLowerCase();
+    const code = String(error?.code || '').toLowerCase();
+    return error?.status === 404 ||
+      (/account|user/.test(code) &&
+        /not.?found|missing|unknown|does.?not.?exist|unregistered/.test(code)) ||
+      (/account|user/.test(messageText) &&
+        /not.?found|does.?not.?exist|unknown|unregistered|no .*account/.test(messageText));
+  }
+
+  function normalizePhone(value) {
+    return String(value || '').replace(/D/g, '');
   }
 
   async function loadPairing() {
@@ -226,53 +276,76 @@
     deviceDot.classList.add('ok');
 
     intro.textContent =
-      'Sign in or create your WHO account to authorize this desktop. If you are new to WHO, your account is created when you verify your email.';
+      'Sign in with your WHO email, or create the same WHO account you use on mobile.';
     accountStep.hidden = false;
+    setMode('signin');
+    email.focus();
   }
 
   async function requestOtp() {
     const button = document.getElementById('sendCode');
     setMessage('');
 
-    const address = email.value.trim().toLowerCase();
-    const displayName = name.value.trim();
-    const phoneNumber = phone.value.trim();
+    let body;
+    let address;
 
-    if (!address || !address.includes('@')) {
-      setMessage('Enter a valid WHO email address.');
-      return;
+    if (mode === 'signup') {
+      address = signupEmail.value.trim().toLowerCase();
+      const displayName = name.value.trim();
+      const phoneNumber = normalizePhone(phone.value);
+
+      if (!displayName) {
+        setMessage('Enter your name to create your WHO account.');
+        return;
+      }
+      if (!address || !address.includes('@')) {
+        setMessage('Enter a valid WHO email address.');
+        return;
+      }
+      if (!/^d{9}$/.test(phoneNumber)) {
+        setMessage('Enter the same 9-digit phone number used by your WHO mobile account.');
+        return;
+      }
+
+      body = {
+        name: displayName,
+        email: address,
+        phoneNumber
+      };
+    } else {
+      address = email.value.trim().toLowerCase();
+
+      if (!address || !address.includes('@')) {
+        setMessage('Enter a valid WHO email address.');
+        return;
+      }
+
+      body = {email: address};
     }
 
-    if (!displayName) {
-      setMessage(mode === 'signup'
-        ? 'Enter your name to create your WHO account.'
-        : 'Enter the name on your WHO account.');
-      return;
-    }
-
-    if (!phoneNumber) {
-      setMessage('Enter the phone number attached to your WHO account.');
-      return;
-    }
+    lastEmail = address;
 
     try {
       setBusy(button, true, 'Sending code…');
 
       await api('/auth/request-code', {
         method: 'POST',
-        body: {
-          name: displayName,
-          email: address,
-          phoneNumber
-        }
+        body
       });
 
       accountStep.hidden = true;
       otpStep.hidden = false;
-      intro.textContent = 'Enter the code sent to your WHO email.';
+      otpHelper.textContent = mode === 'signup'
+        ? 'Enter the confirmation code sent to your WHO email to finish creating the account.'
+        : 'Enter the confirmation code sent to your WHO email.';
+      intro.textContent = 'Check your WHO email for the 6-digit confirmation code.';
       otp.focus();
     } catch (error) {
-      setMessage(error.message);
+      if (mode === 'signin' && isAccountMissing(error)) {
+        showAccountMissing();
+      } else {
+        setMessage(error.message);
+      }
     } finally {
       setBusy(button, false, 'Continue with WHO');
     }
@@ -282,27 +355,34 @@
     const button = document.getElementById('verify');
     setMessage('');
 
-    const address = email.value.trim().toLowerCase();
-    const displayName = name.value.trim();
-    const phoneNumber = phone.value.trim();
     const code = otp.value.trim();
-
-    if (!/^\d{6}$/.test(code)) {
-      setMessage('Enter the 6-digit verification code.');
+    if (!/^d{6}$/.test(code)) {
+      setMessage('Enter the 6-digit confirmation code.');
       return;
     }
+
+    const address = mode === 'signup'
+      ? signupEmail.value.trim().toLowerCase()
+      : email.value.trim().toLowerCase();
+
+    const body = mode === 'signup'
+      ? {
+          name: name.value.trim(),
+          email: address,
+          phoneNumber: normalizePhone(phone.value),
+          code
+        }
+      : {
+          email: address,
+          code
+        };
 
     try {
       setBusy(button, true, 'Verifying…');
 
       const result = await api('/auth/verify-code', {
         method: 'POST',
-        body: {
-          name: displayName,
-          email: address,
-          phoneNumber,
-          code
-        }
+        body
       });
 
       accountToken = String(
@@ -366,8 +446,13 @@
     }
   }
 
-  modeButtons.forEach((button) => {
-    button.addEventListener('click', () => setMode(button.dataset.mode));
+  showCreate.addEventListener('click', () => {
+    setMode(mode === 'signin' ? 'signup' : 'signin');
+  });
+
+  createFromMiss.addEventListener('click', () => {
+    setMode('signup');
+    signupEmail.focus();
   });
 
   document.getElementById('sendCode').addEventListener('click', requestOtp);
@@ -387,11 +472,11 @@
     otp.value = '';
     otpStep.hidden = true;
     accountStep.hidden = false;
-    intro.textContent = 'Sign in or create your WHO account to authorize this desktop.';
-    email.focus();
+    intro.textContent = 'Sign in with your WHO email, or create the same WHO account you use on mobile.';
+    setMode(mode);
+    if (mode === 'signup') signupEmail.focus();
+    else email.focus();
   });
-
-  setMode('signin');
 
   loadPairing().catch(error => {
     intro.textContent = 'This desktop login request could not be verified.';
