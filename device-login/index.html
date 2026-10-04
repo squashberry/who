@@ -59,7 +59,7 @@
       <div class="inner">
         <div class="logo" aria-hidden="true">W</div>
         <div class="eyebrow">WHO DESKTOP</div>
-        <h1>Login to your device</h1>
+        <h1>Sign in to your device</h1>
         <p class="lead" id="intro">Verifying the desktop login request…</p>
 
         <div class="device">
@@ -70,12 +70,20 @@
           <div class="device-dot" id="deviceDot"></div>
         </div>
 
+        <div class="step" id="noCodeStep">
+          <div class="success">
+            <strong>Sign in to WHO Desktop.</strong><br>
+            Open WHO Desktop on your computer and scan the QR code shown there to continue securely.
+          </div>
+          <button class="secondary" id="backHome" type="button">Back to WHO</button>
+        </div>
+
         <div class="step" id="accountStep" hidden>
           <div class="flow-head">
             <strong id="flowTitle">Sign in to WHO</strong>
             <button class="switch-link" id="showCreate" type="button">Create account</button>
           </div>
-          <p class="helper" id="flowHelper">Enter your WHO email. We’ll send a confirmation code if the account exists.</p>
+          <p class="helper" id="flowHelper">Enter the email linked to your WHO account.</p>
 
           <div id="signinFields">
             <label>
@@ -97,7 +105,7 @@
               Phone number
               <input id="phone" type="tel" inputmode="numeric" autocomplete="tel" maxlength="9" pattern="[0-9]{9}" placeholder="9-digit phone number">
             </label>
-            <p class="helper">Use the same 9-digit phone number you use with your WHO mobile account.</p>
+            
           </div>
 
           <div id="accountMiss" class="account-miss" hidden>
@@ -136,7 +144,7 @@
         </div>
 
         <div class="message" id="message" aria-live="polite"></div>
-        <div class="foot">WHO desktop login uses the same confirmation-code account flow as the mobile account system. Creating an account asks for the same identity details and 9-digit phone format used by the WHO mobile signup flow.</div>
+        
       </div>
     </section>
   </main>
@@ -154,6 +162,7 @@
   const deviceDot = document.getElementById('deviceDot');
   const message = document.getElementById('message');
 
+  const noCodeStep = document.getElementById('noCodeStep');
   const accountStep = document.getElementById('accountStep');
   const otpStep = document.getElementById('otpStep');
   const authorizeStep = document.getElementById('authorizeStep');
@@ -263,9 +272,13 @@
 
   async function loadPairing() {
     if (!pairingCode) {
-      throw new Error('This device login request is missing its pairing code.');
+      noCodeStep.hidden = false;
+      accountStep.hidden = true;
+      intro.textContent = 'Open WHO Desktop and scan the QR code shown there.';
+      return;
     }
 
+    noCodeStep.hidden = true;
     device = await api('/desktop/pair/request/' + encodeURIComponent(pairingCode));
 
     if (!device.success) {
@@ -476,6 +489,10 @@
     setMode(mode);
     if (mode === 'signup') signupEmail.focus();
     else email.focus();
+  });
+
+  document.getElementById('backHome').addEventListener('click', () => {
+    window.location.href = '../';
   });
 
   loadPairing().catch(error => {
