@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#060812">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="googlebot" content="noindex,nofollow,noarchive">
+  <title>WHO — Login to your device</title>
+  <style>
+    :root{color-scheme:dark;--bg:#060812;--panel:rgba(13,19,32,.88);--line:rgba(132,171,222,.18);--muted:#8b9ab0;--blue:#1687ff;--blue2:#69c8ff;--good:#6ee7b7;--bad:#ff8e9a}
+    *{box-sizing:border-box}
+    html,body{margin:0;min-height:100%;background:var(--bg);color:#f7f9ff;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    body{min-height:100vh;display:grid;place-items:center;padding:24px;overflow-x:hidden}
+    body:before,body:after{content:"";position:fixed;inset:auto;pointer-events:none;filter:blur(50px);opacity:.42}
+    body:before{width:320px;height:320px;left:-100px;top:-100px;background:radial-gradient(circle,#1687ff 0,transparent 68%)}
+    body:after{width:360px;height:360px;right:-130px;bottom:-120px;background:radial-gradient(circle,#265dff 0,transparent 68%)}
+    .shell{width:min(520px,100%);position:relative}
+    .card{position:relative;overflow:hidden;border:1px solid var(--line);border-radius:32px;background:linear-gradient(180deg,rgba(14,22,36,.92),rgba(7,12,20,.96));box-shadow:0 40px 120px rgba(0,0,0,.55),inset 0 1px rgba(255,255,255,.05);backdrop-filter:blur(26px);animation:enter .7s cubic-bezier(.2,.85,.2,1) both}
+    .card:before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,rgba(105,200,255,.08),transparent 35%,rgba(22,135,255,.05));pointer-events:none}
+    .inner{padding:32px}
+    .logo{width:60px;height:60px;border-radius:19px;display:grid;place-items:center;background:linear-gradient(145deg,#88dcff,#1687ff 58%,#0751c5);box-shadow:0 18px 46px rgba(22,135,255,.26);font-size:22px;font-weight:950}
+    .eyebrow{margin-top:20px;color:var(--blue2);font-size:10px;font-weight:900;letter-spacing:.16em}
+    h1{margin:8px 0 10px;font-size:36px;line-height:1.02;letter-spacing:-.045em}
+    .lead{margin:0;color:var(--muted);line-height:1.65}
+    .device{margin-top:20px;padding:16px 17px;border-radius:18px;border:1px solid rgba(102,151,213,.16);background:rgba(7,12,20,.72);display:flex;align-items:center;justify-content:space-between;gap:16px}
+    .device-copy{min-width:0}
+    .device-label{font-size:12px;color:#6e86a6;text-transform:uppercase;letter-spacing:.12em;font-weight:800}
+    .device-name{margin-top:3px;font-size:17px;font-weight:850;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .device-dot{width:12px;height:12px;border-radius:50%;background:#64748b;box-shadow:0 0 0 6px rgba(100,116,139,.12);flex:none}
+    .device-dot.ok{background:var(--good);box-shadow:0 0 0 6px rgba(110,231,183,.1)}
+    .step{display:grid;gap:14px;margin-top:22px;animation:fade .35s ease both}
+    .step[hidden]{display:none}
+    label{display:grid;gap:8px;color:#b5c2d6;font-size:12px;font-weight:700}
+    input{width:100%;border:1px solid rgba(126,164,214,.18);border-radius:15px;background:#070d17;color:#f7f9ff;padding:14px 15px;outline:none;font:inherit}
+    input:focus{border-color:rgba(58,145,255,.85);box-shadow:0 0 0 4px rgba(58,145,255,.1)}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    button{border:0;border-radius:15px;padding:14px 16px;font:inherit;font-weight:850;cursor:pointer;transition:transform .16s ease,filter .16s ease,background .16s ease}
+    button:hover{transform:translateY(-1px);filter:brightness(1.06)}
+    button:active{transform:translateY(0) scale(.985)}
+    .primary{background:linear-gradient(135deg,#36a7ff,#1687ff 62%,#0b5dcc);color:#fff;box-shadow:0 16px 30px rgba(22,135,255,.22)}
+    .secondary{background:#131f31;color:#d9e4f4;border:1px solid rgba(126,164,214,.14)}
+    .message{min-height:20px;margin:16px 0 0;color:var(--bad);font-size:13px}
+    .message.good{color:var(--good)}
+    .success{padding:18px;border-radius:18px;border:1px solid rgba(110,231,183,.22);background:rgba(7,34,27,.65);color:#c8f7e4;line-height:1.55}
+    .foot{margin-top:20px;color:#54657e;font-size:11px;line-height:1.55}
+    .hidden{display:none!important}
+    .spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.22);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:inline-block;vertical-align:-3px;margin-right:7px}
+    @keyframes enter{from{opacity:0;transform:translateY(16px) scale(.98)}to{opacity:1;transform:none}}
+    @keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    @media(max-width:560px){body{padding:14px}.inner{padding:24px}.card{border-radius:26px}h1{font-size:31px}.row{grid-template-columns:1fr}}
+    @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="card">
+      <div class="inner">
+        <div class="logo" aria-hidden="true">W</div>
+        <div class="eyebrow">WHO DESKTOP</div>
+        <h1>Login to your device</h1>
+        <p class="lead" id="intro">Verifying the desktop login request…</p>
+
+        <div class="device">
+          <div class="device-copy">
+            <div class="device-label">Device</div>
+            <div class="device-name" id="deviceName">Checking request…</div>
+          </div>
+          <div class="device-dot" id="deviceDot"></div>
+        </div>
+
+        <div class="step" id="accountStep" hidden>
+          <label>
+            WHO email
+            <input id="email" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com">
+          </label>
+
+          <div class="row">
+            <label>
+              Your name
+              <input id="name" type="text" autocomplete="name" placeholder="Your name">
+            </label>
+            <label>
+              Phone number
+              <input id="phone" type="tel" autocomplete="tel" placeholder="+220…">
+            </label>
+          </div>
+
+          <button class="primary" id="sendCode">Continue</button>
+        </div>
+
+        <div class="step" id="otpStep" hidden>
+          <label>
+            Verification code
+            <input id="otp" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="6-digit code">
+          </label>
+          <button class="primary" id="verify">Verify and authorize</button>
+          <button class="secondary" id="back">Use a different account</button>
+        </div>
+
+        <div class="step" id="doneStep" hidden>
+          <div class="success">
+            <strong>Desktop authorized.</strong><br>
+            Return to your WHO desktop. It will finish signing in automatically.
+          </div>
+        </div>
+
+        <div class="message" id="message" aria-live="polite"></div>
+        <p class="foot">This page is opened from a WHO desktop pairing QR code. It does not expose a desktop login link in normal WHO website navigation.</p>
+      </div>
+    </section>
+  </main>
+
+<script>
+(() => {
+  'use strict';
+
+  const API = 'https://who-api.who-fe3.workers.dev';
+  const params = new URLSearchParams(window.location.search);
+  const pairingCode = (params.get('code') || '').trim();
+
+  const intro = document.getElementById('intro');
+  const deviceName = document.getElementById('deviceName');
+  const deviceDot = document.getElementById('deviceDot');
+  const message = document.getElementById('message');
+
+  const accountStep = document.getElementById('accountStep');
+  const otpStep = document.getElementById('otpStep');
+  const doneStep = document.getElementById('doneStep');
+
+  const email = document.getElementById('email');
+  const name = document.getElementById('name');
+  const phone = document.getElementById('phone');
+  const otp = document.getElementById('otp');
+
+  let device = null;
+
+  function setMessage(text, good = false) {
+    message.textContent = text || '';
+    message.classList.toggle('good', good);
+  }
+
+  function setBusy(button, busy, label) {
+    button.disabled = busy;
+    if (busy) {
+      button.dataset.previous = button.textContent;
+      button.innerHTML = '<span class="spinner"></span>' + label;
+    } else {
+      button.textContent = button.dataset.previous || label;
+    }
+  }
+
+  async function api(path, options = {}) {
+    const headers = {Accept: 'application/json'};
+    if (options.body !== undefined) headers['Content-Type'] = 'application/json';
+    if (options.token) headers.Authorization = 'Bearer ' + options.token;
+
+    const response = await fetch(API + path, {
+      method: options.method || 'GET',
+      headers,
+      body: options.body === undefined ? undefined : JSON.stringify(options.body),
+      cache: 'no-store',
+      credentials: 'omit'
+    });
+
+    const text = await response.text();
+    let data = {};
+    try { data = text ? JSON.parse(text) : {}; } catch (_) {}
+
+    if (!response.ok) {
+      throw new Error(data.error || 'WHO could not complete this request.');
+    }
+
+    return data;
+  }
+
+  async function loadPairing() {
+    if (!pairingCode) {
+      throw new Error('This device login request is missing its pairing code.');
+    }
+
+    device = await api('/desktop/pair/request/' + encodeURIComponent(pairingCode));
+
+    if (!device.success) {
+      throw new Error(device.error || 'This WHO desktop request is unavailable.');
+    }
+
+    deviceName.textContent = device.deviceName || 'WHO Desktop';
+    deviceDot.classList.add('ok');
+
+    intro.textContent =
+      'Sign in to your WHO account to authorize this desktop.';
+    accountStep.hidden = false;
+  }
+
+  async function requestOtp() {
+    const button = document.getElementById('sendCode');
+    setMessage('');
+
+    const address = email.value.trim().toLowerCase();
+    const displayName = name.value.trim();
+    const phoneNumber = phone.value.trim();
+
+    if (!address || !address.includes('@')) {
+      setMessage('Enter a valid WHO email address.');
+      return;
+    }
+
+    if (!displayName) {
+      setMessage('Enter your name.');
+      return;
+    }
+
+    if (!phoneNumber) {
+      setMessage('Enter your WHO phone number.');
+      return;
+    }
+
+    try {
+      setBusy(button, true, 'Sending code…');
+
+      await api('/auth/request-code', {
+        method: 'POST',
+        body: {
+          name: displayName,
+          email: address,
+          phoneNumber
+        }
+      });
+
+      accountStep.hidden = true;
+      otpStep.hidden = false;
+      intro.textContent = 'Enter the code sent to your WHO email.';
+      otp.focus();
+    } catch (error) {
+      setMessage(error.message);
+    } finally {
+      setBusy(button, false, 'Continue');
+    }
+  }
+
+  async function verifyAndAuthorize() {
+    const button = document.getElementById('verify');
+    setMessage('');
+
+    const address = email.value.trim().toLowerCase();
+    const displayName = name.value.trim();
+    const phoneNumber = phone.value.trim();
+    const code = otp.value.trim();
+
+    if (!/^\d{6}$/.test(code)) {
+      setMessage('Enter the 6-digit verification code.');
+      return;
+    }
+
+    try {
+      setBusy(button, true, 'Verifying…');
+
+      const result = await api('/auth/verify-code', {
+        method: 'POST',
+        body: {
+          name: displayName,
+          email: address,
+          phoneNumber,
+          code
+        }
+      });
+
+      const accessToken = String(
+        result.accessToken ||
+        result.sessionToken ||
+        result.token ||
+        (result.session && result.session.token) ||
+        ''
+      );
+
+      if (!accessToken) {
+        throw new Error('WHO verified the account but returned no session token.');
+      }
+
+      await api(
+        '/desktop/pair/request/' +
+          encodeURIComponent(pairingCode) +
+          '/authorize',
+        {
+          method: 'POST',
+          token: accessToken
+        }
+      );
+
+      otpStep.hidden = true;
+      doneStep.hidden = false;
+      intro.textContent = 'The desktop is finishing the sign-in.';
+      setMessage('', true);
+    } catch (error) {
+      setMessage(error.message);
+    } finally {
+      setBusy(button, false, 'Verify and authorize');
+    }
+  }
+
+  document.getElementById('sendCode').addEventListener('click', requestOtp);
+  document.getElementById('verify').addEventListener('click', verifyAndAuthorize);
+
+  document.getElementById('back').addEventListener('click', () => {
+    setMessage('');
+    otp.value = '';
+    otpStep.hidden = true;
+    accountStep.hidden = false;
+    intro.textContent = 'Sign in to your WHO account to authorize this desktop.';
+    email.focus();
+  });
+
+  loadPairing().catch(error => {
+    intro.textContent = 'This desktop login request could not be verified.';
+    setMessage(error.message);
+  });
+})();
+</script>
+</body>
+</html>
