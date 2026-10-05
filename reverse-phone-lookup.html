@@ -1,11 +1,106 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="index,follow"><link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="site-pages.css"><title>Caller intelligence · WHO</title>  <script src="analytics.js" defer></script>
-</head><body>
-<header class="top"><div class="wrap"><nav><a class="brand" href="./"><span class="mark">W</span><span>WHO</span></a><div class="links"><a href="features.html">Features</a><a href="caller-id.html">Caller ID</a><a href="how-to-use-who.html">How to use WHO</a><a href="privacy.html">Privacy</a><a href="support.html">Support</a></div><a class="cta" href="download.html">Get WHO</a></nav></div></header>
-<main><section class="hero"><div class="wrap"><span class="eyebrow">Caller intelligence</span><h1>Context inside the phone app.</h1><p>WHO's caller intelligence is designed for incoming calls inside WHO. It is not a separate public reverse-phone-search service.</p></div></section>
-<section class="content"><div class="wrap"><div class="grid">
-<div class="card"><span class="badge">In the app</span><h2>When a call arrives</h2><p>WHO can look at the incoming number, your local contact information and available caller signals.</p></div>
-<div class="card"><span class="badge">Privacy</span><h2>No need to paste numbers into the site</h2><p>The website is for product information and downloads. Caller intelligence belongs in the WHO phone experience, where the relevant permissions and controls are available.</p></div>
-<div class="card"><span class="badge">Community</span><h2>Signals can be reported</h2><p>Users can report unwanted or suspicious calls. WHO's architecture is designed to aggregate signals rather than treat one report as unquestionable truth.</p></div>
-<div class="card"><span class="badge">Beta</span><h2>Expect the system to evolve</h2><p>Caller matching and reputation features are actively developing during Beta 1.0. Results should be treated as useful context, not certainty.</p></div>
-</div></div></section></main>
-<footer><div class="wrap"><div class="foot"><a class="brand" href="./"><span class="mark">W</span><span>WHO</span></a><div class="footlinks"><a href="caller-id.html">Caller ID</a><a href="how-to-use-who.html">How to use WHO</a><a href="safety-center.html">Safety Center</a><a href="privacy.html">Privacy</a><a href="support.html">Support</a><a href="download.html">Get WHO</a></div></div><div class="copy">© 2026 Squashberry · WHO Beta 1.0</div></div></footer></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b82f4">
+<meta name="description" content="WHO phone-number lookup and caller intelligence.">
+<meta name="robots" content="index,follow">
+<link rel="icon" href="./favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="./site-pages.css">
+<title>WHO Phone Number Lookup — Who called?</title>
+</head>
+<body>
+<header class="top"><div class="wrap"><nav>
+<a class="brand" href="./"><span class="mark">W</span><span>WHO</span></a>
+<div class="links"><a href="./features.html">Features</a><a href="./caller-id.html">Caller ID</a><a href="./spam-blocking.html">Spam protection</a><a href="./how-it-works.html">How it works</a><a href="./safety-center.html">Safety</a></div>
+<a class="cta" href="./download.html">Get WHO</a>
+</nav></div></header>
+
+<main>
+<section class="hero"><div class="wrap">
+<span class="eyebrow">WHO // PHONE NUMBER LOOKUP</span>
+<h1>Who called<br><em>you?</em></h1>
+<p>Enter a number you do not recognize and start with the same question WHO is built around: who is trying to reach me?</p>
+<div style="max-width:760px;margin-top:30px">
+<form id="lookupPageForm" class="lookup-page-form" action="./reverse-phone-lookup.html" method="get">
+<div class="lookup-page-row">
+<select name="country" id="lookupCountry" aria-label="Country code">
+<option value="220">🇬🇲 +220</option>
+<option value="234">🇳🇬 +234</option>
+<option value="1">🇺🇸 +1</option>
+<option value="44">🇬🇧 +44</option>
+<option value="91">🇮🇳 +91</option>
+<option value="27">🇿🇦 +27</option>
+</select>
+<input id="lookupNumber" name="number" inputmode="tel" placeholder="Enter phone number" required>
+<button type="submit">Search</button>
+</div>
+<p id="lookupPageHint" class="note">Use a number you are comfortable checking. WHO does not treat a search result as proof of identity.</p>
+</form>
+</div>
+</div></section>
+
+<section class="content"><div class="wrap">
+<div id="resultShell" class="grid">
+<article class="card">
+<span class="badge blue">What WHO is checking</span>
+<h2>Useful context, not a verdict.</h2>
+<p>WHO is designed to surface whatever trustworthy caller context is available: possible identity, reputation signals, community reports and actions you can take.</p>
+<table class="table"><tr><th>Signal</th><th>Meaning</th></tr><tr><td><strong>Identity</strong></td><td>Possible name or category associated with the number when available.</td></tr><tr><td><strong>Reputation</strong></td><td>Spam, scam or community context when supported.</td></tr><tr><td><strong>Confidence</strong></td><td>How strongly the available signals support the result.</td></tr><tr><td><strong>Action</strong></td><td>Answer, ignore, block or report based on what you see.</td></tr></table>
+</article>
+<article class="card">
+<span class="badge">WHO app</span>
+<h2>The full result belongs on the phone.</h2>
+<p>The public website provides the search-first entry point. The live WHO caller-intelligence experience is currently centered in the Android app, where the incoming call, contact context and protection tools are available together.</p>
+<div class="callout"><strong>Looking up a number here does not reveal a private person's identity by magic.</strong> Caller information can be incomplete, outdated or wrong.</div>
+<div class="hero-actions" style="margin-top:20px"><a class="action primary" href="./download.html">Get WHO for Android ↗</a><a class="action" href="./how-it-works.html">How the signals work</a></div>
+</article>
+</div>
+
+<div class="card" style="margin-top:16px">
+<div class="kicker-line"><span>SEARCHED NUMBER</span><span id="searchedState">READY</span></div>
+<div id="searchedNumber" style="font-size:clamp(30px,5vw,58px);letter-spacing:-.055em;font-weight:800;margin-top:24px">No number entered</div>
+<p id="searchedMessage" class="note" style="margin-top:8px">Enter a number above to create a WHO lookup request.</p>
+</div>
+
+<div class="section-head" style="margin-top:70px"><span class="section-label">WHY THE CATEGORY WORKS</span><h2>Search is only the beginning.</h2><p>Truecaller, Getcontact, Sync.me and Whoscall all make number identification the first interaction, then expand into caller ID, spam protection, community signals and app downloads. WHO is following that same user-first path while keeping its product claims grounded.</p></div>
+<div class="feature-row"><span class="feature-num">01</span><div><h3>Caller ID</h3><p>Understand who may be calling before you answer.</p></div></div>
+<div class="feature-row"><span class="feature-num">02</span><div><h3>Spam protection</h3><p>Use available reputation and community signals to spot suspicious calls.</p></div></div>
+<div class="feature-row"><span class="feature-num">03</span><div><h3>Contacts and messages</h3><p>Move from a lookup into a complete communication experience instead of a one-off search page.</p></div></div>
+</div></section>
+</main>
+
+<footer><div class="wrap"><div class="foot"><a class="brand" href="./"><span class="mark">W</span><span>WHO</span></a><div class="footlinks"><a href="./features.html">Features</a><a href="./caller-id.html">Caller ID</a><a href="./spam-blocking.html">Spam</a><a href="./how-to-use-who.html">How to use WHO</a><a href="./privacy.html">Privacy</a><a href="./support.html">Support</a><a href="./download.html">Get WHO</a></div></div><div class="copy">© 2026 Squashberry · WHO Beta 1.0</div></div></footer>
+
+<script>
+(() => {
+  const params = new URLSearchParams(location.search);
+  const number = String(params.get('number') || '').trim();
+  const country = String(params.get('country') || '220');
+  const input = document.getElementById('lookupNumber');
+  const select = document.getElementById('lookupCountry');
+  const display = document.getElementById('searchedNumber');
+  const state = document.getElementById('searchedState');
+  const message = document.getElementById('searchedMessage');
+  if (number) {
+    input.value = number;
+    select.value = country;
+    display.textContent = '+' + country + ' ' + number.replace(/[^0-9]/g,'').replace(/(\d{3})(?=\d)/g,'$1 ');
+    state.textContent = 'NUMBER RECEIVED';
+    message.textContent = 'WHO has received the lookup request. Live caller intelligence is currently centered in the Android app.';
+  }
+  document.getElementById('lookupPageForm').addEventListener('submit', event => {
+    const digits = input.value.replace(/[^0-9+]/g,'').trim();
+    if (digits.replace(/[^0-9]/g,'').length < 5) {
+      event.preventDefault();
+      message.textContent = 'Enter a full phone number first.';
+      state.textContent = 'CHECK THE NUMBER';
+      return;
+    }
+    input.value = digits;
+  });
+})();
+</script>
+</body>
+</html>
