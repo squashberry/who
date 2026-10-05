@@ -1,8 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://squashberry.github.io/who/</loc></url>
+  <url><loc>https://squashberry.github.io/who/features.html</loc></url>
+  <url><loc>https://squashberry.github.io/who/how-it-works.html</loc></url>
+  <url><loc>https://squashberry.github.io/who/how-to-use-who.html</loc></url>
+  <url><loc>https://squashberry.github.io/who/how-to-use-relay.html</loc></url>
+  <url><loc>https://squashberry.github.io/who/how-to-use-vpn.html</loc></url>
+  <url><loc>https://squashberry.github.io/who/how-to-use-pc-relay.html</loc></url>
+  <url><loc>https://squashberry.github.io/who/safety-center.html</loc></url>
+  <url><loc>https://squashberry.github.io/who/faq.html</loc></url>
+  <url><loc>https://squashberry.github.io/who/feedback.html</loc></url>
   <url><loc>https://squashberry.github.io/who/download.html</loc></url>
   <url><loc>https://squashberry.github.io/who/support.html</loc></url>
   <url><loc>https://squashberry.github.io/who/privacy.html</loc></url>
   <url><loc>https://squashberry.github.io/who/terms.html</loc></url>
+  <url><loc>https://squashberry.github.io/who/cookies.html</loc></url>
+  <url><loc>https://squashberry.github.io/who/data-choices.html</loc></url>
+  <url><loc>https://squashberry.github.io/who/community-guidelines.html</loc></url>
+  <url><loc>https://squashberry.github.io/who/responsible-disclosure.html</loc></url>
+  <url><loc>https://squashberry.github.io/who/about.html</loc></url>
+  <url><loc>https://squashberry.github.io/who/contact.html</loc></url>
 </urlset>
