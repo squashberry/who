@@ -340,7 +340,6 @@ function initThree() {
     phone.add(heroRing);
 
     networkNodes.length = 0;
-        createParticles();
     resize();
     window.addEventListener('resize', resize);
     window.addEventListener('pointermove', onPointerMove, { passive: true });
@@ -479,23 +478,17 @@ function connectScroll() {
     }
   });
 
-  document.querySelectorAll('.mission').forEach((mission) => {
+  document.querySelectorAll('.story-row').forEach((story) => {
     ScrollTrigger.create({
-      trigger: mission,
-      start: 'top 62%',
-      end: 'bottom 38%',
-      onEnter: () => {
-        setMode(mission.dataset.mode);
-        gsap.to(mission, { opacity: 1, y: 0, duration: .6, overwrite: true });
-      },
-      onLeave: () => gsap.to(mission, { opacity: .46, y: -10, duration: .4, overwrite: true }),
-      onEnterBack: () => {
-        setMode(mission.dataset.mode);
-        gsap.to(mission, { opacity: 1, y: 0, duration: .45, overwrite: true });
-      },
-      onLeaveBack: () => gsap.to(mission, { opacity: .35, y: 20, duration: .4, overwrite: true })
+      trigger: story,
+      start: 'top 68%',
+      end: 'bottom 34%',
+      onEnter: () => gsap.to(story, { opacity: 1, y: 0, duration: .65, overwrite: true }),
+      onLeave: () => gsap.to(story, { opacity: .42, y: -8, duration: .4, overwrite: true }),
+      onEnterBack: () => gsap.to(story, { opacity: 1, y: 0, duration: .45, overwrite: true }),
+      onLeaveBack: () => gsap.to(story, { opacity: .35, y: 16, duration: .4, overwrite: true })
     });
-    gsap.set(mission, { opacity: .35, y: 20 });
+    gsap.set(story, { opacity: .35, y: 16 });
   });
 
   gsap.from('.signal-grid article', {
