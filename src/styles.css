@@ -318,3 +318,121 @@ button { font: inherit; }
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
 }
+
+/* === WHO MOTION / MOBILE PASS 02 === */
+
+.mobile-menu-button{display:none;position:relative;width:42px;height:42px;border:1px solid rgba(166,239,255,.16);border-radius:12px;background:rgba(255,255,255,.025);color:#fff;cursor:pointer;padding:0}
+.mobile-menu-button span{position:absolute;left:12px;width:17px;height:1.5px;background:#dff8ff;transition:transform .22s ease,top .22s ease,opacity .22s ease}
+.mobile-menu-button span:first-child{top:16px}.mobile-menu-button span:last-child{top:24px}
+.mobile-menu-button.is-open span:first-child{top:20px;transform:rotate(45deg)}
+.mobile-menu-button.is-open span:last-child{top:20px;transform:rotate(-45deg)}
+.mobile-menu{position:absolute;top:calc(100% + 8px);left:0;right:0;padding:8px;border:1px solid var(--line);border-radius:18px;background:rgba(3,8,13,.94);backdrop-filter:blur(26px);box-shadow:0 24px 70px rgba(0,0,0,.4);grid-template-columns:1fr;gap:4px;overflow:hidden}
+.mobile-menu[hidden]{display:none!important}
+.mobile-menu.is-open{display:grid}
+.mobile-menu-head{display:flex;justify-content:space-between;gap:10px;padding:10px 11px 8px;color:#637782;font-size:8px;letter-spacing:.14em;font-weight:900}
+.mobile-menu-status{color:var(--good)}
+.mobile-menu>a{display:flex;align-items:center;min-height:46px;padding:0 13px;border-radius:11px;color:#c9d7de;font-size:10px;letter-spacing:.11em;font-weight:900}
+.mobile-menu>a:not(.mobile-menu-cta){border:1px solid transparent}
+.mobile-menu>a:not(.mobile-menu-cta):active,.mobile-menu>a:not(.mobile-menu-cta):focus-visible{background:rgba(255,255,255,.05)}
+.mobile-menu-cta{justify-content:center;background:linear-gradient(135deg,var(--cyan),var(--blue));color:#031018!important;margin-top:3px}
+
+.system-state-short{display:none}
+
+.boot{overflow:hidden;isolation:isolate}
+.boot::before{content:"";position:absolute;inset:-18%;background:radial-gradient(circle at 50% 45%,rgba(66,184,255,.12),transparent 20%,transparent 48%,rgba(0,0,0,.85) 76%);animation:bootBreath 3.8s ease-in-out infinite}
+.boot::after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 0%,rgba(66,184,255,.035) 49%,transparent 51%);background-size:100% 8px;mix-blend-mode:screen;opacity:.65;pointer-events:none}
+.boot-noise{animation:bootNoise 1.8s steps(2,end) infinite}
+.boot-grid{transform:perspective(700px) rotateX(62deg) scale(1.4);transform-origin:50% 80%;animation:bootGridMove 6s linear infinite}
+.boot-scan{position:absolute;left:0;right:0;top:-12%;height:18%;background:linear-gradient(180deg,transparent,rgba(166,239,255,.16),transparent);filter:blur(2px);animation:bootScan 2.8s ease-in-out infinite}
+.boot-orbit{position:absolute;left:50%;top:50%;border:1px solid rgba(166,239,255,.15);border-radius:50%;pointer-events:none}
+.boot-orbit-a{width:min(66vw,720px);height:min(66vw,720px);transform:translate(-50%,-50%) rotate(18deg);animation:bootOrbitA 10s linear infinite}
+.boot-orbit-b{width:min(44vw,500px);height:min(21vw,240px);transform:translate(-50%,-50%) rotate(-24deg);border-color:rgba(66,184,255,.23);animation:bootOrbitB 7s linear infinite}
+.boot-orbit-c{width:min(52vw,590px);height:min(15vw,180px);transform:translate(-50%,-50%) rotate(68deg);border-color:rgba(125,255,189,.12);animation:bootOrbitC 12s linear infinite}
+.boot-core{transform:translateY(12px);animation:bootCoreIn .9s cubic-bezier(.18,.88,.28,1) both}
+.boot-mark-wrap{position:relative;width:110px;height:110px;margin:0 auto 18px;display:grid;place-items:center}
+.boot-mark-wrap::before,.boot-mark-wrap::after{content:"";position:absolute;inset:8px;border:1px solid rgba(166,239,255,.18);border-radius:26px;animation:bootPulse 2s ease-out infinite}
+.boot-mark-wrap::after{inset:-10px;border-color:rgba(66,184,255,.09);animation-delay:.65s}
+.boot-mark{position:relative;z-index:1;width:74px;height:74px;margin:0}
+.boot-kicker{position:relative}
+.boot h1{position:relative;text-shadow:0 0 30px rgba(66,184,255,.18);animation:bootGlitch 3.6s steps(1,end) infinite}
+.boot h1::before,.boot h1::after{content:attr(data-boot-glitch);position:absolute;inset:0;pointer-events:none}
+.boot h1::before{color:rgba(66,184,255,.46);transform:translate(2px,0);clip-path:inset(0 0 65% 0);animation:bootGlitchA 2.1s steps(2,end) infinite}
+.boot h1::after{color:rgba(255,92,120,.32);transform:translate(-2px,0);clip-path:inset(62% 0 7% 0);animation:bootGlitchB 1.7s steps(2,end) infinite}
+.boot-subline{margin:-2px 0 10px;color:#5f727c;font-size:8px;letter-spacing:.24em;font-weight:900}
+.boot-status{animation:statusFlicker 2.5s steps(1,end) infinite}
+.boot-track{position:relative;box-shadow:0 0 28px rgba(66,184,255,.08)}
+.boot-track::after{content:"";position:absolute;top:-6px;bottom:-6px;left:0;width:30%;background:rgba(166,239,255,.11);filter:blur(7px);animation:bootBarShimmer 1.7s linear infinite}
+.boot-enter{position:relative;overflow:hidden}
+.boot-enter::before{content:"";position:absolute;inset:-2px;border:1px solid rgba(166,239,255,.17);border-radius:14px;animation:enterPulse 1.4s ease-in-out infinite}
+.boot-enter::after{content:"";position:absolute;top:0;bottom:0;left:-30%;width:22%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.16),transparent);transform:skewX(-18deg);animation:enterSweep 2.2s ease-in-out infinite}
+.boot-enter-label,.boot-enter-icon{position:relative;z-index:1}
+.boot-skip{opacity:.72}
+
+.hero{isolation:isolate}
+.hero::before{content:"";position:absolute;width:520px;height:520px;right:8%;top:16%;border-radius:50%;background:radial-gradient(circle,rgba(66,184,255,.12),rgba(66,184,255,0) 68%);filter:blur(8px);animation:heroOrb 5s ease-in-out infinite;z-index:-1}
+.hero::after{content:"";position:absolute;left:0;right:0;top:15%;height:1px;background:linear-gradient(90deg,transparent,rgba(166,239,255,.25),transparent);animation:heroScan 4.8s ease-in-out infinite;pointer-events:none}
+.hero-side{position:relative}
+.hero-scanline{position:absolute;inset:-15px;border-radius:26px;border:1px solid rgba(166,239,255,.07);pointer-events:none;animation:heroRing 3.6s ease-in-out infinite}
+.hero-floating-readout{position:absolute;z-index:3;padding:7px 9px;border:1px solid rgba(166,239,255,.12);border-radius:999px;background:rgba(3,9,14,.78);backdrop-filter:blur(12px);color:#8fa8b5;font-size:8px;letter-spacing:.13em;font-weight:900;box-shadow:0 12px 35px rgba(0,0,0,.28);animation:readoutFloat 3.8s ease-in-out infinite}
+.hero-floating-readout-a{left:-42px;top:17%;animation-delay:-1.1s}
+.hero-floating-readout-b{right:-26px;bottom:19%;animation-delay:-2.2s}
+.hud-card{animation:hudBreathe 4.2s ease-in-out infinite}
+.hud-row strong{animation:statusGlow 2s ease-in-out infinite}
+.mission{will-change:transform,opacity}
+.signal-grid article,.field-card,.launch-actions .button{will-change:transform}
+
+@keyframes bootCoreIn{from{opacity:0;transform:translateY(28px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes bootGridMove{from{background-position:0 0,0 0}to{background-position:0 460px,460px 0}}
+@keyframes bootScan{0%,100%{transform:translateY(-20%);opacity:0}18%{opacity:.85}50%{opacity:.2}82%{opacity:.85}100%{transform:translateY(620%)}}
+@keyframes bootOrbitA{to{transform:translate(-50%,-50%) rotate(378deg)}}
+@keyframes bootOrbitB{to{transform:translate(-50%,-50%) rotate(-384deg)}}
+@keyframes bootOrbitC{to{transform:translate(-50%,-50%) rotate(428deg)}}
+@keyframes bootPulse{0%{transform:scale(.88);opacity:.7}72%{transform:scale(1.16);opacity:0}100%{transform:scale(1.16);opacity:0}}
+@keyframes bootNoise{0%,100%{transform:translate3d(0,0,0)}25%{transform:translate3d(-1%,1%,0)}50%{transform:translate3d(1%,-1%,0)}75%{transform:translate3d(1%,1%,0)}}
+@keyframes bootBreath{0%,100%{transform:scale(.96);opacity:.7}50%{transform:scale(1.06);opacity:1}}
+@keyframes bootGlitch{0%,86%,100%{transform:none}88%{transform:skewX(-3deg) translateX(2px)}89%{transform:skewX(2deg) translateX(-2px)}90%{transform:none}}
+@keyframes bootGlitchA{0%,88%,100%{opacity:0}89%{opacity:1;transform:translate(7px,-1px)}90%{opacity:0}}
+@keyframes bootGlitchB{0%,90%,100%{opacity:0}91%{opacity:1;transform:translate(-6px,1px)}92%{opacity:0}}
+@keyframes statusFlicker{0%,96%,100%{opacity:1}97%{opacity:.35}98%{opacity:1}}
+@keyframes bootBarShimmer{to{transform:translateX(350%)}}
+@keyframes enterPulse{0%,100%{opacity:.2;transform:scale(.98)}50%{opacity:1;transform:scale(1.01)}}
+@keyframes enterSweep{0%,55%{transform:translateX(0) skewX(-18deg);opacity:0}65%{opacity:1}100%{transform:translateX(640%) skewX(-18deg);opacity:0}}
+@keyframes heroOrb{0%,100%{transform:translate3d(0,0,0) scale(.9);opacity:.7}50%{transform:translate3d(-20px,16px,0) scale(1.08);opacity:1}}
+@keyframes heroScan{0%,100%{transform:translateX(-20%);opacity:0}20%{opacity:.6}50%{transform:translateX(20%);opacity:.2}80%{opacity:.6}}
+@keyframes heroRing{0%,100%{transform:scale(.98);opacity:.45}50%{transform:scale(1.04);opacity:1}}
+@keyframes readoutFloat{0%,100%{transform:translate3d(0,0,0)}50%{transform:translate3d(0,-9px,0)}}
+@keyframes hudBreathe{0%,100%{transform:translateY(0);box-shadow:var(--shadow)}50%{transform:translateY(-5px);box-shadow:0 40px 110px rgba(0,0,0,.5),0 0 45px rgba(66,184,255,.06)}}
+@keyframes statusGlow{0%,100%{text-shadow:0 0 0 rgba(125,255,189,0)}50%{text-shadow:0 0 16px rgba(125,255,189,.48)}}
+
+@media (max-width: 680px){
+  .topbar{top:10px;left:10px;right:10px;transform:none;width:auto;grid-template-columns:auto 1fr auto;gap:9px;padding:7px;border-radius:15px}
+  .brand{gap:7px;font-size:12px;letter-spacing:.14em}
+  .brand>span{width:34px;height:34px;border-radius:10px}
+  .system-state{display:flex;justify-self:end;font-size:8px;letter-spacing:.11em}
+  .system-state-wide{display:none}.system-state-short{display:inline}
+  .desktop-nav,.desktop-cta{display:none}
+  .mobile-menu-button{display:block}
+  .mobile-menu{position:fixed;top:68px;left:10px;right:10px}
+  .hero{padding-top:118px}
+  .hero-side{width:min(100%,330px);margin:0 auto 8px}
+  .hero-floating-readout-a{left:-4px;top:-7px}
+  .hero-floating-readout-b{right:-4px;bottom:-8px}
+  .hero-scanline{inset:-10px}
+  .boot-core{width:min(92vw,520px);padding:0 10px}
+  .boot-orbit-a{width:120vw;height:120vw}
+  .boot-orbit-b{width:105vw;height:40vw}
+  .boot-orbit-c{width:115vw;height:34vw}
+  .boot-mark-wrap{width:92px;height:92px;margin-bottom:12px}
+  .boot-mark{width:64px;height:64px;font-size:23px}
+  .boot-kicker{font-size:8px}
+  .boot h1{font-size:clamp(70px,24vw,118px);margin-top:4px}
+  .boot-subline{font-size:7px;letter-spacing:.17em;line-height:1.5}
+  .boot-status{font-size:9px;letter-spacing:.13em}
+  .boot-meta{font-size:7px}
+  .boot-enter{width:min(100%,310px);min-height:52px;margin-top:25px}
+  .boot-skip{margin-top:14px}
+}
+
+@media (prefers-reduced-motion: reduce){
+  .boot-grid,.boot-scan,.boot-orbit,.boot-noise,.boot::before,.boot-mark-wrap::before,.boot-mark-wrap::after,.boot h1,.boot h1::before,.boot h1::after,.boot-track::after,.boot-enter::before,.boot-enter::after,.hero::before,.hero::after,.hero-scanline,.hero-floating-readout,.hud-card,.hud-row strong{animation:none!important}
+}
