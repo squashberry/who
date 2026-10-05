@@ -1,10 +1,10 @@
-import * as THREE from 'three';
-import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import './styles.css';
 
-gsap.registerPlugin(ScrollTrigger);
+const THREE = window.THREE;
+const gsap = window.gsap;
+const ScrollTrigger = window.ScrollTrigger;
+
+if (gsap && ScrollTrigger) gsap.registerPlugin(ScrollTrigger);
 
 const state = {
   progress: 0,
@@ -254,6 +254,7 @@ function drawBackup(ctx, w, h) {
 
 function initThree() {
   try {
+    if (!THREE) throw new Error('Three.js runtime unavailable.');
     renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -280,24 +281,24 @@ function initThree() {
 
     const bodyMat = new THREE.MeshPhysicalMaterial({ color: 0x101a21, metalness: .72, roughness: .19, clearcoat: .5, clearcoatRoughness: .16 });
     const edgeMat = new THREE.MeshPhysicalMaterial({ color: 0x203844, metalness: .92, roughness: .18, clearcoat: .4 });
-    const body = new THREE.Mesh(new RoundedBoxGeometry(1.72, 3.42, .22, 7, .10), bodyMat);
+    const body = new THREE.Mesh(new THREE.BoxGeometry(1.72, 3.42, .22, 7, .10), bodyMat);
     phone.add(body);
 
-    const edge = new THREE.Mesh(new RoundedBoxGeometry(1.63, 3.33, .08, 7, .10), edgeMat);
+    const edge = new THREE.Mesh(new THREE.BoxGeometry(1.63, 3.33, .08, 7, .10), edgeMat);
     edge.position.z = -.03;
     phone.add(edge);
 
     createScreenCanvas();
     drawScreen('caller');
     screenMesh = new THREE.Mesh(
-      new RoundedBoxGeometry(1.47, 3.01, .055, 7, .08),
+      new THREE.BoxGeometry(1.47, 3.01, .055, 7, .08),
       new THREE.MeshBasicMaterial({ map: screenTexture, transparent: true })
     );
     screenMesh.position.z = .13;
     phone.add(screenMesh);
 
     const cameraBump = new THREE.Mesh(
-      new RoundedBoxGeometry(.72, .13, .05, 5, .05),
+      new THREE.BoxGeometry(.72, .13, .05, 5, .05),
       new THREE.MeshBasicMaterial({ color: 0x010305 })
     );
     cameraBump.position.set(0, 1.43, .17);
@@ -432,6 +433,7 @@ function animate() {
 }
 
 function connectScroll() {
+  if (!gsap || !ScrollTrigger) return;
   const experience = document.querySelector('.experience');
   if (!experience) return;
 
@@ -507,11 +509,13 @@ function initBoot() {
 }
 
 function init() {
+  const hasAnimationRuntime = Boolean(gsap && ScrollTrigger);
+  if (!hasAnimationRuntime) fallback.hidden = false;
   initThree();
-  connectScroll();
+  if (hasAnimationRuntime) connectScroll();
   connectSmoothActions();
   initBoot();
-  ScrollTrigger.refresh();
+  if (ScrollTrigger) ScrollTrigger.refresh();
 }
 
 window.addEventListener('load', init);
