@@ -484,17 +484,9 @@ function connectScroll() {
     gsap.set(story, { opacity: .35, y: 16 });
   });
 
-  gsap.from('.signal-grid article', {
-    y: 40, opacity: 0, stagger: .08, duration: .8, ease: 'power3.out',
-    scrollTrigger: { trigger: '.signals-section', start: 'top 72%' }
-  });
   gsap.from('.experience-intro > *', {
     y: 60, opacity: 0, stagger: .12, duration: 1, ease: 'power3.out',
     scrollTrigger: { trigger: '.experience-intro', start: 'top 72%' }
-  });
-  gsap.from('.field-card', {
-    x: 60, opacity: 0, duration: .8, ease: 'power3.out',
-    scrollTrigger: { trigger: '.field-section', start: 'top 68%' }
   });
 }
 
