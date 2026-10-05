@@ -203,3 +203,87 @@ footer{position:relative;z-index:1;padding:38px 0 48px;border-top:1px solid var(
 .lookup-page-row button{border:0;border-radius:10px;background:var(--blue);color:#fff;font-weight:850;cursor:pointer}
 .lookup-page-row button:hover{background:var(--blue-strong)}
 @media(max-width:700px){.lookup-page-row{grid-template-columns:86px 1fr}.lookup-page-row button{grid-column:1/-1;min-height:48px}}
+
+
+/* === WHO CONSISTENCY + MOBILE PASS === */
+:root{
+  --blue:#0b82f4;
+  --blue-strong:#075fc0;
+  --green:var(--blue);
+  --danger:var(--blue);
+}
+.badge.green,.badge.red{
+  border-color:rgba(11,130,244,.18);
+  color:#a9ddff;
+  background:rgba(11,130,244,.055);
+}
+.success{
+  background:rgba(11,130,244,.055);
+  border-color:rgba(11,130,244,.16);
+  color:#b7dcf6;
+}
+.danger{
+  background:rgba(11,130,244,.05);
+  border-color:rgba(11,130,244,.15);
+  color:#a9cce5;
+}
+.callout.danger{
+  background:rgba(11,130,244,.055);
+  border-color:rgba(11,130,244,.15);
+  color:#a9cce5;
+}
+.top .cta{
+  background:#0b82f4;
+  color:#fff;
+  box-shadow:0 8px 24px rgba(11,130,244,.16);
+}
+.top .mark{
+  background:#0b82f4;
+  color:#fff;
+}
+.hero{
+  background:
+    radial-gradient(700px 400px at 85% 5%,rgba(11,130,244,.10),transparent 65%),
+    linear-gradient(180deg,#f9fbfd,#f4f7fa);
+}
+@media(max-width:900px){
+  .top nav{
+    min-height:64px;
+    flex-wrap:wrap;
+    row-gap:0;
+    padding:7px 0 0;
+  }
+  .top .brand{flex:0 0 auto}
+  .top .cta{margin-left:auto;flex:0 0 auto}
+  .top .links{
+    display:flex;
+    order:3;
+    flex:0 0 100%;
+    width:100%;
+    overflow-x:auto;
+    justify-content:flex-start;
+    gap:2px;
+    padding:4px 0 7px;
+    scrollbar-width:none;
+    -webkit-overflow-scrolling:touch;
+  }
+  .top .links::-webkit-scrollbar{display:none}
+  .top .links a{
+    flex:0 0 auto;
+    white-space:nowrap;
+    padding:8px 9px;
+    font-size:9px;
+  }
+  .top{
+    background:rgba(255,255,255,.95);
+  }
+  .hero{
+    padding:55px 0 45px;
+  }
+}
+@media(max-width:560px){
+  .top nav{min-height:57px}
+  .top .links a{font-size:8px;letter-spacing:.06em}
+  .hero h1{font-size:clamp(44px,13vw,66px)}
+  .card{box-shadow:0 14px 45px rgba(0,0,0,.16)}
+}
