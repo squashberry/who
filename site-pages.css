@@ -194,3 +194,12 @@ footer{position:relative;z-index:1;padding:38px 0 48px;border-top:1px solid var(
   .footlinks{justify-content:flex-start}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important;animation:none!important}}
+
+
+.lookup-page-form{max-width:760px;padding:14px;background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:16px;box-shadow:0 18px 45px rgba(8,61,110,.07)}
+.lookup-page-row{display:grid;grid-template-columns:112px 1fr 100px;gap:6px}
+.lookup-page-row select,.lookup-page-row input{min-height:50px;border:1px solid #dfe5ea;border-radius:10px;background:#fff;color:#171c21;padding:0 13px;outline:none}
+.lookup-page-row input:focus{border-color:rgba(11,130,244,.44);box-shadow:0 0 0 3px rgba(11,130,244,.08)}
+.lookup-page-row button{border:0;border-radius:10px;background:var(--blue);color:#fff;font-weight:850;cursor:pointer}
+.lookup-page-row button:hover{background:var(--blue-strong)}
+@media(max-width:700px){.lookup-page-row{grid-template-columns:86px 1fr}.lookup-page-row button{grid-column:1/-1;min-height:48px}}
