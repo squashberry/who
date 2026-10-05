@@ -404,11 +404,11 @@
     googleButton.innerHTML = '';
     window.google.accounts.id.renderButton(googleButton, {
       type: 'standard',
-      theme: 'outline',
+      theme: 'outline_dark',
       size: 'large',
       text: 'continue_with',
       shape: 'pill',
-      width: Math.min(456, Math.max(280, googleButton.clientWidth || 360))
+      width: Math.min(400, Math.max(280, googleButton.clientWidth || 360))
     });
 
     googleRendered = true;
