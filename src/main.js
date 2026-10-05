@@ -1,5 +1,3 @@
-import './styles.css';
-
 const THREE = window.THREE;
 const gsap = window.gsap;
 const ScrollTrigger = window.ScrollTrigger;
