@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /who/admin/
+Disallow: /who/device-login/
+
+Sitemap: https://squashberry.github.io/who/sitemap.xml
