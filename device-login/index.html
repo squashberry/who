@@ -3,64 +3,46 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#060812">
+  <meta name="theme-color" content="#050608">
   <meta name="robots" content="noindex,nofollow,noarchive">
   <meta name="googlebot" content="noindex,nofollow,noarchive">
   <meta http-equiv="Cache-Control" content="no-store,no-cache,must-revalidate,max-age=0">
   <meta http-equiv="Pragma" content="no-cache">
   <title>WHO — Authorize Desktop</title>
   <style>
-    :root{color-scheme:dark;--bg:#060812;--panel:rgba(13,19,32,.88);--line:rgba(132,171,222,.18);--muted:#8b9ab0;--blue:#1687ff;--blue2:#69c8ff;--good:#6ee7b7;--bad:#ff8e9a}
-    *{box-sizing:border-box}
-    html,body{margin:0;min-height:100%;background:var(--bg);color:#f7f9ff;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-    body{min-height:100vh;display:grid;place-items:center;padding:24px;overflow-x:hidden}
-    body:before,body:after{content:"";position:fixed;inset:auto;pointer-events:none;filter:blur(50px);opacity:.42}
-    body:before{width:320px;height:320px;left:-100px;top:-100px;background:radial-gradient(circle,#1687ff 0,transparent 68%)}
-    body:after{width:360px;height:360px;right:-130px;bottom:-120px;background:radial-gradient(circle,#265dff 0,transparent 68%)}
-    .shell{width:min(520px,100%);position:relative}
-    .card{position:relative;overflow:hidden;border:1px solid var(--line);border-radius:32px;background:linear-gradient(180deg,rgba(14,22,36,.92),rgba(7,12,20,.96));box-shadow:0 40px 120px rgba(0,0,0,.55),inset 0 1px rgba(255,255,255,.05);backdrop-filter:blur(26px);animation:enter .7s cubic-bezier(.2,.85,.2,1) both}
-    .card:before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,rgba(105,200,255,.08),transparent 35%,rgba(22,135,255,.05));pointer-events:none}
-    .inner{padding:32px}
-    .logo{width:60px;height:60px;border-radius:19px;display:grid;place-items:center;background:linear-gradient(145deg,#88dcff,#1687ff 58%,#0751c5);box-shadow:0 18px 46px rgba(22,135,255,.26);font-size:22px;font-weight:950}
-    .eyebrow{margin-top:20px;color:var(--blue2);font-size:10px;font-weight:900;letter-spacing:.16em}
-    h1{margin:8px 0 10px;font-size:36px;line-height:1.02;letter-spacing:-.045em}
-    .lead{margin:0;color:var(--muted);line-height:1.65}
-    .device{margin-top:20px;padding:16px 17px;border-radius:18px;border:1px solid rgba(102,151,213,.16);background:rgba(7,12,20,.72);display:flex;align-items:center;justify-content:space-between;gap:16px}
-    .device-copy{min-width:0}.device-label{font-size:12px;color:#6e86a6;text-transform:uppercase;letter-spacing:.12em;font-weight:800}
-    .device-name{margin-top:3px;font-size:17px;font-weight:850;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .device-dot{width:12px;height:12px;border-radius:50%;background:#64748b;box-shadow:0 0 0 6px rgba(100,116,139,.12);flex:none}
-    .device-dot.ok{background:var(--good);box-shadow:0 0 0 6px rgba(110,231,183,.1)}
-    .step{display:grid;gap:14px;margin-top:22px;animation:fade .35s ease both}.step[hidden],#accountMiss[hidden],#signupFields[hidden],#signinFields[hidden]{display:none!important}
-    .flow-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
-    .auth-choice{display:grid;gap:12px;margin-top:22px}
-    .google-frame{min-height:44px;display:flex;justify-content:center;align-items:center}
-    .divider{display:flex;align-items:center;gap:12px;color:#667892;font-size:10px;font-weight:900;letter-spacing:.14em;text-transform:uppercase}
-    .divider:before,.divider:after{content:"";height:1px;flex:1;background:rgba(126,164,214,.14)}
-    .manual-panel{display:grid;gap:14px;margin-top:18px;padding-top:18px;border-top:1px solid rgba(126,164,214,.12)}
-    .back-options{border:0;background:transparent;color:#69c8ff;padding:0;font:inherit;font-size:11px;font-weight:850;cursor:pointer;text-align:left}
-    .google-note{color:#74869f;font-size:10px;line-height:1.5;text-align:center;margin-top:-3px}
-    .flow-head strong{font-size:14px}.switch-link{border:0;background:transparent;color:#69c8ff;padding:0;font:inherit;font-size:11px;font-weight:850;cursor:pointer}
-    .helper{margin:-4px 0 2px;color:#74869f;font-size:11px;line-height:1.55}
-    label{display:grid;gap:8px;color:#b5c2d6;font-size:12px;font-weight:700}
-    input{width:100%;border:1px solid rgba(126,164,214,.18);border-radius:15px;background:#070d17;color:#f7f9ff;padding:14px 15px;outline:none;font:inherit}
-    input:focus{border-color:rgba(58,145,255,.85);box-shadow:0 0 0 4px rgba(58,145,255,.1)}
-    button{border:0;border-radius:15px;padding:14px 16px;font:inherit;font-weight:850;cursor:pointer;transition:transform .16s ease,filter .16s ease,background .16s ease}
-    button:hover{transform:translateY(-1px);filter:brightness(1.06)}button:active{transform:translateY(0) scale(.985)}
-    button:disabled{cursor:wait;opacity:.72;transform:none!important}
-    .primary{background:linear-gradient(135deg,#36a7ff,#1687ff 62%,#0b5dcc);color:#fff;box-shadow:0 16px 30px rgba(22,135,255,.22)}
-    .secondary{background:#131f31;color:#d9e4f4;border:1px solid rgba(126,164,214,.14)}
-    .message{min-height:20px;margin:16px 0 0;color:var(--bad);font-size:13px;line-height:1.5}.message.good{color:var(--good)}
-    .account-miss{display:grid;gap:9px;padding:14px;border-radius:17px;border:1px solid rgba(255,142,154,.15);background:rgba(83,15,27,.22)}
-    .account-miss strong{font-size:12px}.account-miss span{color:#9caabe;font-size:11px;line-height:1.55}.account-miss button{padding:11px 13px;font-size:11px}
-    .success{padding:18px;border-radius:18px;border:1px solid rgba(110,231,183,.22);background:rgba(7,34,27,.65);color:#c8f7e4;line-height:1.55}
-    .foot{margin-top:20px;color:#54657e;font-size:10px;line-height:1.55}
-    .spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.22);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:inline-block;vertical-align:-3px;margin-right:7px}
-    @keyframes enter{from{opacity:0;transform:translateY(16px) scale(.98)}to{opacity:1;transform:none}}
-    @keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
-    @keyframes spin{to{transform:rotate(360deg)}}
-    @media(max-width:560px){body{padding:14px}.inner{padding:24px}.card{border-radius:26px}h1{font-size:31px}}
-    @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
-  </style>
+:root{color-scheme:dark;--bg:#050608;--panel:#0d0f12;--panel2:#111418;--line:rgba(255,255,255,.105);--muted:#858882;--blue:#7fc9ff;--good:#96e4b5;--bad:#ed8b8b}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--bg);color:#f3f2ed;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+body{min-height:100vh;display:grid;place-items:center;padding:20px;overflow-x:hidden}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(650px 480px at 50% -10%,rgba(77,143,187,.13),transparent 70%)}
+.shell{width:min(540px,100%);position:relative;z-index:1}
+.card{position:relative;overflow:hidden;border:1px solid var(--line);border-radius:24px;background:linear-gradient(155deg,#111418,#090a0d);box-shadow:0 35px 100px rgba(0,0,0,.45);animation:enter .55s cubic-bezier(.2,.85,.2,1) both}
+.inner{padding:30px}
+.logo{width:54px;height:54px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.15);border-radius:14px;background:#0c0e11;color:#efeee8;font-size:21px;font-weight:950}
+.eyebrow{margin-top:18px;color:#7b7e79;font-size:9px;font-weight:900;letter-spacing:.16em;text-transform:uppercase}
+h1{margin:9px 0 9px;font-size:34px;line-height:1;letter-spacing:-.05em}
+.lead{margin:0;color:#858882;line-height:1.7}
+.device{margin-top:21px;padding:15px 16px;border-radius:15px;border:1px solid var(--line-soft,#fff1);background:#0a0c0f;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.device-copy{min-width:0}.device-label{font-size:8px;color:#6f726d;text-transform:uppercase;letter-spacing:.14em;font-weight:900}.device-name{margin-top:3px;font-size:16px;font-weight:820;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.device-dot{width:11px;height:11px;border-radius:50%;background:#5e625e;box-shadow:0 0 0 6px rgba(94,98,94,.10);flex:none}.device-dot.ok{background:var(--good);box-shadow:0 0 0 6px rgba(150,228,181,.10)}
+.step{display:grid;gap:13px;margin-top:22px;animation:fade .28s ease both}.step[hidden],#accountMiss[hidden],#signupFields[hidden],#signinFields[hidden]{display:none!important}
+.flow-head{display:flex;align-items:center;justify-content:space-between;gap:12px}.auth-choice{display:grid;gap:12px;margin-top:22px}.google-frame{min-height:44px;display:flex;justify-content:center;align-items:center}.divider{display:flex;align-items:center;gap:12px;color:#6a6d68;font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase}.divider:before,.divider:after{content:"";height:1px;flex:1;background:var(--line-soft)}
+.manual-panel{display:grid;gap:13px;margin-top:17px;padding-top:17px;border-top:1px solid var(--line-soft)}
+.back-options{border:0;background:transparent;color:#9bd8ff;padding:0;font:inherit;font-size:10px;font-weight:850;cursor:pointer;text-align:left}
+.google-note{color:#6f726d;font-size:10px;line-height:1.5;text-align:center}.flow-head strong{font-size:14px}.switch-link{border:0;background:transparent;color:#9bd8ff;padding:0;font:inherit;font-size:10px;font-weight:850;cursor:pointer}.helper{margin:-3px 0 2px;color:#747771;font-size:10px;line-height:1.6}
+label{display:grid;gap:7px;color:#b9bab5;font-size:11px;font-weight:700}
+input{width:100%;border:1px solid var(--line);border-radius:12px;background:#080a0d;color:#f3f2ed;padding:13px 14px;outline:none;font:inherit}
+input:focus{border-color:rgba(127,201,255,.42);box-shadow:0 0 0 3px rgba(127,201,255,.08)}
+button{border:0;border-radius:12px;padding:13px 15px;font:inherit;font-weight:850;cursor:pointer;transition:.16s ease}
+button:hover{transform:translateY(-1px)}button:active{transform:scale(.985)}button:disabled{cursor:wait;opacity:.7;transform:none!important}
+.primary{background:#efeee8;color:#08090a}.secondary{background:#0b0d10;color:#d3d2cc;border:1px solid var(--line)}
+.message{min-height:19px;margin:14px 0 0;color:var(--bad);font-size:12px;line-height:1.5}.message.good{color:var(--good)}
+.account-miss{display:grid;gap:8px;padding:13px;border-radius:14px;border:1px solid rgba(237,139,139,.15);background:rgba(77,20,20,.18)}.account-miss strong{font-size:11px}.account-miss span{color:#969994;font-size:10px;line-height:1.6}.account-miss button{padding:10px 12px;font-size:10px}
+.success{padding:16px;border-radius:15px;border:1px solid rgba(150,228,181,.16);background:rgba(150,228,181,.045);color:#c9ead4;line-height:1.6}.foot{margin-top:20px;color:#62655f;font-size:9px;line-height:1.55}
+.spinner{width:15px;height:15px;border:2px solid rgba(0,0,0,.18);border-top-color:#08090a;border-radius:50%;animation:spin .7s linear infinite;display:inline-block;vertical-align:-3px;margin-right:7px}
+@keyframes enter{from{opacity:0;transform:translateY(14px) scale(.985)}to{opacity:1;transform:none}}@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:560px){body{padding:12px}.inner{padding:23px}.card{border-radius:20px}h1{font-size:30px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
+</style>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
