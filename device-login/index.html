@@ -32,6 +32,13 @@
     .device-dot.ok{background:var(--good);box-shadow:0 0 0 6px rgba(110,231,183,.1)}
     .step{display:grid;gap:14px;margin-top:22px;animation:fade .35s ease both}.step[hidden],#accountMiss[hidden],#signupFields[hidden],#signinFields[hidden]{display:none!important}
     .flow-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .auth-choice{display:grid;gap:12px;margin-top:22px}
+    .google-frame{min-height:44px;display:flex;justify-content:center;align-items:center}
+    .divider{display:flex;align-items:center;gap:12px;color:#667892;font-size:10px;font-weight:900;letter-spacing:.14em;text-transform:uppercase}
+    .divider:before,.divider:after{content:"";height:1px;flex:1;background:rgba(126,164,214,.14)}
+    .manual-panel{display:grid;gap:14px;margin-top:18px;padding-top:18px;border-top:1px solid rgba(126,164,214,.12)}
+    .back-options{border:0;background:transparent;color:#69c8ff;padding:0;font:inherit;font-size:11px;font-weight:850;cursor:pointer;text-align:left}
+    .google-note{color:#74869f;font-size:10px;line-height:1.5;text-align:center;margin-top:-3px}
     .flow-head strong{font-size:14px}.switch-link{border:0;background:transparent;color:#69c8ff;padding:0;font:inherit;font-size:11px;font-weight:850;cursor:pointer}
     .helper{margin:-4px 0 2px;color:#74869f;font-size:11px;line-height:1.55}
     label{display:grid;gap:8px;color:#b5c2d6;font-size:12px;font-weight:700}
@@ -54,6 +61,7 @@
     @media(max-width:560px){body{padding:14px}.inner{padding:24px}.card{border-radius:26px}h1{font-size:31px}}
     @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
   </style>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
   <main class="shell">
@@ -81,46 +89,58 @@
         </div>
 
         <div class="step" id="accountStep" hidden>
-          <div class="flow-head">
-            <strong id="flowTitle">Sign in to WHO</strong>
-            <button class="switch-link" id="showCreate" type="button">Create account</button>
-          </div>
-          <p class="helper" id="flowHelper">Enter the email linked to your WHO account.</p>
+          <div id="authChoice">
+            <div class="google-frame" id="googleButton" aria-label="Continue with Google"></div>
+            <div class="google-note">Use the Google account connected to your WHO account.</div>
 
-          <div id="signinFields">
-            <label>
-              WHO email
-              <input id="email" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com">
-            </label>
-            <label>
-              Mobile number
-              <input id="signinPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="Your mobile number">
-            </label>
+            <div class="divider"><span>or</span></div>
+
+            <button class="secondary" id="manualButton" type="button">Continue manually</button>
           </div>
 
-          <div id="signupFields" hidden>
-            <label>
-              Your name
-              <input id="name" type="text" autocomplete="name" placeholder="Your name">
-            </label>
-            <label>
-              WHO email
-              <input id="signupEmail" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com">
-            </label>
-            <label>
-              Phone number
-              <input id="phone" type="tel" inputmode="numeric" autocomplete="tel" maxlength="9" pattern="[0-9]{9}" placeholder="9-digit phone number">
-            </label>
-            
-          </div>
+          <div class="manual-panel" id="manualPanel" hidden>
+            <button class="back-options" id="backToOptions" type="button">← Back to sign-in options</button>
 
-          <div id="accountMiss" class="account-miss" hidden>
-            <strong>WHO account not found</strong>
-            <span>No WHO account is linked to this email. You can create the same WHO account you use on mobile.</span>
-            <button class="secondary" id="createFromMiss" type="button">Create WHO account</button>
-          </div>
+            <div class="flow-head">
+              <strong id="flowTitle">Sign in to WHO</strong>
+              <button class="switch-link" id="showCreate" type="button">Create account</button>
+            </div>
+            <p class="helper" id="flowHelper">Enter the email linked to your WHO account.</p>
 
-          <button class="primary" id="sendCode">Continue with WHO</button>
+            <div id="signinFields">
+              <label>
+                WHO email
+                <input id="email" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com">
+              </label>
+              <label>
+                Mobile number
+                <input id="signinPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="Your mobile number">
+              </label>
+            </div>
+
+            <div id="signupFields" hidden>
+              <label>
+                Your name
+                <input id="name" type="text" autocomplete="name" placeholder="Your name">
+              </label>
+              <label>
+                WHO email
+                <input id="signupEmail" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com">
+              </label>
+              <label>
+                Phone number
+                <input id="phone" type="tel" inputmode="numeric" autocomplete="tel" maxlength="9" pattern="[0-9]{9}" placeholder="9-digit phone number">
+              </label>
+            </div>
+
+            <div id="accountMiss" class="account-miss" hidden>
+              <strong>WHO account not found</strong>
+              <span>No WHO account is linked to this email. You can create the same WHO account you use on mobile.</span>
+              <button class="secondary" id="createFromMiss" type="button">Create WHO account</button>
+            </div>
+
+            <button class="primary" id="sendCode" type="button">Continue with WHO</button>
+          </div>
         </div>
 
         <div class="step" id="otpStep" hidden>
@@ -131,6 +151,19 @@
           <p class="helper" id="otpHelper">Enter the code sent to your WHO email.</p>
           <button class="primary" id="verify">Verify WHO account</button>
           <button class="secondary" id="back">Use a different account</button>
+        </div>
+
+        <div class="step" id="googlePhoneStep" hidden>
+          <div class="flow-head">
+            <strong>Finish your WHO account</strong>
+          </div>
+          <p class="helper">Google verified your identity. WHO needs your Gambia mobile number to finish creating your account.</p>
+          <label>
+            Gambia mobile number
+            <input id="googlePhone" type="tel" inputmode="numeric" autocomplete="tel" maxlength="9" pattern="[0-9]{9}" placeholder="9-digit phone number">
+          </label>
+          <button class="primary" id="completeGoogleSignup" type="button">Continue</button>
+          <button class="secondary" id="cancelGoogleSignup" type="button">Use a different sign-in method</button>
         </div>
 
         <div class="step" id="authorizeStep" hidden>
@@ -160,6 +193,7 @@
   'use strict';
 
   const API = 'https://who-api.who-fe3.workers.dev';
+  const GOOGLE_CLIENT_ID = '207148022166-rn08uvr7cv28cck5i9n7r92qini3g8oh.apps.googleusercontent.com';
   const params = new URLSearchParams(window.location.search);
   const pairingCode = (params.get('code') || '').trim();
 
@@ -171,8 +205,15 @@
   const noCodeStep = document.getElementById('noCodeStep');
   const accountStep = document.getElementById('accountStep');
   const otpStep = document.getElementById('otpStep');
+  const googlePhoneStep = document.getElementById('googlePhoneStep');
   const authorizeStep = document.getElementById('authorizeStep');
   const doneStep = document.getElementById('doneStep');
+
+  const authChoice = document.getElementById('authChoice');
+  const googleButton = document.getElementById('googleButton');
+  const manualButton = document.getElementById('manualButton');
+  const manualPanel = document.getElementById('manualPanel');
+  const backToOptions = document.getElementById('backToOptions');
 
   const signinFields = document.getElementById('signinFields');
   const signupFields = document.getElementById('signupFields');
@@ -187,14 +228,24 @@
   const name = document.getElementById('name');
   const phone = document.getElementById('phone');
   const signinPhone = document.getElementById('signinPhone');
+  const googlePhone = document.getElementById('googlePhone');
   const otp = document.getElementById('otp');
   const otpHelper = document.getElementById('otpHelper');
+
+  const sendCodeButton = document.getElementById('sendCode');
+  const verifyButton = document.getElementById('verify');
+  const authorizeButton = document.getElementById('authorizeDesktop');
+  const completeGoogleSignupButton = document.getElementById('completeGoogleSignup');
 
   let mode = 'signin';
   let accountToken = '';
   let verifiedUser = null;
   let device = null;
   let lastEmail = '';
+  let googleIdToken = '';
+  let googleReady = false;
+  let googleBusy = false;
+  let googleRendered = false;
 
   function setMessage(text, good = false) {
     message.textContent = text || '';
@@ -226,6 +277,20 @@
     setMessage('');
   }
 
+  function openManualPanel() {
+    authChoice.hidden = true;
+    manualPanel.hidden = false;
+    setMessage('');
+    if (mode === 'signup') signupEmail.focus();
+    else email.focus();
+  }
+
+  function backToAuthOptions() {
+    manualPanel.hidden = true;
+    authChoice.hidden = false;
+    setMessage('');
+  }
+
   function showAccountMissing() {
     accountMiss.hidden = false;
     flowTitle.textContent = 'WHO account not found';
@@ -247,6 +312,42 @@
     } else {
       button.textContent = button.dataset.previous || label;
     }
+  }
+
+  function extractSessionToken(result) {
+    return String(
+      result?.accessToken ||
+      result?.sessionToken ||
+      result?.token ||
+      result?.session?.token ||
+      ''
+    );
+  }
+
+  function showAuthorizationStep(result, fallbackEmail = '') {
+    accountToken = extractSessionToken(result);
+    if (!accountToken) {
+      throw new Error('WHO authenticated the account but returned no session token.');
+    }
+
+    verifiedUser = result?.user || null;
+    const identity =
+      verifiedUser?.displayName ||
+      verifiedUser?.name ||
+      verifiedUser?.email ||
+      result?.email ||
+      fallbackEmail ||
+      'your WHO account';
+
+    document.getElementById('signedInLabel').textContent =
+      'Signed in as ' + identity + '.';
+
+    otpStep.hidden = true;
+    googlePhoneStep.hidden = true;
+    authorizeStep.hidden = false;
+    intro.textContent =
+      'Your WHO account is verified. Review the desktop identity, then explicitly authorize it.';
+    setMessage('', true);
   }
 
   async function api(path, options = {}) {
@@ -290,6 +391,155 @@
     return String(value || '').replace(/[^0-9]/g, '');
   }
 
+  function initGoogleButton() {
+    if (googleRendered || !window.google?.accounts?.id) return Boolean(googleRendered);
+
+    window.google.accounts.id.initialize({
+      client_id: GOOGLE_CLIENT_ID,
+      callback: handleGoogleCredential,
+      auto_select: false,
+      cancel_on_tap_outside: false
+    });
+
+    googleButton.innerHTML = '';
+    window.google.accounts.id.renderButton(googleButton, {
+      type: 'standard',
+      theme: 'outline',
+      size: 'large',
+      text: 'continue_with',
+      shape: 'pill',
+      width: Math.min(456, Math.max(280, googleButton.clientWidth || 360))
+    });
+
+    googleRendered = true;
+    googleReady = true;
+    return true;
+  }
+
+  function waitForGoogle(timeoutMs = 10000) {
+    if (initGoogleButton()) return Promise.resolve();
+
+    return new Promise((resolve, reject) => {
+      const started = Date.now();
+      const timer = setInterval(() => {
+        if (initGoogleButton()) {
+          clearInterval(timer);
+          resolve();
+          return;
+        }
+        if (Date.now() - started >= timeoutMs) {
+          clearInterval(timer);
+          reject(new Error('Google sign-in could not be loaded. Please use manual sign-in.'));
+        }
+      }, 100);
+    });
+  }
+
+  async function startGoogleAuth() {
+    if (googleBusy) return;
+    googleBusy = true;
+    setMessage('');
+
+    try {
+      await waitForGoogle();
+      if (!googleReady) throw new Error('Google sign-in is unavailable right now.');
+
+      intro.textContent = 'Connecting to Google…';
+      googleButton.style.pointerEvents = 'none';
+      window.google.accounts.id.prompt((notification) => {
+        if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+          googleButton.style.pointerEvents = '';
+          intro.textContent = 'Continue with Google or choose manual sign-in.';
+          setMessage('Google sign-in did not open. Please try again or continue manually.');
+          googleBusy = false;
+        }
+      });
+    } catch (error) {
+      googleButton.style.pointerEvents = '';
+      googleBusy = false;
+      setMessage(error.message);
+      intro.textContent = 'Continue with Google or choose manual sign-in.';
+    }
+  }
+
+  async function handleGoogleCredential(response) {
+    googleButton.style.pointerEvents = '';
+    if (!response?.credential) {
+      googleBusy = false;
+      setMessage('Google did not return a valid sign-in credential.');
+      return;
+    }
+
+    googleIdToken = String(response.credential);
+
+    try {
+      intro.textContent = 'Verifying your Google account…';
+      setMessage('');
+
+      const result = await api('/auth/google', {
+        method: 'POST',
+        body: {idToken: googleIdToken}
+      });
+
+      if (result?.requiresPhone) {
+        googlePhoneStep.hidden = false;
+        accountStep.hidden = true;
+        googlePhone.hidden = false;
+        googlePhone.focus();
+        intro.textContent = 'One last step: add your Gambia phone number to finish your WHO account.';
+        googleBusy = false;
+        return;
+      }
+
+      showAuthorizationStep(result, result?.user?.email || '');
+      accountStep.hidden = true;
+      googleBusy = false;
+    } catch (error) {
+      googleBusy = false;
+      googleIdToken = '';
+      setMessage(error.message);
+      intro.textContent = 'Continue with Google or choose manual sign-in.';
+    }
+  }
+
+  async function completeGoogleSignup() {
+    setMessage('');
+    const value = normalizePhone(googlePhone.value);
+
+    if (!/^[0-9]{9}$/.test(value)) {
+      setMessage('Enter your 9-digit Gambia mobile number.');
+      return;
+    }
+
+    if (!googleIdToken) {
+      setMessage('Your Google sign-in expired. Please continue with Google again.');
+      googlePhoneStep.hidden = true;
+      accountStep.hidden = false;
+      return;
+    }
+
+    try {
+      setBusy(completeGoogleSignupButton, true, 'Creating account…');
+
+      const result = await api('/auth/google', {
+        method: 'POST',
+        body: {
+          idToken: googleIdToken,
+          phoneNumber: value
+        }
+      });
+
+      showAuthorizationStep(result, result?.user?.email || '');
+      googleIdToken = '';
+      googlePhoneStep.hidden = true;
+      accountStep.hidden = true;
+    } catch (error) {
+      setMessage(error.message);
+    } finally {
+      setBusy(completeGoogleSignupButton, false, 'Continue');
+    }
+  }
+
   async function loadPairing() {
     if (!pairingCode) {
       noCodeStep.hidden = false;
@@ -309,14 +559,16 @@
     deviceDot.classList.add('ok');
 
     intro.textContent =
-      'Confirm your WHO account to securely authorize this desktop.';
+      'Continue with Google, or sign in manually to authorize this desktop.';
     accountStep.hidden = false;
-    setMode('signin');
-    email.focus();
+    authChoice.hidden = false;
+    manualPanel.hidden = true;
+    waitForGoogle().catch(() => {
+      // Manual sign-in remains available if Google cannot be loaded.
+    });
   }
 
   async function requestOtp() {
-    const button = document.getElementById('sendCode');
     setMessage('');
 
     let body;
@@ -359,10 +611,6 @@
         return;
       }
 
-      // The current WHO auth endpoint requires identity fields even when
-      // the email already belongs to an account. The user does not need
-      // to type a name again; the backend-required name is supplied here
-      // only to satisfy that existing endpoint contract.
       body = {
         name: 'WHO User',
         displayName: 'WHO User',
@@ -374,7 +622,7 @@
     lastEmail = address;
 
     try {
-      setBusy(button, true, 'Sending code…');
+      setBusy(sendCodeButton, true, 'Sending code…');
 
       await api('/auth/request-code', {
         method: 'POST',
@@ -395,12 +643,11 @@
         setMessage(error.message);
       }
     } finally {
-      setBusy(button, false, 'Continue with WHO');
+      setBusy(sendCodeButton, false, 'Continue with WHO');
     }
   }
 
   async function verifyAccount() {
-    const button = document.getElementById('verify');
     setMessage('');
 
     const code = otp.value.trim();
@@ -430,51 +677,26 @@
         };
 
     try {
-      setBusy(button, true, 'Verifying…');
+      setBusy(verifyButton, true, 'Verifying…');
 
       const result = await api('/auth/verify-code', {
         method: 'POST',
         body
       });
 
-      accountToken = String(
-        result.accessToken ||
-        result.sessionToken ||
-        result.token ||
-        (result.session && result.session.token) ||
-        ''
-      );
-
-      if (!accountToken) {
-        throw new Error('WHO verified the account but returned no session token.');
-      }
-
-      verifiedUser = result.user || {};
-      const identity =
-        verifiedUser.displayName ||
-        verifiedUser.email ||
-        address;
-
-      document.getElementById('signedInLabel').textContent =
-        'Signed in as ' + identity + '.';
-
-      otpStep.hidden = true;
-      authorizeStep.hidden = false;
-      intro.textContent =
-        'Your WHO account is verified. Review the desktop identity, then explicitly authorize it.';
+      showAuthorizationStep(result, address);
     } catch (error) {
       setMessage(error.message);
     } finally {
-      setBusy(button, false, 'Verify WHO account');
+      setBusy(verifyButton, false, 'Verify WHO account');
     }
   }
 
   async function authorizeDesktop() {
-    const button = document.getElementById('authorizeDesktop');
     setMessage('');
 
     try {
-      setBusy(button, true, 'Authorizing…');
+      setBusy(authorizeButton, true, 'Authorizing…');
 
       await api(
         '/desktop/pair/request/' +
@@ -494,9 +716,12 @@
     } catch (error) {
       setMessage(error.message);
     } finally {
-      setBusy(button, false, 'Authorize this desktop');
+      setBusy(authorizeButton, false, 'Authorize this desktop');
     }
   }
+
+  manualButton.addEventListener('click', openManualPanel);
+  backToOptions.addEventListener('click', backToAuthOptions);
 
   showCreate.addEventListener('click', () => {
     accountMiss.hidden = true;
@@ -509,16 +734,29 @@
     signupEmail.focus();
   });
 
-  document.getElementById('sendCode').addEventListener('click', requestOtp);
-  document.getElementById('verify').addEventListener('click', verifyAccount);
-  document.getElementById('authorizeDesktop').addEventListener('click', authorizeDesktop);
+  sendCodeButton.addEventListener('click', requestOtp);
+  verifyButton.addEventListener('click', verifyAccount);
+  authorizeButton.addEventListener('click', authorizeDesktop);
+  completeGoogleSignupButton.addEventListener('click', completeGoogleSignup);
+  document.getElementById('cancelGoogleSignup').addEventListener('click', () => {
+    googleIdToken = '';
+    googlePhoneStep.hidden = true;
+    accountStep.hidden = false;
+    authChoice.hidden = false;
+    manualPanel.hidden = true;
+    setMessage('');
+    intro.textContent = 'Continue with Google, or sign in manually to authorize this desktop.';
+  });
 
   document.getElementById('cancelAuthorize').addEventListener('click', () => {
     accountToken = '';
     verifiedUser = null;
     authorizeStep.hidden = true;
-    otpStep.hidden = false;
+    accountStep.hidden = false;
+    authChoice.hidden = false;
+    manualPanel.hidden = true;
     setMessage('Authorization cancelled. The desktop has not been authorized.');
+    intro.textContent = 'Continue with Google, or sign in manually to authorize this desktop.';
   });
 
   document.getElementById('back').addEventListener('click', () => {
@@ -526,15 +764,20 @@
     otp.value = '';
     otpStep.hidden = true;
     accountStep.hidden = false;
-    intro.textContent = 'Confirm your WHO account to securely authorize this desktop.';
-    accountMiss.hidden = true;
-    setMode(mode);
-    if (mode === 'signup') signupEmail.focus();
-    else email.focus();
+    authChoice.hidden = false;
+    manualPanel.hidden = true;
+    intro.textContent = 'Continue with Google, or sign in manually to authorize this desktop.';
   });
 
   document.getElementById('backHome').addEventListener('click', () => {
     window.location.href = '../';
+  });
+
+  window.addEventListener('resize', () => {
+    if (googleRendered && window.google?.accounts?.id) {
+      // Re-render is deliberately avoided because GIS button instances
+      // are stateful. The container remains responsive through CSS.
+    }
   });
 
   loadPairing().catch(error => {
