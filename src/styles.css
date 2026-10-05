@@ -576,7 +576,7 @@ body:before{
   .container,.hero-inner,.header-inner,.trust-inner{
     width:calc(100% - 22px);
   }
-  .logo span:last-child{display:none}
+  .logo{font-size:13px;gap:7px}
   .logo-mark{width:35px;height:35px}
   .hero-inner{padding-top:35px}
   .hero h1{font-size:46px}
