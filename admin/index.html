@@ -41,6 +41,17 @@
     </div>
   </div>
 
+  <div class="command-palette" id="commandPalette" aria-hidden="true">
+    <div class="command-backdrop" data-command-close></div>
+    <div class="command-card" role="dialog" aria-modal="true" aria-label="WHO Control command palette">
+      <div class="command-search"><span>⌕</span><input id="commandInput" autocomplete="off" placeholder="Jump to a section or action…" /></div>
+      <div class="command-results" id="commandResults"></div>
+      <div class="command-hint"><span>↑↓ Navigate</span><span>Enter Open</span><span>Esc Close</span></div>
+    </div>
+  </div>
+  <div class="global-alert" id="globalAlert" role="status">
+    <span class="alert-dot"></span><b id="globalAlertTitle">WHO Control</b><span id="globalAlertText">Checking live systems…</span><button id="globalAlertAction">Open</button>
+  </div>
   <div class="admin-app">
     <aside class="sidebar">
       <div class="side-brand"><span class="brand-mark">W</span><div><b>WHO Control</b><small>Squashberry</small></div></div>
@@ -64,7 +75,7 @@
     <div class="main-shell">
       <header class="admin-topbar">
         <div><span class="crumb">WHO CONTROL</span><h1 id="pageTitle">Overview</h1><p id="pageSub">A light command center for the WHO product.</p></div>
-        <div class="top-right"><span class="api-chip" id="apiChip"><i></i> Authentication required</span><button class="top-icon" id="refreshButton" aria-label="Refresh">↻</button></div>
+        <div class="top-right"><button class="command-trigger" id="commandTrigger"><span>⌕</span><span>Command</span><kbd>Ctrl K</kbd></button><span class="api-chip" id="apiChip"><i></i> Authentication required</span><button class="top-icon" id="refreshButton" aria-label="Refresh">↻</button></div>
       </header>
 
       <main class="content">
@@ -136,6 +147,7 @@
 
         <section class="page" data-section="users">
           <div class="section-title"><span class="eyebrow">USERS</span><h2>Account & device pulse.</h2><p>Live counts from the WHO D1 users and devices tables, refreshed with the overview dashboard.</p></div>
+          <div class="panel user-console"><div class="user-console-head"><div><span class="eyebrow">USER OPERATIONS</span><h3>Identity search</h3><small>Search support is ready for the next live user endpoint without exposing private contact data in the UI.</small></div><span class="tag amber">SECURE</span></div><div class="user-search-row"><input id="userSearch" placeholder="Search name, email, WHO ID or phone…" autocomplete="off"><button class="ghost-btn" id="userSearchButton">Search</button></div><div id="userSearchState" class="user-search-state">No search run yet.</div></div>
           <div class="metrics-grid">
             <div class="stat-card"><small>Total users</small><strong id="usersPageTotal">—</strong><span>WHO accounts</span></div>
             <div class="stat-card"><small>Users today</small><strong id="usersPageToday">—</strong><span>New accounts</span></div>
@@ -258,12 +270,12 @@
     </div>
   </div>
 
-  <nav class="mobile-admin-nav" id="mobileAdminNav">
+  <div class="mobile-more-drawer" id="mobileMoreDrawer"><button data-page="users">Users</button><button data-page="analytics">Analytics</button><button data-page="reports">Reports</button><button data-page="releases">Releases</button><button data-page="announcements">Announcements</button><button data-page="feedback">Feedback</button></div><nav class="mobile-admin-nav" id="mobileAdminNav">
     <button class="active" data-page="overview"><span>⌂</span><small>Home</small></button>
     <button data-page="caller"><span>⌕</span><small>Caller</small></button>
     <button data-page="remote"><span>⚙</span><small>Config</small></button>
     <button data-page="crashes"><span>!</span><small>Crashes</small></button>
-    <button data-page="audit"><span>◌</span><small>Audit</small></button>
+    <button data-page="audit"><span>◌</span><small>Audit</small></button><button id="mobileMoreButton"><span>＋</span><small>More</small></button>
   </nav>
 
 
