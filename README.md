@@ -1791,3 +1791,399 @@ A historical commit named **"Restore WHO Control password login UI"** added the 
 
 The Git repository is public. Assume anything ever committed should be treated as potentially public until verified and rotated.
 
+
+
+---
+
+# INTERNAL / REMOVE LATER — PRE-DELETE AUDIT VERIFIED 2026-10-05
+
+This section records findings verified against the current `main` branch immediately before the planned redesign/deletion. Remove it when the new public repository is ready.
+
+## Repository inventory
+
+- Repository: `squashberry/who`
+- Default branch: `main`
+- Latest audited commit: `8ae25aa95254471ac8ec1485068c0560fe68a9cc`
+- Latest audited commit message: `Archive current WHO website build knowledge before redesign`
+- Site file count: **60 blobs**
+- Text/config files: **58**
+- Binary files: **2** — `icons/icon-192.png`, `icons/icon-512.png`
+- Website is a GitHub Pages static application; there is no frontend package manager/build system in this repository.
+- The companion Android/app repository is **`squashberry/who-app`**, not this website repository.
+
+## Verified public routes/pages
+
+The current site contains the public landing experience plus these standalone pages:
+
+`/`
+`/about.html`
+`/account.html` (legacy desktop auth)
+`/blog.html`
+`/business.html`
+`/caller-id.html`
+`/careers.html`
+`/community-guidelines.html`
+`/community.html`
+`/contact.html`
+`/contacts.html`
+`/cookies.html`
+`/data-choices.html`
+`/developers.html`
+`/device-login/`
+`/download.html`
+`/faq.html`
+`/features.html`
+`/feedback.html`
+`/how-it-works.html`
+`/how-to-use-pc-relay.html`
+`/how-to-use-relay.html`
+`/how-to-use-vpn.html`
+`/how-to-use-who.html`
+`/how-we-use-your-info.html`
+`/impact.html`
+`/investors.html`
+`/media.html`
+`/premium.html`
+`/privacy.html`
+`/responsible-disclosure.html`
+`/reverse-phone-lookup.html`
+`/safety-center.html`
+`/scam-alert.html`
+`/sms.html`
+`/spam-blocking.html`
+`/support.html`
+`/terms.html`
+`/thanks.html`
+`/404.html`
+
+The old homepage itself is hash-switched among several in-page screens rather than using a normal application router.
+
+## Verified live integration contracts
+
+### Public API origin
+
+`https://who-api.who-fe3.workers.dev`
+
+### Public site telemetry
+
+`POST /analytics/collect`
+
+Events currently used include:
+
+- `page_view`
+- `download_start`
+
+Browser storage keys:
+
+- `who-web-visitor-id-v1`
+- `who-web-session-id-v1`
+
+### Feedback
+
+`POST /feedback`
+
+The public feedback form explicitly warns users not to submit passwords, OTPs, banking PINs, private contact lists or other sensitive secrets.
+
+### Desktop pairing
+
+`GET /desktop/pair/request/<pairingCode>`
+
+`POST /desktop/pair/request/<pairingCode>/authorize`
+
+Authorization header:
+
+`Authorization: Bearer <accountToken>`
+
+The desktop page performs an explicit authorization step after account verification.
+
+### WHO account confirmation
+
+`POST /auth/request-code`
+
+`POST /auth/verify-code`
+
+The manual flow uses a six-digit confirmation code.
+
+### Google identity
+
+`POST /auth/google`
+
+The browser loads Google Identity Services from:
+
+`https://accounts.google.com/gsi/client`
+
+The current browser code contains a **Google OAuth client ID only**. A client ID is public configuration; the OAuth client secret must remain backend-only.
+
+### Admin
+
+`POST /admin/login`
+
+`GET /admin/session`
+
+`POST /admin/logout`
+
+`GET /admin/config`
+
+`PATCH /admin/config`
+
+`GET /admin/stats`
+
+`GET /admin/download-stats?range=<days>`
+
+`GET /admin/website-stats?range=<days>`
+
+`GET /admin/crashes?limit=200`
+
+`PATCH /admin/crashes/<id>`
+
+`GET /admin/reports`
+
+`PATCH /admin/reports/<id>`
+
+`GET /admin/feedback`
+
+`PATCH /admin/feedback/<id>`
+
+`GET /admin/audit`
+
+Admin bearer tokens are stored in browser session storage under `who_admin_token`.
+
+There is currently a UI placeholder for user search, but the frontend explicitly says the live `/admin/users` endpoint is not enabled.
+
+## Verified release/configuration data
+
+`config/who-config.json` currently carries:
+
+- app version
+- latest version
+- minimum supported version
+- force-update state/title/message/button
+- soft-update state/title/message/later button
+- welcome revision/state/title/message/email/button
+- maintenance state/title/message
+- announcement state/title/message/revision
+- crash-report URL
+- welcome feedback URL
+
+The new build should have one release/config source instead of hardcoding release values throughout the site.
+
+## Verified deployment behavior
+
+Current workflow:
+
+`.github/workflows/pages.yml`
+
+Deployment is triggered by pushes to `main` plus manual dispatch.
+
+The workflow currently uploads the repository root:
+
+`path: .`
+
+This must **not** be copied into the new architecture. The new site should build to `dist/` and publish only `dist/`.
+
+## Verified security boundary
+
+The website is not the real security boundary.
+
+- `/admin/` is hidden from crawlers by `robots.txt`, but robots.txt is not access control.
+- Admin access is enforced through backend session/auth endpoints.
+- Desktop authorization requires a backend-issued account session token.
+- Auth pages use `noindex,nofollow,noarchive` and no-store cache controls.
+- Admin tokens are held in session storage, not hard-coded.
+- The frontend does not contain the admin password.
+- The frontend does not contain a Google OAuth client secret.
+- No obvious Supabase service-role key, database password, API secret, private key, or backend credential value was found in the current default-branch website files inspected.
+
+**Important:** this is a current/default-branch audit, not proof that an old credential never existed in Git history or backend configuration. Any credential ever committed to a public repository should be treated as exposed and rotated.
+
+## Verified architecture problems worth NOT carrying
+
+1. Simulated boot percentage instead of real loading/cinematic sequencing.
+2. Root-of-repository GitHub Pages deployment.
+3. Public, standalone admin page sharing the same site boundary.
+4. First-party analytics behavior spread across many static pages.
+5. Hand-maintained sitemap that already drifted: `how-to-use-pc-relay.html` exists but was absent from the sitemap.
+6. Mixed hash-router + standalone HTML page architecture.
+7. Hardcoded `1.0.0` values in several site surfaces.
+8. Main-site JS unregisters every visible service worker, which is unsafe as a shared-origin architecture.
+9. Theme/first-paint behavior differs between the home shell and secondary pages.
+10. CSS transforms are being used as the main "3D phone" effect rather than a controlled real 3D scene.
+11. Support page is inconsistent with the other pages' analytics inclusion.
+12. The public website is carrying internal operational/admin concerns that should be separated.
+
+## Verified auth behavior that must survive the rebuild
+
+The important account rule is:
+
+**Existing account ≠ new account.**
+
+The current desktop flow explicitly recognizes an account-missing condition and offers account creation instead of silently creating another account.
+
+Required states:
+
+- pairing code missing
+- pairing code invalid/expired
+- account exists
+- account not found
+- sign in
+- create account
+- code sent
+- invalid code
+- account verified
+- explicit desktop authorization
+- authorization cancelled
+- authorization complete
+- network/API failure
+
+This distinction is a core behavior requirement, not merely a UI copy choice.
+
+## Verified design direction for the replacement site
+
+The redesign should **not** be "the same startup landing page with better animations."
+
+It should be an immersive **WHO SYSTEM / PRODUCT LAUNCH** experience:
+
+### 01 — BOOT
+
+A short cinematic system boot, then:
+
+**WHO ONLINE**
+
+**[ TAP TO IDENTIFY ]**
+
+First visit may be cinematic. Returning visits should be fast. Include a skip path, reduced-motion behavior, touch + mouse + keyboard support, and low-power fallback.
+
+### 02 — SIGNAL
+
+The website immediately demonstrates WHO.
+
+A call arrives.
+
+The visitor sees:
+
+- unknown number
+- analysis state
+- identity/reputation context
+- confidence
+- available actions
+
+The product is demonstrated before it is explained.
+
+### 03 — COMMUNICATION STACK
+
+The central 3D device becomes the stage for:
+
+- calling
+- contacts
+- messaging
+- spam/safety signals
+
+### 04 — RELAY
+
+Two devices enter the scene.
+
+The interaction visually shows:
+
+**HOST → RELAY SESSION → RECEIVER**
+
+The user should understand the feature from the animation itself.
+
+### 05 — NETWORK
+
+The phone changes from ordinary traffic to a protected WHO network state.
+
+Do not describe this as anonymity.
+
+### 06 — BACKUP
+
+Contacts/settings are assembled into a protected backup package and moved to the user's chosen backup destination.
+
+The visitor should understand:
+
+**USER DATA → USER CONTROL → BACKUP**
+
+### 07 — FIELD REPORTS
+
+Testimonials should feel like operational reports rather than fighting-game character cards:
+
+**FIELD REPORT 027**
+
+Platform · WHO version · Rating · Short review
+
+Keep the game language but preserve trust.
+
+### 08 — FINAL LAUNCH
+
+The phone rotates into the camera, the screen becomes the transition, and the final statement lands:
+
+**STOP GUESSING.  
+KNOW WHO IS CALLING.**
+
+Then the real platform/download actions.
+
+## Recommended technical approach
+
+- **GSAP + ScrollTrigger** for the master timeline and scroll choreography.
+- **Three.js** for the primary 3D device because it gives complete scene/material/camera control.
+- **Lottie only for small 2D/vector moments**, not as the core visual engine.
+- DOM/HTML remains responsible for the real text, forms, legal content, navigation and accessibility.
+- Cap WebGL resolution/pixel ratio and stop heavy work for offscreen scenes.
+- Use real static fallbacks for weak devices, WebGL failure and reduced-motion environments.
+- No mandatory gyroscope access.
+- Audio is optional and off by default.
+- Do not make every section a 3D scene.
+
+## Public data / claims rule
+
+Do not invent global numbers.
+
+The old proposed "spam calls blocked today" slot-machine counter should only exist if the backend measures a real, publishable aggregate.
+
+Good candidates for future real public metrics:
+
+- calls analyzed
+- reputation signals processed
+- reports reviewed
+- active devices
+- downloads
+- Relay sessions
+- service uptime
+
+Only expose metrics that are real, aggregated, and safe to publish.
+
+## Performance rule
+
+The old site had no true production asset pipeline.
+
+The new site should:
+
+- use a real build system
+- code-split by scene/page
+- preload only hero-critical assets
+- compress images
+- optimize 3D assets/textures
+- cap WebGL pixel ratio
+- pause offscreen animation
+- support reduced motion
+- detect WebGL failure
+- ship only production artifacts to GitHub Pages
+
+Preferred deployment shape:
+
+`source → build → dist/ → GitHub Pages`
+
+Never:
+
+`source repository root → Pages`
+
+## Final migration principle
+
+Carry **the WHO system and its contracts**.
+
+Do not carry **the old brochure structure**.
+
+Keep the product truth, authentication rules, API contracts, Relay/VPN concepts, operational tooling, legal/privacy obligations, moderation flow and release/configuration model.
+
+Throw away the fixed startup-style navbar, bento-card presentation, fake loader, CSS-only phone showcase, manual sitemap maintenance and root-as-production deployment model.
+
+The new site should feel like **launching WHO**, not reading about WHO.
