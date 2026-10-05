@@ -424,7 +424,8 @@ function animate() {
   const targetRotationX = state.dragX + state.targetX + state.progress * .02 + (state.motionAllowed ? Math.sin(t * .0009) * .014 : 0);
   const targetRotationY = state.dragY + state.targetY + .18 - state.progress * .24 + (state.motionAllowed ? Math.sin(t * .00065) * .02 : 0);
   const targetRotationZ = -0.08 + Math.sin(state.progress * Math.PI) * .035 + (state.motionAllowed ? Math.sin(t * .0011) * .014 : 0);
-  const targetX = Math.sin(state.progress * Math.PI) * .48 + floatX;
+  const desktopStageX = window.innerWidth > 980 ? 1.55 - state.progress * 2.0 : 0;
+  const targetX = desktopStageX + Math.sin(state.progress * Math.PI) * .48 + floatX;
   const targetY = .08 - state.progress * .16 + floatY;
   const targetZ = state.progress < .05 ? 0 : -state.progress * .9;
   const scale = 1 + state.progress * .08;
