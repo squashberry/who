@@ -8,17 +8,42 @@
       menuButton.setAttribute('aria-expanded','false');
       mobileMenu.hidden = true;
     };
-    menuButton.addEventListener('click', () => {
-      const open = menuButton.getAttribute('aria-expanded') === 'true';
-      if (open) closeMenu();
-      else {
+    const setMenuOpen = (open) => {
+      if (open) {
         menuButton.classList.add('open');
         menuButton.setAttribute('aria-expanded','true');
+        menuButton.setAttribute('aria-label','Close menu');
         mobileMenu.hidden = false;
+        document.documentElement.style.overflow = 'hidden';
+      } else {
+        menuButton.classList.remove('open');
+        menuButton.setAttribute('aria-expanded','false');
+        menuButton.setAttribute('aria-label','Open menu');
+        mobileMenu.hidden = true;
+        document.documentElement.style.overflow = '';
       }
+    };
+
+    const closeMenu = () => setMenuOpen(false);
+
+    menuButton.addEventListener('click', () => {
+      setMenuOpen(menuButton.getAttribute('aria-expanded') !== 'true');
     });
+
     mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMenu));
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeMenu();
+    });
+
+    document.addEventListener('pointerdown', e => {
+      if (mobileMenu.hidden) return;
+      if (!mobileMenu.contains(e.target) && !menuButton.contains(e.target)) closeMenu();
+    });
+
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 1000) closeMenu();
+    });
   }
 
   const form = document.getElementById('lookupForm');
