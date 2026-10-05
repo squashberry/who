@@ -3,42 +3,37 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#03060a">
-  <meta name="description" content="WHO — caller intelligence, communication tools, Relay and network protection in one phone experience.">
+  <meta name="theme-color" content="#050608">
+  <meta name="description" content="WHO — a clearer phone experience for calls, messages, Relay, network protection and backup.">
   <meta name="robots" content="index,follow">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="WHO — Stop guessing. Know WHO is calling.">
-  <meta property="og:description" content="Launch the WHO experience. See the call, the context and the next move.">
+  <meta property="og:title" content="WHO — Know who's calling before you answer.">
+  <meta property="og:description" content="WHO brings context to calls, messages and the rest of your phone experience.">
   <meta property="og:url" content="https://squashberry.github.io/who/">
   <link rel="icon" href="/who/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="stylesheet" href="./src/styles.css">
-  <title>WHO — System Online</title>
+  <title>WHO — Know before you answer</title>
 </head>
 <body>
   <div id="boot" class="boot" aria-hidden="false">
-    <div class="boot-noise"></div>
-    <div class="boot-grid"></div>
-    <div class="boot-scan"></div>
-    <div class="boot-orbit boot-orbit-a"></div>
-    <div class="boot-orbit boot-orbit-b"></div>
-    <div class="boot-orbit boot-orbit-c"></div>
-    <div class="boot-core">
-      <div class="boot-signal boot-signal-a">IDENTITY</div>
-      <div class="boot-signal boot-signal-b">RELAY</div>
-      <div class="boot-signal boot-signal-c">NETWORK</div>
-      <div class="boot-mark-wrap"><div class="boot-mark" aria-hidden="true">W</div></div>
-      <div class="boot-kicker">SQUASHBERRY // COMMUNICATION SYSTEM</div>
-      <h1 data-boot-glitch="WHO">WHO</h1>
-      <div class="boot-subline">THE COMMUNICATION SYSTEM IS INITIALIZING</div>
-      <div class="boot-status" id="bootStatus">INITIALIZING WHO CORE…</div>
-      <div class="boot-track"><i id="bootFill"></i></div>
-      <div class="boot-meta"><span id="bootPercent">0%</span><span>SECURE LAUNCH SEQUENCE</span></div>
+    <div class="boot-glow"></div>
+    <div class="boot-word">WHO</div>
+    <div class="boot-rule"><i id="bootFill"></i></div>
+    <div class="boot-corner boot-corner-left">
+      <span>BY SQUASHBERRY</span>
+      <span>PHONE / 01</span>
+    </div>
+    <div class="boot-corner boot-corner-right">
+      <span id="bootStatus">OPENING WHO…</span>
+      <span id="bootPercent">0%</span>
+    </div>
+    <div class="boot-actions">
       <button id="enterButton" class="boot-enter" type="button" disabled>
-        <span class="boot-enter-label">TAP TO IDENTIFY</span>
+        <span class="boot-enter-label">ENTER WHO</span>
         <span class="boot-enter-icon">↗</span>
       </button>
-      <button id="skipButton" class="boot-skip" type="button">Skip launch</button>
+      <button id="skipButton" class="boot-skip" type="button">Skip</button>
     </div>
   </div>
 
@@ -48,7 +43,7 @@
       <div class="fallback-screen">
         <span>WHO</span>
         <strong>UNKNOWN CALLER</strong>
-        <small>Analyzing signal…</small>
+        <small>Looking for context…</small>
         <div class="fallback-chip">CONFIDENCE 91%</div>
       </div>
     </div>
@@ -59,22 +54,22 @@
   <header class="topbar">
     <a class="brand" href="./" aria-label="WHO home"><span>W</span><strong>WHO</strong></a>
     <nav class="desktop-nav" aria-label="Primary navigation">
-      <a href="#experience">Experience</a>
-      <a href="#signals">Protection</a>
+      <a href="#experience">Product</a>
+      <a href="#principles">Why WHO</a>
       <a href="#relay">Relay</a>
       <a href="#download">Download</a>
     </nav>
     <div class="topbar-right">
-      <span class="system-state"><i></i><span class="system-state-wide">SYSTEM ONLINE</span><span class="system-state-short">ONLINE</span></span>
+      <span class="beta-note">ANDROID BETA</span>
       <a class="topbar-cta desktop-cta" href="./download.html">GET WHO</a>
       <button class="mobile-menu-button" id="mobileMenuButton" type="button" aria-expanded="false" aria-controls="mobileMenu" aria-label="Open navigation">
         <span></span><span></span>
       </button>
     </div>
     <div class="mobile-menu" id="mobileMenu" hidden>
-      <div class="mobile-menu-head"><span>WHO // NAVIGATION</span><span class="mobile-menu-status">SYSTEM ONLINE</span></div>
-      <a href="#experience">01 / EXPERIENCE</a>
-      <a href="#signals">02 / PROTECTION</a>
+      <div class="mobile-menu-head"><span>WHO</span><span>ANDROID BETA</span></div>
+      <a href="#experience">01 / PRODUCT</a>
+      <a href="#principles">02 / WHY WHO</a>
       <a href="#relay">03 / RELAY</a>
       <a href="#download">04 / DOWNLOAD</a>
       <a class="mobile-menu-cta" href="./download.html">GET WHO ↗</a>
@@ -84,124 +79,132 @@
   <main id="site">
     <section class="hero" id="hero">
       <div class="hero-copy">
-        <div class="eyebrow"><span class="pulse"></span> WHO // COMMUNICATION INTELLIGENCE</div>
-        <h2>Stop guessing.<br><em>Know WHO</em> is calling.</h2>
-        <p>See the context before you answer. Keep calls, messages, contacts, Relay and network tools in one phone experience.</p>
+        <div class="eyebrow">A BETTER FIRST LOOK AT YOUR CALLS</div>
+        <h1>Know who’s calling<br><em>before you answer.</em></h1>
+        <p>WHO puts useful context around unknown calls and gives the rest of your phone experience room to make sense.</p>
         <div class="hero-actions">
-          <a class="button button-primary" href="#experience">ENTER THE EXPERIENCE <span>↓</span></a>
-          <a class="button button-quiet" href="./download.html">VIEW DOWNLOADS</a>
+          <a class="button button-primary" href="#experience">SEE HOW IT WORKS <span>↓</span></a>
+          <a class="button button-quiet" href="./download.html">DOWNLOAD</a>
         </div>
-        <div class="hero-signals">
-          <span>CALLER ID</span><span>SMS</span><span>RELAY</span><span>NETWORK</span><span>BACKUP</span>
-        </div>
+        <div class="hero-footnote">Caller intelligence · Messages · Relay · Network · Backup</div>
       </div>
 
       <div class="hero-side">
-        <div class="hero-scanline" aria-hidden="true"></div>
-        <div class="hero-floating-readout hero-floating-readout-a">SIGNAL / 91%</div>
-        <div class="hero-floating-readout hero-floating-readout-b">RELAY / READY</div>
-        <div class="hud-card">
-          <div class="hud-label">LIVE SYSTEM READOUT</div>
-          <div class="hud-row"><span>IDENTITY ENGINE</span><strong>READY</strong></div>
-          <div class="hud-row"><span>RELAY SUBSYSTEM</span><strong>READY</strong></div>
-          <div class="hud-row"><span>NETWORK LAYER</span><strong>READY</strong></div>
-          <div class="hud-row"><span>ANDROID BETA</span><strong>1.0.0</strong></div>
+        <div class="hero-product-caption">
+          <span>WHO / 01</span>
+          <strong>CALLER INTELLIGENCE</strong>
+          <p>Context is a signal, not proof.</p>
         </div>
-        <p class="hero-note">Your decision stays yours. WHO provides context, not certainty.</p>
+        <p class="hero-note">Designed to help you decide. Never to decide for you.</p>
       </div>
     </section>
 
     <section id="experience" class="experience">
       <div class="experience-intro">
+        <span class="section-index">THE PRODUCT</span>
         <div>
-          <span class="section-index">SYSTEM / 01</span>
-          <h2>The product<br><em>introduces itself.</em></h2>
+          <h2>One phone.<br><em>More context.</em></h2>
+          <p>The phone moves with you. WHO simply makes more of what is happening on it easier to understand.</p>
         </div>
-        <p>Scroll through the phone. Every scene is a real WHO concept, not a decorative demo.</p>
       </div>
 
-      <div class="mission mission-left" data-mode="caller">
-        <span class="mission-index">MISSION 01</span>
-        <span class="mission-kicker">CALLER INTELLIGENCE</span>
-        <h3>See the signal<br>before the answer.</h3>
-        <p>Unknown numbers can become context: possible identity, reputation signals, confidence and the actions available to you.</p>
-        <div class="mission-meta"><span>UNKNOWN CALL</span><span>CONFIDENCE</span><span>REPUTATION</span></div>
+      <div class="story-row story-row-left" data-mode="caller">
+        <span class="story-number">01</span>
+        <div class="story-copy">
+          <span class="story-kicker">CALLER INTELLIGENCE</span>
+          <h3>See something useful<br>before you pick up.</h3>
+          <p>Unknown numbers can come with possible identity, reputation signals, confidence and clear actions. You stay in control of the decision.</p>
+        </div>
       </div>
 
-      <div class="mission mission-right" data-mode="messages">
-        <span class="mission-index">MISSION 02</span>
-        <span class="mission-kicker">MESSAGING</span>
-        <h3>Turn message noise<br>into a clean signal.</h3>
-        <p>Personal, transactions, spam and unknown senders become an organized communication surface instead of one endless inbox.</p>
-        <div class="mission-meta"><span>PERSONAL</span><span>TRANSACTIONS</span><span>SPAM</span></div>
+      <div class="story-row story-row-right" data-mode="messages">
+        <span class="story-number">02</span>
+        <div class="story-copy">
+          <span class="story-kicker">MESSAGES</span>
+          <h3>A quieter inbox<br>starts with context.</h3>
+          <p>Personal messages, transactions, spam and unknown senders can be separated so the important conversations are easier to find.</p>
+        </div>
       </div>
 
-      <div class="mission mission-left" id="relay" data-mode="relay">
-        <span class="mission-index">MISSION 03</span>
-        <span class="mission-kicker">WHO RELAY</span>
-        <h3>One phone connects.<br>Another phone gets online.</h3>
-        <p>A host can share its working connection through a fresh Relay session. Pairing is explicit, visible and temporary.</p>
-        <div class="mission-meta"><span>HOST</span><span>SESSION</span><span>RECEIVER</span></div>
+      <div class="story-row story-row-left" id="relay" data-mode="relay">
+        <span class="story-number">03</span>
+        <div class="story-copy">
+          <span class="story-kicker">WHO RELAY</span>
+          <h3>One phone connects.<br>Another gets online.</h3>
+          <p>Relay lets a host share its working connection through a fresh, explicit session. Pairing is visible and temporary.</p>
+        </div>
       </div>
 
-      <div class="mission mission-right" id="signals" data-mode="network">
-        <span class="mission-index">MISSION 04</span>
-        <span class="mission-kicker">WHO NETWORK</span>
-        <h3>Change the network<br>without losing the context.</h3>
-        <p>See endpoint information, country, latency and protected state while WHO handles the supported VPN path.</p>
-        <div class="mission-meta"><span>ENDPOINT</span><span>LATENCY</span><span>PROTECTED</span></div>
+      <div class="story-row story-row-right" data-mode="network">
+        <span class="story-number">04</span>
+        <div class="story-copy">
+          <span class="story-kicker">NETWORK</span>
+          <h3>See the connection<br>you are actually using.</h3>
+          <p>WHO can surface endpoint information, country, latency and supported protected-network state without pretending that a VPN makes you anonymous.</p>
+        </div>
       </div>
 
-      <div class="mission mission-left" data-mode="backup">
-        <span class="mission-index">MISSION 05</span>
-        <span class="mission-kicker">BACKUP</span>
-        <h3>Your contacts.<br>Your backup.</h3>
-        <p>Backup is a user-controlled operation. Data stays conceptually separate from caller-intelligence systems and can be restored when you choose.</p>
-        <div class="mission-meta"><span>CONTACTS</span><span>CONTROL</span><span>RESTORE</span></div>
+      <div class="story-row story-row-left" data-mode="backup">
+        <span class="story-number">05</span>
+        <div class="story-copy">
+          <span class="story-kicker">BACKUP</span>
+          <h3>Your contacts.<br>Your choice.</h3>
+          <p>Backup stays user-controlled. Contacts can be backed up to Google Drive and restored when you choose.</p>
+        </div>
       </div>
     </section>
 
-    <section class="signals-section">
+    <section class="principles" id="principles">
       <div class="section-heading">
-        <span class="section-index">SYSTEM / 02</span>
-        <h2>Built around<br><em>context, not hype.</em></h2>
-        <p>WHO is designed to help you make a better communication decision, not to pretend uncertainty does not exist.</p>
+        <span class="section-index">WHY WHO</span>
+        <h2>Good phone software<br><em>knows when not to guess.</em></h2>
+        <p>WHO is being built around a simple idea: useful information is better than false certainty.</p>
       </div>
-      <div class="signal-grid">
-        <article><span class="signal-num">01</span><h3>Confidence</h3><p>Identity suggestions are signals with visible uncertainty, not proof of legal identity.</p></article>
-        <article><span class="signal-num">02</span><h3>Privacy</h3><p>Your private address book is not silently transformed into a public directory.</p></article>
-        <article><span class="signal-num">03</span><h3>Choice</h3><p>WHO informs the decision. You choose whether to answer, ignore, block or report.</p></article>
-        <article><span class="signal-num">04</span><h3>Separation</h3><p>Backup, community intelligence and operational systems stay conceptually separated.</p></article>
+
+      <div class="principle-list">
+        <article><span>01</span><div><h3>Signals, not verdicts</h3><p>Identity suggestions carry uncertainty. WHO should never turn a guess into a fact.</p></div></article>
+        <article><span>02</span><div><h3>Private stays private</h3><p>Your address book should not silently become a public directory just because you use the app.</p></div></article>
+        <article><span>03</span><div><h3>You make the call</h3><p>Answer, ignore, block or report. WHO gives you better context; the decision remains yours.</p></div></article>
+        <article><span>04</span><div><h3>Separate by design</h3><p>Backup, community intelligence and operational systems are treated as different jobs with different boundaries.</p></div></article>
       </div>
     </section>
 
-    <section class="field-section">
-      <div class="field-copy">
-        <span class="section-index">SYSTEM / 03</span>
-        <h2>FIELD REPORTS<br><em>when the field speaks.</em></h2>
-        <p>Approved WHO beta feedback can surface here after moderation. The public feed starts empty rather than inventing testimonials.</p>
+    <section class="relay-feature">
+      <div class="relay-copy">
+        <span class="section-index">WHO RELAY</span>
+        <h2>Useful when<br><em>there is no Wi‑Fi.</em></h2>
+        <p>Use one phone as the host and another as the receiver. WHO makes the pairing explicit instead of hiding the handoff behind a mysterious “connect” button.</p>
+        <a class="text-link" href="./how-to-use-pc-relay.html">LEARN ABOUT RELAY ↗</a>
       </div>
-      <div class="field-card">
-        <div class="field-card-top"><span>FIELD REPORT 001</span><i>WAITING FOR APPROVED SIGNAL</i></div>
-        <div class="field-empty">Public beta feedback will appear here after it is reviewed by WHO Control.</div>
-        <div class="field-card-bottom"><span>MODERATED</span><span>PUBLIC FEED</span><span>NO FABRICATED REVIEWS</span></div>
+      <div class="relay-card">
+        <div class="relay-card-top"><span>HOST</span><span>RECEIVER</span></div>
+        <div class="relay-line"><i></i></div>
+        <div class="relay-code">8K7P-42</div>
+        <div class="relay-card-bottom">FRESH SESSION / EXPLICIT PAIRING</div>
       </div>
+    </section>
+
+    <section class="beta-section">
+      <div>
+        <span class="section-index">CURRENTLY</span>
+        <h2>Still in beta.<br><em>That matters.</em></h2>
+      </div>
+      <p>WHO is currently available for Android. Some features are evolving quickly, and public feedback will shape what becomes production-ready. We would rather show the unfinished edges than manufacture a perfect story.</p>
     </section>
 
     <section class="launch-section" id="download">
-      <div class="launch-kicker">WHO // SYSTEM ONLINE</div>
-      <h2>Ready when<br><em>you are.</em></h2>
-      <p>WHO is currently available for Android. Windows is the companion direction. iOS/iPadOS follows when the platform is genuinely ready.</p>
+      <span class="launch-kicker">GET WHO</span>
+      <h2>Your phone<br><em>should know more.</em></h2>
+      <p>Download the Android beta today. Windows companion support and iOS/iPadOS work follow as those platforms become genuinely ready.</p>
       <div class="launch-actions">
-        <a class="button button-primary" href="./download.html">VIEW ALL PLATFORMS <span>↗</span></a>
-        <a class="button button-quiet" href="https://raw.githubusercontent.com/squashberry/who-app/main/WHO-v1.0.0.apk">DOWNLOAD ANDROID 1.0.0</a>
+        <a class="button button-primary" href="./download.html">VIEW DOWNLOADS <span>↗</span></a>
+        <a class="button button-quiet" href="https://raw.githubusercontent.com/squashberry/who-app/main/WHO-v1.0.0.apk">ANDROID 1.0.0</a>
       </div>
-      <div class="launch-foot"><span>STOP GUESSING.</span><strong>KNOW WHO IS CALLING.</strong></div>
     </section>
   </main>
 
   <footer class="footer">
-    <div><a class="brand footer-brand" href="./"><span>W</span><strong>WHO</strong></a><p>Communication intelligence by Squashberry.</p></div>
+    <div><a class="brand footer-brand" href="./"><span>W</span><strong>WHO</strong></a><p>Communication software by Squashberry.</p></div>
     <div class="footer-links">
       <a href="./download.html">Download</a>
       <a href="./support.html">Support</a>
