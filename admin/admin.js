@@ -271,7 +271,9 @@
     token = '';
     currentUser = null;
     sessionStorage.removeItem('who_admin_token');
-    setApiState(false, 'Admin authentication required.');
+    renderOperationalSignals();
+  renderGlobalAlert();
+  setApiState(false, 'Admin authentication required.');
     showAuthScreen('Admin session locked.');
   }
 
@@ -818,6 +820,62 @@
     }
   }
 
+
+  const commandItems = [
+    ['overview','Overview','Live product pulse'],
+    ['users','Users','Accounts and devices'],
+    ['caller','Caller intelligence','Privacy-preserving signals'],
+    ['analytics','Website analytics','Visitors and conversion'],
+    ['reports','Reports','Moderation queue'],
+    ['releases','Releases','Version and update gate'],
+    ['remote','Remote config','Live runtime controls'],
+    ['announcements','Announcements','Publish product messages'],
+    ['crashes','Crashes','Crash triage'],
+    ['feedback','Feedback','Beta feedback queue'],
+    ['audit','Audit','Admin mutation history']
+  ];
+  let commandIndex = 0;
+
+  function renderCommandResults(filter='') {
+    const root=document.getElementById('commandResults');
+    if(!root) return;
+    const q=String(filter||'').toLowerCase().trim();
+    const rows=commandItems.filter(x=>!q || x[0].includes(q) || x[1].toLowerCase().includes(q) || x[2].toLowerCase().includes(q));
+    commandIndex=Math.min(commandIndex,Math.max(0,rows.length-1));
+    root.innerHTML=rows.length ? rows.map((x,i)=>'<button class="command-item '+(i===commandIndex?'selected':'')+'" data-command-page="'+escapeHtml(x[0])+'"><span><b>'+escapeHtml(x[1])+'</b><small>'+escapeHtml(x[2])+'</small></span><small>Open</small></button>').join('') : '<div class="user-search-state" style="padding:18px">No matching command.</div>';
+    root.querySelectorAll('[data-command-page]').forEach(btn=>btn.addEventListener('click',()=>{setPage(btn.dataset.commandPage);closeCommandPalette();}));
+  }
+  function openCommandPalette(){
+    const p=document.getElementById('commandPalette'); if(!p)return;
+    p.classList.add('show'); p.setAttribute('aria-hidden','false'); commandIndex=0; renderCommandResults('');
+    setTimeout(()=>document.getElementById('commandInput')?.focus(),20);
+  }
+  function closeCommandPalette(){const p=document.getElementById('commandPalette');if(!p)return;p.classList.remove('show');p.setAttribute('aria-hidden','true')}
+  function renderOperationalSignals(){
+    const el=document.getElementById('attentionList'), tag=document.getElementById('opsHealthTag'); if(!el||!tag)return;
+    const pendingReports=allReports.filter(r=>String(r.status||'pending')==='pending').length;
+    const pendingCrashes=allCrashes.filter(r=>String(r.status||'pending')==='pending').length;
+    const pendingFeedback=allFeedback.filter(r=>String(r.status||'pending')==='pending').length;
+    const force=Boolean(serverConfig.forceUpdate), maintenance=Boolean(serverConfig.maintenanceMode);
+    const items=[];
+    if(maintenance) items.push(['danger','!','Maintenance mode is ON','Normal sessions may be blocked.','remote']);
+    if(force) items.push(['danger','↑','Force update is ON','Users below the minimum version may be blocked.','releases']);
+    if(pendingCrashes) items.push(['danger','!',''+pendingCrashes+' crash report'+(pendingCrashes===1?'':'s')+' pending','Open Crash Center to triage.','crashes']);
+    if(pendingReports) items.push(['warn','⚑',''+pendingReports+' report'+(pendingReports===1?'':'s')+' pending','Review reputation reports.','reports']);
+    if(pendingFeedback) items.push(['warn','☷',''+pendingFeedback+' feedback item'+(pendingFeedback===1?'':'s')+' pending','Close the beta feedback loop.','feedback']);
+    if(!items.length) items.push(['ok','✓','WHO looks healthy','No pending moderation or crash queue items.','overview']);
+    el.innerHTML=items.slice(0,5).map(x=>'<button class="attention-item '+x[0]+'" data-attention-page="'+x[4]+'"><span class="attention-icon">'+x[1]+'</span><div><b>'+escapeHtml(x[2])+'</b><small>'+escapeHtml(x[3])+'</small></div></button>').join('');
+    el.querySelectorAll('[data-attention-page]').forEach(b=>b.addEventListener('click',()=>setPage(b.dataset.attentionPage)));
+    const bad=items.some(x=>x[0]==='danger'), warn=items.some(x=>x[0]==='warn');
+    tag.textContent=bad?'ACTION REQUIRED':warn?'NEEDS REVIEW':'HEALTHY'; tag.className='tag '+(bad?'red':warn?'amber':'green');
+  }
+  function renderGlobalAlert(){
+    const alert=document.getElementById('globalAlert'); if(!alert)return;
+    const pending=allReports.filter(r=>String(r.status||'pending')==='pending').length+allCrashes.filter(r=>String(r.status||'pending')==='pending').length;
+    if(pending>0){alert.className='global-alert show warn';document.getElementById('globalAlertTitle').textContent='WHO needs attention';document.getElementById('globalAlertText').textContent=pending+' operational item'+(pending===1?'':'s')+' in queue';document.getElementById('globalAlertAction').textContent='Review';document.getElementById('globalAlertAction').onclick=()=>setPage('reports');}
+    else{alert.className='global-alert';}
+  }
+
   function renderStats() {
     const appVersion = serverConfig.appVersion || serverConfig.latestVersion || '—';
     const force = Boolean(serverConfig.forceUpdate);
@@ -843,6 +901,8 @@
         : (allCrashes.length ? 'Latest records loaded' : 'No crash records returned');
 
     renderLiveStats();
+    renderOperationalSignals();
+    renderGlobalAlert();
   }
 
   async function loadStats() {
@@ -1184,6 +1244,28 @@
   document.getElementById('adminLogout')?.addEventListener('click', async () => {
     await logoutAdmin();
   });
+
+  document.getElementById('commandTrigger')?.addEventListener('click', openCommandPalette);
+  document.querySelector('[data-command-close]')?.addEventListener('click', closeCommandPalette);
+  document.getElementById('commandInput')?.addEventListener('input',(e)=>{commandIndex=0;renderCommandResults(e.target.value)});
+  document.addEventListener('keydown',(e)=>{
+    if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();openCommandPalette();return;}
+    const p=document.getElementById('commandPalette');
+    if(!p?.classList.contains('show'))return;
+    if(e.key==='Escape'){closeCommandPalette();return;}
+    if(e.key==='ArrowDown'){e.preventDefault();commandIndex++;renderCommandResults(document.getElementById('commandInput')?.value||'');}
+    if(e.key==='ArrowUp'){e.preventDefault();commandIndex=Math.max(0,commandIndex-1);renderCommandResults(document.getElementById('commandInput')?.value||'');}
+    if(e.key==='Enter'){document.querySelector('.command-item.selected')?.click();}
+  });
+  document.getElementById('mobileMoreButton')?.addEventListener('click',()=>document.getElementById('mobileMoreDrawer')?.classList.toggle('show'));
+  document.querySelectorAll('[data-attention-page]').forEach(b=>b.addEventListener('click',()=>setPage(b.dataset.attentionPage)));
+  document.getElementById('userSearchButton')?.addEventListener('click',()=>{
+    const q=(document.getElementById('userSearch')?.value||'').trim();
+    const s=document.getElementById('userSearchState');
+    if(s) s.textContent=q ? 'Search endpoint is not enabled in the current WHO Control API. No private user data was exposed.' : 'Enter a user identifier to search.';
+    if(q) toast('User search is awaiting the live /admin/users endpoint.');
+  });
+  document.getElementById('userSearch')?.addEventListener('keydown',(e)=>{if(e.key==='Enter')document.getElementById('userSearchButton')?.click();});
 
   document.getElementById('refreshButton')?.addEventListener('click', async () => {
     await refreshData();
