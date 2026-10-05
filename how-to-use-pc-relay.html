@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="index,follow">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="site-pages.css">
+<title>How to use WHO PC Relay · WHO</title>
+<script src="analytics.js" defer></script>
+</head>
+<body>
+<header class="top"><div class="wrap"><nav>
+<a class="brand" href="./"><span class="mark">W</span><span>WHO</span></a>
+<div class="links">
+<a href="features.html">Features</a>
+<a href="how-to-use-who.html">How to use WHO</a>
+<a href="how-to-use-relay.html">Relay</a>
+<a href="safety-center.html">Safety</a>
+<a href="support.html">Support</a>
+</div>
+<a class="cta" href="download.html">Get WHO</a>
+</nav></div></header>
+
+<main>
+<section class="hero">
+<div class="wrap">
+<span class="eyebrow">WHO PC</span>
+<h1>Use WHO Relay with a Windows PC</h1>
+<p>WHO PC can receive internet through a WHO Relay phone. For older Windows Wi-Fi adapters, WHO Relay uses Ultra Relay compatibility mode.</p>
+</div>
+</section>
+
+<section class="content"><div class="wrap">
+
+<div class="grid">
+<div class="card">
+<span class="badge">1 · Host phone</span>
+<h2>Turn on Ultra Relay</h2>
+<p>On the Android phone that has working internet, open WHO → Relay and start Share / Host mode. Ultra Relay creates the compatibility hotspot used by older Windows PCs.</p>
+</div>
+
+<div class="card">
+<span class="badge">2 · Windows PC</span>
+<h2>Connect to the WHO hotspot</h2>
+<p>Open Windows Wi-Fi and connect the PC to the hotspot created by WHO Relay. Keep the phone close to the PC while the Relay session is active.</p>
+</div>
+
+<div class="card">
+<span class="badge">3 · WHO PC</span>
+<h2>Open Relay</h2>
+<p>Open WHO PC and go to Relay. WHO PC continuously searches the connected local network for the WHO Relay service. You should not need to guess a gateway address.</p>
+</div>
+
+<div class="card">
+<span class="badge">4 · Authenticate</span>
+<h2>Use the fresh Relay code</h2>
+<p>When WHO PC identifies the WHO Relay, enter the current pairing code shown by the host phone. Do not reuse an older Relay code.</p>
+</div>
+
+<div class="card">
+<span class="badge">5 · Connected</span>
+<h2>Use WHO Internet</h2>
+<p>After authentication, WHO PC starts its Relay tunnel and routes traffic through the WHO phone. Keep the host phone's Relay session active while the PC is using the connection.</p>
+</div>
+
+<div class="card">
+<span class="badge">6 · Stop safely</span>
+<h2>Disconnect when finished</h2>
+<p>Disconnect WHO Relay from WHO PC before turning off the host session. WHO should restore the PC's previous network path when the Relay tunnel stops.</p>
+</div>
+</div>
+
+<div class="card" style="margin-top:18px">
+<span class="badge">Why Ultra Relay?</span>
+<h2>Compatibility mode for older PCs</h2>
+<p>Modern phones and laptops may support WPA3. Older Windows Wi-Fi adapters may not. Ultra Relay uses a WPA2-Personal compatibility hotspot so older WHO PC hardware can join the Relay network.</p>
+<p>Ultra Relay does not replace WHO's Relay authentication. The Wi-Fi connection and WHO pairing session are separate layers.</p>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h2>Troubleshooting WHO PC Relay</h2>
+<div class="grid" style="grid-template-columns:repeat(2,1fr)">
+<div><span class="badge">PC cannot see the hotspot</span><p>Make sure Ultra Relay is running on the host phone, keep the phone nearby, and make sure Windows Wi-Fi is enabled.</p></div>
+<div><span class="badge">Hotspot is visible but will not connect</span><p>Ultra Relay is designed for older Windows Wi-Fi adapters. Try disconnecting other Wi-Fi networks first and reconnecting to the WHO Relay hotspot.</p></div>
+<div><span class="badge">WHO PC keeps searching</span><p>Confirm that Windows is actually connected to the WHO Relay hotspot. WHO PC cannot discover the phone's Relay service while Windows is disconnected from the Relay network.</p></div>
+<div><span class="badge">Pairing fails</span><p>Start a fresh Ultra Relay session on the phone and use the newly generated pairing code.</p></div>
+<div><span class="badge">No internet after pairing</span><p>Check that the host phone itself has internet and that the WHO Relay session still shows connected.</p></div>
+<div><span class="badge">Still stuck</span><p>Send a report through the WHO feedback page with your WHO PC version, Windows version and the Relay screen status.</p></div>
+</div>
+</div>
+
+<div style="margin-top:20px;display:flex;gap:10px;flex-wrap:wrap">
+<a class="cta" href="how-to-use-relay.html">← Mobile Relay guide</a>
+<a class="cta" href="feedback.html">Send WHO feedback →</a>
+</div>
+
+</div></section>
+</main>
+
+<footer><div class="wrap"><div class="foot">
+<a class="brand" href="./"><span class="mark">W</span><span>WHO</span></a>
+<div class="footlinks">
+<a href="how-to-use-who.html">How to use WHO</a>
+<a href="how-to-use-relay.html">Relay guide</a>
+<a href="how-to-use-pc-relay.html">WHO PC Relay</a>
+<a href="how-to-use-vpn.html">VPN guide</a>
+<a href="safety-center.html">Safety Center</a>
+<a href="faq.html">FAQ</a>
+<a href="feedback.html">Feedback</a>
+<a href="support.html">Support</a>
+<a href="privacy.html">Privacy</a>
+<a href="terms.html">Terms</a>
+<a href="about.html">About</a>
+<a href="contact.html">Contact</a>
+</div>
+</div><div class="copy">© 2026 Squashberry · WHO Beta 1.0</div></div></footer>
+</body>
+</html>
