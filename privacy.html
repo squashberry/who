@@ -1,2 +1,94 @@
 <!doctype html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#03060a"><link rel="icon" href="/who/favicon.svg"><title>WHO — Privacy</title><style>body{margin:0;background:#03060a;color:#edf6fb;font-family:Inter,system-ui,sans-serif}.wrap{width:min(860px,calc(100% - 36px));margin:auto;padding:32px 0 90px}.brand{color:#fff;text-decoration:none;font-weight:900;letter-spacing:.16em}.hero{padding-top:70px}.k{color:#6f8290;font-size:10px;letter-spacing:.16em;font-weight:900;text-transform:uppercase}.hero h1{font-size:clamp(50px,8vw,88px);letter-spacing:-.07em;line-height:.9}.hero p,.doc{color:#8496a1;line-height:1.85}.doc{font-size:15px}.doc h2{color:#e8f2f6;font-size:22px;margin-top:48px}.doc strong{color:#dff2fb}.doc code{color:#a6efff}a{color:#a6efff}</style></head><body><main class="wrap"><a class="brand" href="./">WHO</a><div class="hero"><div class="k">WHO // PRIVACY</div><h1>Privacy by<br>architecture.</h1><p>WHO should make the user more informed about communication, not less informed about how their data is handled.</p></div><article class="doc"><h2>What WHO is designed to do</h2><p>WHO uses communication context to help a person decide what to do with calls, messages and connections. Caller intelligence is a confidence-based signal, not proof of legal identity.</p><h2>Contacts and backups</h2><p>Your private address book should not silently become a public directory. Backup and restore are user-controlled operations and should remain separate from caller-intelligence data systems.</p><h2>Community signals</h2><p>Community intelligence should favor quality, moderation, independent signals, corrections and visible uncertainty rather than raw volume.</p><h2>Website analytics</h2><p>The public website may use first-party analytics for page views and download events. The implementation should match the published privacy explanation and should not describe the site as analytics-free when analytics are enabled.</p><h2>Security</h2><p>Credentials, service-role keys, database passwords, OAuth client secrets, signing keys and other privileged secrets belong on the backend or secure release systems. They do not belong in the public website.</p><h2>Changes</h2><p>This is the rebuilt site's concise privacy surface. The policy should be expanded with the final production data map, legal basis, retention periods, processor list and user-rights workflow before a public release outside beta.</p><p><a href="./">← Return to WHO</a></p></article></main></body></html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#050608">
+<meta name="description" content="WHO privacy policy for the Android beta, website, account and connected services.">
+<meta name="robots" content="index,follow">
+<link rel="icon" href="./favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="./site-pages.css">
+<title>WHO Privacy — Squashberry</title>
+</head>
+<body>
+<header class="top"><div class="wrap"><nav>
+<a class="brand" href="./"><span class="mark">W</span><span>WHO</span></a>
+<div class="links"><a href="./features.html">Features</a><a href="./how-it-works.html">How it works</a><a href="./safety-center.html">Safety</a><a href="./support.html">Support</a></div>
+<a class="cta" href="./download.html">Get WHO</a>
+</nav></div></header>
+
+<main>
+<section class="hero"><div class="wrap">
+<span class="eyebrow">WHO // PRIVACY</span>
+<h1>Privacy should be<br><em>understandable.</em></h1>
+<p>WHO handles communication data, account information and optional connected services. This policy explains the product boundaries in plain language for the current beta.</p>
+<div class="meta-row"><span class="badge">Last updated · 5 October 2026</span><span class="badge blue">WHO Beta 1.0</span></div>
+</div></section>
+
+<section class="content"><div class="wrap">
+<div class="callout"><strong>Beta note:</strong> WHO is still evolving. The final production policy will be kept aligned with the exact data flows that ship. We will not use this page to claim that a feature is privacy-preserving when the implementation does something different.</div>
+
+<div class="section-head" style="margin-top:55px"><span class="section-label">THE SHORT VERSION</span><h2>What matters most.</h2></div>
+<div class="grid three">
+<article class="card"><span class="badge blue">01</span><h2>Your contacts are yours.</h2><p>WHO should not silently turn a private address book into a public directory. Contact backup and restore are user-controlled operations and are conceptually separate from caller-intelligence data.</p></article>
+<article class="card"><span class="badge blue">02</span><h2>Signals are not certainty.</h2><p>Caller intelligence can be incomplete or wrong. A suggested name, category or reputation signal is context to help you decide, not proof of legal identity.</p></article>
+<article class="card"><span class="badge blue">03</span><h2>You stay in charge.</h2><p>WHO helps with calls, messages, Relay and network decisions. You choose whether to answer, block, report, pair, connect, back up or restore.</p></article>
+</div>
+
+<div class="prose">
+<h2>1. Information you provide</h2>
+<p>You may provide an account email or phone number, verification information, profile or app preferences, support requests, feedback and information needed to authorize a device. When you submit feedback or a support request, include only the information needed to explain the problem.</p>
+
+<h2>2. Device and app information</h2>
+<p>The app and website can process technical information needed to operate the service, such as app version, operating system, device capability, crash diagnostics, network state, timestamps and operational identifiers. The exact fields depend on the feature and build.</p>
+
+<h2>3. Contacts, calls and messages</h2>
+<p>WHO can request access to contacts, call state, call history or SMS-related capabilities when you enable features that require them. These permissions exist to power phone functionality such as calling, Recents, caller intelligence, contacts and messaging.</p>
+<p>Your private contacts should remain conceptually separate from community caller intelligence. A contact saved on your device is not automatically treated as a public submission.</p>
+
+<h2>4. Caller intelligence and community data</h2>
+<p>WHO may use community reports, public signals, business information, user corrections and moderation outcomes to improve caller context. The system is designed around confidence, provenance and uncertainty rather than treating every submitted name as a fact.</p>
+<div class="callout danger"><strong>Do not rely on caller intelligence for high-stakes identity verification.</strong> Fraudsters can spoof numbers and public information can be stale or incorrect.</div>
+
+<h2>5. Relay and network features</h2>
+<p>WHO Relay uses an explicit pairing/session model between participating devices. Session identifiers and operational state may be processed to establish, maintain and terminate a Relay connection. WHO Network/VPN features can process connection metadata needed to establish and monitor the supported tunnel.</p>
+<p>Using a VPN does not make you anonymous, and Relay should only be paired with devices you recognize and intend to connect.</p>
+
+<h2>6. Backups</h2>
+<p>Google Drive backup is designed as a user-controlled feature. The backup operation is distinct from caller-intelligence systems. When you connect a Google account or authorize Drive access, Google’s own account, storage and privacy terms also apply.</p>
+
+<h2>7. Website analytics</h2>
+<p>The WHO website may collect limited first-party analytics such as page visits, download events, referral information and technical request data so Squashberry can understand whether the public site works. Analytics should never be described as disabled when the deployed site has analytics enabled.</p>
+
+<h2>8. Email, authentication and verification</h2>
+<p>Account verification and service email may require an email address and a one-time code or other authentication material. Authentication secrets and privileged backend credentials are not intended to be stored in the public website.</p>
+
+<h2>9. Sharing and processors</h2>
+<p>WHO may rely on infrastructure providers for hosting, authentication, email delivery, analytics, storage, crash reporting or database services. The production privacy notice should identify the active providers and processing roles before broad release.</p>
+
+<h2>10. Security</h2>
+<p>Keep your device locked, protect your account verification channels and never share OTPs, passwords, recovery codes or desktop authorization credentials with another person. Report security issues through <a href="./responsible-disclosure.html">Responsible Disclosure</a>.</p>
+
+<h2>11. Retention and deletion</h2>
+<p>Retention depends on the feature and data category. Operational logs may be retained long enough to diagnose and secure the service; account or user-created data should have a defined lifecycle. The final production release will publish concrete retention periods and deletion procedures for each category.</p>
+
+<h2>12. Your choices</h2>
+<p>You can review Android permissions, turn off optional features, disconnect supported services and manage available account data. The <a href="./data-choices.html">Your data</a> page provides the product-facing controls and explanations available in the beta.</p>
+
+<h2>13. Children</h2>
+<p>WHO is not designed as a children's service. Do not create an account or provide personal information where applicable if you are not legally permitted to use the service in your location.</p>
+
+<h2>14. Changes to this policy</h2>
+<p>When WHO adds a material new data flow, this policy should be updated to describe it. The date at the top indicates the current version published on this website.</p>
+
+<h2>15. Contact</h2>
+<p>For general privacy questions, use <a href="./contact.html">Contact</a>. For security vulnerabilities, use <a href="./responsible-disclosure.html">Responsible Disclosure</a>. For product questions, use <a href="./support.html">Support</a>.</p>
+</div>
+</div></section>
+</main>
+
+<footer><div class="wrap"><div class="foot">
+<a class="brand" href="./"><span class="mark">W</span><span>WHO</span></a>
+<div class="footlinks"><a href="./data-choices.html">Your data</a><a href="./cookies.html">Cookies</a><a href="./responsible-disclosure.html">Security</a><a href="./terms.html">Terms</a><a href="./support.html">Support</a></div>
+</div><div class="copy">© 2026 Squashberry · WHO Beta 1.0</div></div></footer>
+</body></html>
