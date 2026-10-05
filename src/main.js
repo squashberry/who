@@ -73,6 +73,4 @@
   };
   window.addEventListener('scroll', onScroll, {passive:true});
   onScroll();
-
-  window.WHOAnalytics?.pageView(location.pathname);
 })();
