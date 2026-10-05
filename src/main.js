@@ -46,6 +46,7 @@ let animationFrame = 0;
 let frameCounter = 0;
 let destroyed = false;
 let currentMode = '';
+let threeStarted = false;
 let heroRing = null;
 const networkNodes = [];
 
@@ -339,19 +340,7 @@ function initThree() {
     phone.add(heroRing);
 
     networkNodes.length = 0;
-    const nodeGeometry = new THREE.SphereGeometry(.035, 8, 8);
-    const nodeMat = new THREE.MeshBasicMaterial({ color: 0xa6efff });
-    for (let i = 0; i < 26; i++) {
-      const node = new THREE.Mesh(nodeGeometry, nodeMat);
-      const angle = i * 2.39996;
-      const radius = 2.2 + (i % 5) * .38;
-      const yRadius = radius * .7;
-      node.position.set(Math.cos(angle) * radius, Math.sin(angle) * yRadius, (i % 7) * -.12);
-      scene.add(node);
-      networkNodes.push({ node, angle, radius, yRadius, speed: .00018 + (i % 5) * .000025 });
-    }
-
-    createParticles();
+        createParticles();
     resize();
     window.addEventListener('resize', resize);
     window.addEventListener('pointermove', onPointerMove, { passive: true });
@@ -359,7 +348,7 @@ function initThree() {
     window.addEventListener('pointerup', onPointerUp, { passive: true });
     window.addEventListener('pointercancel', onPointerUp, { passive: true });
 
-    animate();
+    renderer.domElement.style.visibility = 'hidden';
     return true;
   } catch (error) {
     console.warn('WHO 3D scene unavailable:', error);
@@ -426,6 +415,13 @@ function setMode(mode) {
   drawScreen(mode);
 }
 
+function startThree() {
+  if (threeStarted || !renderer) return;
+  threeStarted = true;
+  renderer.domElement.style.visibility = 'visible';
+  animate();
+}
+
 function animate() {
   if (destroyed) return;
   animationFrame = requestAnimationFrame(animate);
@@ -434,11 +430,11 @@ function animate() {
   const t = performance.now();
   const floatY = state.motionAllowed ? Math.sin(t * .00145) * .085 : 0;
   const floatX = state.motionAllowed ? Math.sin(t * .00073) * .045 : 0;
-  const targetRotationX = state.dragX + state.targetX + state.progress * .03 + (state.motionAllowed ? Math.sin(t * .0009) * .025 : 0);
-  const targetRotationY = state.dragY + state.targetY + .24 - state.progress * .34 + (state.motionAllowed ? Math.sin(t * .00065) * .035 : 0);
+  const targetRotationX = state.dragX + state.targetX + state.progress * .02 + (state.motionAllowed ? Math.sin(t * .0009) * .014 : 0);
+  const targetRotationY = state.dragY + state.targetY + .18 - state.progress * .24 + (state.motionAllowed ? Math.sin(t * .00065) * .02 : 0);
   const targetRotationZ = -0.08 + Math.sin(state.progress * Math.PI) * .035 + (state.motionAllowed ? Math.sin(t * .0011) * .014 : 0);
-  const targetX = Math.sin(state.progress * Math.PI) * .7 + floatX;
-  const targetY = .15 - state.progress * .2 + floatY;
+  const targetX = Math.sin(state.progress * Math.PI) * .48 + floatX;
+  const targetY = .08 - state.progress * .16 + floatY;
   const targetZ = state.progress < .05 ? 0 : -state.progress * .9;
   const scale = 1 + state.progress * .08;
 
@@ -454,23 +450,7 @@ function animate() {
     phone.scale.setScalar(phone.scale.x + (nextScale - phone.scale.x) * .05);
   }
 
-  if (heroRing) {
-    const pulse = 1 + Math.sin(t * .0012) * .055;
-    heroRing.scale.set(pulse, pulse, pulse);
-    heroRing.material.opacity = .075 + (Math.sin(t * .0015) + 1) * .032;
-  }
 
-  networkNodes.forEach((item) => {
-    const a = item.angle + t * item.speed;
-    item.node.position.x = Math.cos(a) * item.radius;
-    item.node.position.y = Math.sin(a * 1.04) * item.yRadius;
-    item.node.position.z = -0.2 + Math.sin(a * 1.7) * .35;
-  });
-
-  if (particleField) {
-    particleField.rotation.y += state.motionAllowed ? .00075 : .00008;
-    particleField.rotation.x += state.motionAllowed ? .00024 : .00003;
-  }
 
   if (renderer && screenTexture && state.motionAllowed && frameCounter % 4 === 0) {
     drawScreen(currentMode || 'caller', t * .03);
@@ -566,10 +546,9 @@ function initMobileMenu() {
 function revealSite() {
   if (!gsap) return;
   const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
-  tl.fromTo('.topbar', { y: -28, opacity: 0 }, { y: 0, opacity: 1, duration: .7 })
-    .fromTo('.hero-copy > *', { y: 34, opacity: 0 }, { y: 0, opacity: 1, duration: .7, stagger: .07 }, '-=.35')
-    .fromTo('.hero-side', { x: 35, opacity: 0 }, { x: 0, opacity: 1, duration: .8 }, '-=.55')
-    .fromTo('.hero-floating-readout', { scale: .8, opacity: 0 }, { scale: 1, opacity: 1, duration: .5, stagger: .08 }, '-=.55');
+  tl.fromTo('.topbar', { y: -20, opacity: 0 }, { y: 0, opacity: 1, duration: .65 })
+    .fromTo('.hero-copy > *', { y: 28, opacity: 0 }, { y: 0, opacity: 1, duration: .65, stagger: .055 }, '-=.3')
+    .fromTo('.hero-product-caption', { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: .65 }, '-=.42');
 }
 
 function connectSmoothActions() {
@@ -587,21 +566,20 @@ function unlock() {
   localStorage.setItem('who_intro_seen', '1');
   document.body.style.overflow = '';
 
-  if (gsap && state.motionAllowed) {
-    gsap.timeline({
-      onComplete: () => {
-        boot.classList.add('is-leaving');
-        boot.setAttribute('aria-hidden', 'true');
-        revealSite();
-      }
-    })
-      .to('.boot-core', { scale: 1.06, opacity: 0, duration: .42, ease: 'power3.in' })
-      .to('.boot-orbit', { scale: 1.28, opacity: 0, duration: .5, stagger: .03 }, '<')
-      .to('.boot-grid', { opacity: 0, duration: .35 }, '<');
-  } else {
+  const finish = () => {
     boot.classList.add('is-leaving');
     boot.setAttribute('aria-hidden', 'true');
-    window.setTimeout(revealSite, 180);
+    startThree();
+    revealSite();
+  };
+
+  if (gsap && state.motionAllowed) {
+    gsap.timeline({ onComplete: finish })
+      .to('.boot-word', { opacity: 0, y: -18, duration: .38, ease: 'power2.in' })
+      .to('.boot-rule', { scaleX: 0, transformOrigin: '50% 50%', duration: .32, ease: 'power2.in' }, '<')
+      .to('.boot-corner, .boot-actions', { opacity: 0, duration: .24 }, '<');
+  } else {
+    finish();
   }
 }
 
