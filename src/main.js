@@ -301,24 +301,24 @@ function initThree() {
 
     const bodyMat = new THREE.MeshPhysicalMaterial({ color: 0x101a21, metalness: .72, roughness: .19, clearcoat: .5, clearcoatRoughness: .16 });
     const edgeMat = new THREE.MeshPhysicalMaterial({ color: 0x203844, metalness: .92, roughness: .18, clearcoat: .4 });
-    const body = new THREE.Mesh(new THREE.BoxGeometry(1.72, 3.42, .22, 7, .10), bodyMat);
+    const body = new THREE.Mesh(new THREE.BoxGeometry(1.72, 3.42, .22, 6, 6, 2), bodyMat);
     phone.add(body);
 
-    const edge = new THREE.Mesh(new THREE.BoxGeometry(1.63, 3.33, .08, 7, .10), edgeMat);
+    const edge = new THREE.Mesh(new THREE.BoxGeometry(1.63, 3.33, .08, 6, 6, 2), edgeMat);
     edge.position.z = -.03;
     phone.add(edge);
 
     createScreenCanvas();
     drawScreen('caller');
     screenMesh = new THREE.Mesh(
-      new THREE.BoxGeometry(1.47, 3.01, .055, 7, .08),
+      new THREE.BoxGeometry(1.47, 3.01, .055, 6, 6, 1),
       new THREE.MeshBasicMaterial({ map: screenTexture, transparent: true })
     );
     screenMesh.position.z = .13;
     phone.add(screenMesh);
 
     const cameraBump = new THREE.Mesh(
-      new THREE.BoxGeometry(.72, .13, .05, 5, .05),
+      new THREE.BoxGeometry(.72, .13, .05, 4, 2, 2),
       new THREE.MeshBasicMaterial({ color: 0x010305 })
     );
     cameraBump.position.set(0, 1.43, .17);
