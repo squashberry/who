@@ -500,3 +500,11 @@ footer{
   from{transform:rotate(0deg)}
   to{transform:rotate(360deg)}
 }
+
+
+/* Final contrast correction: keep content labels dark, hero labels light. */
+.eyebrow,.k,.section-label{color:#738090}
+.hero .eyebrow,.hero .k,.hero .section-label{color:rgba(255,255,255,.76)}
+.display{color:var(--text)}
+.display em{color:#2f3944}
+.hero .display,.hero .display em{color:#fff}
