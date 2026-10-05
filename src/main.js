@@ -288,12 +288,12 @@ function initThree() {
     camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, .1, 100);
     camera.position.set(0, .15, 7.35);
 
-    const ambient = new THREE.HemisphereLight(0x9edfff, 0x020609, 1.4);
+    const ambient = new THREE.HemisphereLight(0xffffff, 0x020203, 1.2);
     scene.add(ambient);
-    const key = new THREE.DirectionalLight(0xbceeff, 3);
+    const key = new THREE.DirectionalLight(0xffffff, 2.7);
     key.position.set(3, 5, 5);
     scene.add(key);
-    const rim = new THREE.PointLight(0x168dff, 18, 16);
+    const rim = new THREE.PointLight(0x78b8d4, 6, 12);
     rim.position.set(-3, -1, 3);
     scene.add(rim);
 
@@ -330,14 +330,6 @@ function initThree() {
       button.position.set(side * .9, .72, 0);
       phone.add(button);
     });
-
-    heroRing = new THREE.Mesh(
-      new THREE.RingGeometry(1.95, 2.08, 64),
-      new THREE.MeshBasicMaterial({ color: 0x52c8ff, transparent: true, opacity: .12, side: THREE.DoubleSide })
-    );
-    heroRing.rotation.x = Math.PI / 2;
-    heroRing.position.z = -1.0;
-    phone.add(heroRing);
 
     networkNodes.length = 0;
     resize();
